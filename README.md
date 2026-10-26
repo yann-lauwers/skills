@@ -29,7 +29,7 @@ npx skills add nextlevelbuilder/ui-ux-pro-max-skill -g -a claude-code -y -s ui-u
 npx skills add vojtaholik/good-css -g -a claude-code -y -s good-css
 
 # plugins
-claude plugin marketplace add yann-lauwers/skills
+claude plugin marketplace add yann-lauwers/skills   # then set "autoUpdate": true on it in ~/.claude/settings.json
 claude plugin install yann@yannlauwers --scope user
 claude plugin install continuous-compaction@yannlauwers --scope user
 ```
@@ -72,6 +72,6 @@ Run in the repo: `npx skills add yann-lauwers/skills -a claude-code -y -s <names
 
 1. Edit it here, commit, push.
 2. User level: `npx skills update -g -y`. Each repo using it: `npx skills update -p -y` in that repo, then commit in your own repos.
-3. Plugins: `claude plugin marketplace update yannlauwers`, then `/reload-plugins` in open sessions.
+3. Plugins: background auto-update picks up the push (`"autoUpdate": true` on the `yannlauwers` marketplace in `~/.claude/settings.json`); to take it at once, `claude plugin marketplace update yannlauwers && claude plugin update yann@yannlauwers`, then `/reload-plugins` in open sessions. The `yann` plugin carries no `version`, so every pushed commit is a new version.
 
 A new skill is a folder `skills/<name>/` with its `SKILL.md`, plus its row above.
