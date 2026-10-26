@@ -1,6 +1,6 @@
 ---
 name: house-style
-description: "Gives a generated page, chart, deck, dashboard or published Artifact the house look — one brand, the house tokens by CSS variable name — and changes the house system itself. Use on 'house style', 'house palette', 'brand colour', before writing any standalone HTML page or stylesheet. Not for an unbuilt screen's look or judging a shipped interface — /impeccable ; not for pushing to Claude Design — /claude-design ."
+description: "Gives a generated page, chart, deck, dashboard or published Artifact the house look — one brand, the house tokens by CSS variable name — and changes the house system itself. Use on 'house style', 'house palette', 'brand colour', before writing any standalone HTML page or stylesheet. Not for an unbuilt screen's look or judging a shipped interface — /impeccable ."
 allowed-tools: Read, Grep, Glob, Write(**/*.html), Write(**/*.css), Edit(**/*.html), Edit(**/*.css)
 ---
 

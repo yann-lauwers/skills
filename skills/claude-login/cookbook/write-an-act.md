@@ -21,5 +21,4 @@ try {
 - One tab per unit of work, closed after; the session outlives it.
 - `close()` in a `finally` → it stops Chrome, which flushes the cookies, and releases the lock; skipped → the account stays locked until the process dies.
 - The act's effect is repeatable → its own ledger under `state/`, so a rerun is a no-op · the act mints a one-time credential → no ledger, a refused one is retried by running again.
-- An act on a published Artifact → its content runs in a frame on `*.claudeusercontent.com`, and a design system's previews mount only as its view's own scroll container passes them → `examples/design-system-look.mjs` finds both.
 - Iterating on an act → run it against a second account rather than retrying one.

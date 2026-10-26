@@ -27,7 +27,6 @@ claude-login forget <email>             delete the profile — the only destruct
 | Ask | Read or run |
 | --- | --- |
 | accept the artifact invitations waiting in a mailbox | `examples/accept-invites.mjs` |
-| prove a published Design System Artifact draws — its Overview and cover, and each named component's live preview — one `OVERVIEW`, `PREVIEW`, `ERRORS` and `RESULT` line each, exit 0 only when all hold; usage in its header | `examples/design-system-look.mjs` |
 | write a new act, or change one | `cookbook/write-an-act.md` |
 | a run stopped with a message instead of finishing | `references/failures.md` |
 | change `chrome.mjs` or `login.mjs`, or a sign-in misbehaves with no message naming why | `references/sign-in-mechanics.md` |
