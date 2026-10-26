@@ -1,5 +1,6 @@
 """Whether a shell command only reads, walks a tree, or follows links — read off its words, never run."""
 import re
+import shlex
 
 import hook_shell as hs
 
@@ -18,9 +19,9 @@ READ_VERBS = {
 # Two readers that become writers under a flag. Rejected on sight rather than
 # parsed: the spellings are many (`-i`, `-i''`, `-i.bak`, `-ni`) and a missed one
 # grants a write.
-_SED_INPLACE = re.compile(r"^-{1,2}[A-Za-z]*i")
-_SED_WRITES = re.compile(r"(^|[;{}\s'\"0-9,/$])[wWe]\s+\S")
-_REDIRECT = re.compile(r"^(?:[0-9]|&)?>>?(.*)$")
+_HARMLESS_REDIRECT = re.compile(r"[0-9&]?>>?\s*/dev/null|[0-9]?>&[0-9-]")
+_SUBSTITUTION = re.compile(r"<\(|>\(|\$\(|`")
+_SED_PRINT_SCRIPT = re.compile(r"^(?:\$|\d+(?:,(?:\d+|\$))?|/[^/]*/(?:,/[^/]*/)?)?p$")
 _FIND_ACTIONS = {"-delete", "-exec", "-execdir", "-ok", "-okdir", "-fprint", "-fprint0", "-fprintf", "-fls",
                  "-fprint", "-fprintf", "-fls"}
 
@@ -34,14 +35,12 @@ def _segment_reads_only(segment):
     if verb not in READ_VERBS:
         return False
     tokens = segment.split()
-    if _redirects_to_a_file(tokens):
-        return False
     operands = [t for t in tokens[1:] if not t.startswith("-")]
-    if verb == "sed" and any(_SED_INPLACE.match(t) for t in tokens):
-        return False
     if verb == "find" and any(t in _FIND_ACTIONS for t in tokens):
         return False
-    if verb == "sort" and any(t == "-o" or t.startswith(("-o", "--output")) for t in tokens):
+    if verb == "sort" and any(t == "-o" or t.startswith(("-o", "--output", "--compress")) for t in tokens):
+        return False
+    if verb == "file" and any(t in ("-C", "--compile") or t.startswith("-m") for t in tokens):
         return False
     if verb in ("uniq", "xxd") and len(operands) > 1:
         return False
@@ -50,15 +49,19 @@ def _segment_reads_only(segment):
     return True
 
 
-def _redirects_to_a_file(tokens):
-    for i, token in enumerate(tokens):
-        m = _REDIRECT.match(token)
-        if not m:
-            continue
-        target = m.group(1) or (tokens[i + 1] if i + 1 < len(tokens) else "")
-        if target != "/dev/null" and not target.startswith("&"):
-            return True
-    return False
+def _sed_prints_only(statement):
+    try:
+        words = shlex.split(statement)
+    except ValueError:
+        return False
+    scripts, flags = [], set()
+    for w in words[1:]:
+        if w.startswith("-"):
+            flags.add(w)
+        elif not scripts:
+            scripts.append(w)
+    return flags <= {"-n", "-E", "-r"} and "-n" in flags and len(scripts) == 1 \
+        and bool(_SED_PRINT_SCRIPT.match(scripts[0]))
 
 
 def _segments(command):
@@ -77,7 +80,9 @@ def reads_only(command):
     only its first verb would grant it.
     """
     try:
-        if any(hs.command_word(st) == "sed" and _SED_WRITES.search(st)
+        if _SUBSTITUTION.search(command) or ">" in _HARMLESS_REDIRECT.sub("", command):
+            return False
+        if any(hs.command_word(st) == "sed" and not _sed_prints_only(st)
                for _, st in hs.statements(command)):
             return False
         return all(_segment_reads_only(segment) for segment in _segments(command))
