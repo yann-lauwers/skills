@@ -24,7 +24,7 @@ npx skills add pbakaus/impeccable -g -a claude-code -y -s impeccable
 npx skills add humanlayer/skills -g -a claude-code -y -s show-me
 npx skills add cloudflare/skills -g -a claude-code -y -s cloudflare wrangler
 npx skills add emilkowalski/skill -g -a claude-code -y -s animate apple-design emil-design-eng find-animation-opportunities improve-animations review-animations
-npx skills add Leonxlnx/taste-skill -g -a claude-code -y -s design-taste-frontend high-end-visual-design redesign-existing-projects
+npx skills add Leonxlnx/taste-skill -g -a claude-code -y -s design-taste-frontend
 npx skills add nextlevelbuilder/ui-ux-pro-max-skill -g -a claude-code -y -s ui-ux-pro-max
 npx skills add vojtaholik/good-css -g -a claude-code -y -s good-css
 
