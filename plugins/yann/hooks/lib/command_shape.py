@@ -19,7 +19,8 @@ READ_VERBS = {
 # Two readers that become writers under a flag. Rejected on sight rather than
 # parsed: the spellings are many (`-i`, `-i''`, `-i.bak`, `-ni`) and a missed one
 # grants a write.
-_HARMLESS_REDIRECT = re.compile(r"[0-9&]?>>?\s*/dev/null|[0-9]?>&[0-9-]")
+_HARMLESS_REDIRECT = re.compile(
+    r"(?<!\S)(?:[0-9&]?>>?\s*/dev/null|[0-9]?>&(?:[0-9]+|-))(?=\s|$|[;&|)])")
 _SUBSTITUTION = re.compile(r"<\(|>\(|\$\(|`")
 _SED_PRINT_SCRIPT = re.compile(r"^(?:\$|\d+(?:,(?:\d+|\$))?|/[^/]*/(?:,/[^/]*/)?)?p$")
 _FIND_ACTIONS = {"-delete", "-exec", "-execdir", "-ok", "-okdir", "-fprint", "-fprint0", "-fprintf", "-fls",
@@ -71,6 +72,15 @@ def _segments(command):
                 yield segment
 
 
+def _pipeline_members(command):
+    for _, statement in hs.statements(command):
+        start = 0
+        for pipe in [i for i, c in enumerate(hs.act_view(statement)) if c == "|"] + [len(statement)]:
+            if statement[start:pipe].strip():
+                yield statement[start:pipe]
+            start = pipe + 1
+
+
 def reads_only(command):
     """Every command in every statement, pipeline members included, is a reader.
 
@@ -82,8 +92,8 @@ def reads_only(command):
     try:
         if _SUBSTITUTION.search(command) or ">" in _HARMLESS_REDIRECT.sub("", command):
             return False
-        if any(hs.command_word(st) == "sed" and not _sed_prints_only(st)
-               for _, st in hs.statements(command)):
+        if any(hs.command_word(member) == "sed" and not _sed_prints_only(member)
+               for member in _pipeline_members(command)):
             return False
         return all(_segment_reads_only(segment) for segment in _segments(command))
     except Exception:
