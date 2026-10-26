@@ -1,0 +1,1 @@
+{"name":"yann-probe","owner":{"name":"Yann Lauwers"},"description":"probe","plugins":[{"name":"zz-probe","source":"./plugins/zz-probe","description":"probe"}]}
