@@ -1,32 +1,30 @@
-# Troubleshoot a card in the pane
+# Troubleshoot a component on the page
 
-A card the owner expects is missing from the pane, or shows there blank or broken. Ends when the reply names which card drew what, and the cause of each one that did not.
+A component the owner expects is missing from a published system, or shows there blank or broken. Ends when the reply names which preview drew what, and the cause of each one that did not.
 
-- Run the file reads cheapest first; open the pane only when they leave the cause unnamed.
-- Find the project and its owner per `SKILL.md` § Project config and § The project.
+- Run the file reads cheapest first; open the page only when they leave the cause unnamed.
+- Find the system per `SKILL.md` § Project config.
 
 ## Step 1 — Read the hosted files
 
-1. `get_file _ds_manifest.json` into the scratchpad, and look for each card the owner named.
-2. Cards import a component bundle → run `cookbook/push.md` step 6's bundle check.
-3. `get_file` the card itself: its first line carries the `@dsCard` marker, and every script and stylesheet it loads is a file in the project.
+1. `Artifact` `list` the link with `scope: "files"`, and look for `project/components/<Name>/preview.html`.
+2. `Artifact` `read` the preview and `project/components/bundle.js`'s first line.
 
 | Reading | Cause | Fix |
 | --- | --- | --- |
-| the card is absent from the manifest | another writer's push replaced the index, or the push carried none | rebuild the index per `cookbook/push.md` step 2 and push it |
-| the manifest names it, the marker is missing | the card was written without one | add the marker, then push the card and the index |
-| a card is blank with components missing, or draws an older look | the bundle at that path is older than the tree | `cookbook/push.md` step 6 |
-| a file the card loads is absent, or was written `text/plain` | `cookbook/push.md` step 4's mime rule was broken | write that file again under its own type |
+| no `preview.html` for the component | the export wrote none, or a publish removed it | export the tip again and publish, per `cookbook/push.md` |
+| its first line is not the `@dsCard` marker | the preview was written without one | fix the exporter, then publish |
+| the bundle's header lacks the component, or its namespace differs from the index's `namespace` | the bundle and the index come from different trees | publish the whole export of one tree |
+| the preview links a path the files listing lacks | the export left a file out | fix the exporter, then publish |
 
 Done when one row names the cause — or none does, and Step 2 runs.
 
-## Step 2 — Open the pane as the owner
+## Step 2 — Open the page
 
-1. Run /claude-login 's pane check as the project's owner, over the cards the owner named plus one card that imports the bundle, against the index Step 1 saved.
-2. Open one saved frame and look at it; each `CARD` line names its file.
+1. Run `cookbook/push.md` step 6's act over the components the owner named.
+2. Open the screenshot it saved for each one.
 
-- The pane is the only witness → a repo's pre-push render compiles the bundle locally, draws green against a blank hosted project, and never stands in for it.
-- No route into the pane as the owner → say so; never substitute another check.
-- `ABSENT` or a `dropped` path → the index row · `BLANK` with `missing=` names → the bundle row · `BLANK` with nothing missing → the card itself: open its saved frame and its source.
+- The page is the only witness → a local render of the export draws against files the page may not serve, and never stands in for it.
+- `ABSENT` → the Components view never mounted that preview: Step 1's first row · `BLANK` → the preview mounted and drew nothing: read its console errors in the act's `ERRORS` line, then its source.
 
-Done when the reply names what drew, card by card, and the cause of each that did not.
+Done when the reply names what drew, component by component, and the cause of each that did not.
