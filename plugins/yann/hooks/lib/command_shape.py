@@ -22,6 +22,7 @@ READ_VERBS = {
 _HARMLESS_REDIRECT = re.compile(
     r"(?<!\S)(?:[0-9&]?>>?\s*/dev/null|[0-9]?>&(?:[0-9]+|-))(?=\s|$|[;&|)])")
 _SUBSTITUTION = re.compile(r"<\(|>\(|\$\(|`")
+_LOCALE_ASSIGNMENT = re.compile(r"^(?:LANG|LC_[A-Z]+)=[A-Za-z0-9_.@-]*$")
 _SED_PRINT_SCRIPT = re.compile(r"^(?:\$|\d+(?:,(?:\d+|\$))?|/[^/]*/(?:,/[^/]*/)?)?p$")
 _FIND_ACTIONS = {"-delete", "-exec", "-execdir", "-ok", "-okdir", "-fprint", "-fprint0", "-fprintf", "-fls",
                  "-fprint", "-fprintf", "-fls"}
@@ -36,6 +37,9 @@ def _segment_reads_only(segment):
     if verb not in READ_VERBS:
         return False
     tokens = segment.split()
+    leading = next((t.lstrip(hs._LEADING_GROUP) for t in tokens if not _LOCALE_ASSIGNMENT.match(t)), "")
+    if leading != verb:
+        return False
     operands = [t for t in tokens[1:] if not t.startswith("-")]
     if verb == "find" and any(t in _FIND_ACTIONS for t in tokens):
         return False
