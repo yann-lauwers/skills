@@ -16,7 +16,7 @@
 
 ## The agents layer
 
-- An agent file lives at `~/Code/skills/plugins/yann/agents/<name>.md` and answers to `yann:<name>` → edit, add or delete it there, commit, push, then `claude plugin marketplace update yannlauwers`.
+- An agent file lives at `~/Code/skills/plugins/yann/agents/<name>.md` and answers to `yann:<name>` → edit, add or delete it there, commit, push, then `claude plugin marketplace update yannlauwers && claude plugin update yann@yannlauwers` (background auto-update takes it otherwise).
 - `description:` holds one plain line — never a folded `>` or a quoted string.
 - A pack's agents, listed in `~/Code/skills/plugins/yann/packs.toml` → after the pack's skills update (`npx skills update <pack>`), copy its agent `.md` files from upstream into `plugins/yann/agents/`, update their sha256 in `packs.toml` `[<pack>.files]`, then commit and push.
 - An edited agent → dispatch it from a fresh session; a running one sees the change only after a delay.

@@ -60,7 +60,7 @@ Every canon body — rule, skill, agent, format, command, prompt, `CLAUDE.md`/`A
 ## Where canon lives
 
 - `~/Code/skills` (`yann-lauwers/skills`) is the one home of every own skill, agent and hook; a host installs them from GitHub with the commands in its `README.md`, never by link.
-- Change one → edit it in `~/Code/skills`, commit, push, then refresh: a skill → `npx skills update -g -y`, and `npx skills update -p -y` in each repo using it · an agent or hook → `claude plugin marketplace update yannlauwers`.
+- Change one → edit it in `~/Code/skills`, commit, push, then refresh: a skill → `npx skills update -g -y`, and `npx skills update -p -y` in each repo using it · an agent or hook → `claude plugin marketplace update yannlauwers && claude plugin update yann@yannlauwers` (background auto-update takes it otherwise).
 - An installed copy (`~/.claude/skills/<name>`, the plugin cache) is never edited: the next update overwrites it.
 - `~/.agents/AGENTS.md`, `~/.claude/settings.json` and `~/.config/` are this host's own files, backed up by the T7 only; edit them in place.
 
