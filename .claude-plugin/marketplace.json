@@ -1,1 +1,20 @@
-{"name":"yann-probe","owner":{"name":"Yann Lauwers"},"description":"probe","plugins":[{"name":"zz-probe","source":"./plugins/zz-probe","description":"probe"}]}
+{
+  "name": "yannlauwers",
+  "description": "Yann Lauwers' Claude Code plugins.",
+  "owner": {
+    "name": "Yann Lauwers",
+    "url": "https://github.com/yann-lauwers"
+  },
+  "plugins": [
+    {
+      "name": "yann",
+      "source": "./plugins/yann",
+      "description": "Yann's agents and hooks."
+    },
+    {
+      "name": "continuous-compaction",
+      "source": "./plugins/continuous-compaction",
+      "description": "Summarizes a conversation when a turn ends above a fill floor, then continues it. /compaction shows and changes the floor for one conversation or all of them."
+    }
+  ]
+}

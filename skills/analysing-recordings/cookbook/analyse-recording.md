@@ -1,0 +1,11 @@
+# Analyse a recording
+
+- Every claim about what the screen showed rests on a frame opened as an image; the manifest carries only frame paths and spoken words, and the transcript only what the speaker says happened.
+
+1. Settle analyse or file per SKILL.md § Does this recording get analysed?; state `reasoning: <evidence>` in one line (the user's verb, the question attached, or the destination named). File or both → do the file work first; file only → say the content was left unread, and stop.
+2. `command -v ffmpeg ffprobe whisper-cli`; anything absent, or the model missing → `references/toolchain.md`. A silent recording needs only `ffmpeg` and `ffprobe`.
+3. Run `${CLAUDE_SKILL_DIR}/scripts/breakdown.py <absolute recording path>`; a recording stored in the vault or a repo → add `--out <session scratchpad>/breakdown-<name>` so nothing lands beside it, unless the user asked for it there. A UI walkthrough with distinct screens takes `--scene`; a continuous recording takes the default spread. Past ~10 minutes, or on near-identical frames → `references/sampling.md`.
+4. Failure checks → zero frames on a file with video, or zero segments on a file with audio, is a failure (`references/toolchain.md`); a first transcript line of `(speaking in foreign language)`, one segment spanning the run, or nonsense means the wrong model ran (`references/sampling.md`). Done when a `manifest :` line prints, the file exists and the first transcript line reads as speech.
+5. Read `MANIFEST.md` in full: header table, every row, the transcript. A question about the recording itself → duration and resolution go in the answer.
+6. Open frames as images by their `frames/<name>.png` path: the moment named, the moments the transcript marks as a change, the first and last row, and `reasoning: <rows>` in one line. A whole-recording question ("what does this show") → every row.
+7. Answer from the evidence: lead with what the recording shows in the user's nouns, cite a timestamp beside each observation (`at 4.6s the settings panel is open`), name what stayed invisible (the gaps in `references/sampling.md` § What a frame cannot carry that this answer touches, and every garbled word), leave the breakdown directory where the script wrote it and say where.

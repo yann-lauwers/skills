@@ -1,0 +1,8 @@
+[Unit]
+Description=Vault tick: commit, pull and push both vault repos
+
+[Service]
+Type=oneshot
+ExecStart=%h/.claude/skills/obsidian/scripts/vault-tick
+TimeoutStartSec=15min
+Nice=10

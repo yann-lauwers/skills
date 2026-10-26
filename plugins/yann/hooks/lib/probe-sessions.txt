@@ -1,0 +1,146 @@
+# Session ids that belong to probes, not to real work.
+#
+# An EXPLICIT list, never a pattern. The obvious shortcut — "a session id that is
+# not a UUID is a probe" — was proposed and measured before it shipped: it would
+# have hidden 1,229 rows logged under `unknown`, the id a REAL session falls back
+# to when its payload carries no session_id. Among them sat every credential-leak
+# block the estate has ever made (71 `secret-output` denies, 13
+# `credential-store-read` denies). A filter over a security log fails toward
+# showing too much; this file is the shape that cannot do otherwise.
+#
+# Adding an id is a claim that those rows were produced by a probe rather than by
+# work. Make it only for a session you ran yourself.
+#
+# The list stops growing once probes redirect their own state — a probe against a
+# live hook sets HOOK_STATE_ROOT to a temp dir, and its rows never reach here.
+# Every id below predates that discipline.
+#
+# Read by: `hook-decisions --exclude-probes` (opt-in; the default view shows
+# everything, so nobody is ever silently handed a filtered security log).
+
+t
+s
+wiring
+probe-1
+probe-2
+probe-3
+probe-4
+probe-test-001
+verify-enforce-A
+verify-enforce-C
+
+# 2026-08-19 — manual probes run while building the canon read gate.
+audit-1278
+gate-18732
+rtk-15624
+
+# 2026-08-25/26 — probes run while building stop-unfinished, before that check
+# redirected its own state. Each id was minted by a test harness in this hooks
+# tree, never by a session doing work: `cal2-`/`cal3-` calibration batteries,
+# `chain-` the execution-chain read, `final-` the labelled battery, `var-`/
+# `draftvar-`/`irr-`/`out-`/`d2-` single-case probes, and the rest one-off live
+# fires against the wired hook.
+cal2-1476083718553662639
+cal2-1589777066453533368
+cal2-1685997758437117507
+cal2-2211950791997673191
+cal2-2857307851067936712
+cal2-3707715481241568164
+cal2-3945273764814054203
+cal2-4746670456411113125
+cal2-4848876011922590638
+cal2-5038747341434959580
+cal2-5678985442575776512
+cal2-5967655497752475596
+cal2-6051050123738659536
+cal2-8768420587190554366
+cal2-968623436600304003
+cal3-1466678792573013746
+cal3-1564319281931238477
+cal3-2416099451452484451
+cal3-2509060507393890548
+cal3-2598060508084067847
+cal3-2706648519803306362
+cal3-3208215175801391368
+cal3-4475779767489842364
+cal3-4833992941470947553
+cal3-4877479713766544711
+cal3-6092175089916181538
+cal3-7206710579940237036
+cal3-7345429027828467961
+cal3-7688804648431467437
+cal3-8108138802909750334
+cal3-8170861231715059250
+cal3-8655124609520545171
+chain-1006902412100149298
+chain-1148751144511982959
+chain-1396505308616736425
+chain-1595832590705039593
+chain-2322858083959319983
+chain-2989609682076125958
+chain-4810176201991894962
+chain-5213986365641082407
+chain-5904556870993439103
+chain-6050870220875690984
+chain-6274001789336962476
+chain-7662904488063038682
+chain-9060544513283525685
+d2-0
+d2-1
+d2-2
+d2-3
+d2-4
+d2-5
+draftvar-0
+draftvar-1
+draftvar-2
+draftvar-3
+draftvar-4
+draftvar-5
+final-1129986747691868008
+final-2550108838497261630
+final-2573763964984030474
+final-2984319925974262910
+final-4347949647162112970
+final-4432182768713036319
+final-597312383606342613
+final-6044812410061655460
+final-6408491072154928901
+final-7179974010405606363
+final-768570986197509561
+final-8160564426864081405
+final-8701029951181648552
+final-8716485708896763819
+final-8946461504928553249
+final-9197835697306896453
+flip-after
+flip-before
+irr-0
+irr-1
+irr-2
+irr-3
+live-check
+live-check2
+out-0
+out-1
+out-2
+out-3
+recheck-2617850868042822252
+recheck-4100138566112153798
+stale-1
+stale-after
+stale-before
+tools-live
+var-0
+var-1
+var-2
+var-3
+var-4
+var-5
+probe-writing-observe-0916
+# `branch-cut-in-base` ship-day battery, 2026-08-31 09:34:38: nine enforce-mode
+# denies in one second against les-gites-du-haras naming feat/x, feat/z and
+# `backup/x-$(date`, while the shipped mode was observe. Not a session anyone
+# sat in; the checked-in battery now redirects its state.
+rev-sess
+rename-probe

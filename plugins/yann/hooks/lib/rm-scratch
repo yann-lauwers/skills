@@ -1,0 +1,119 @@
+#!/usr/bin/env python3
+"""Is every recursive force delete in this command confined to a temporary directory?
+
+`auto-allow-bash.sh` refuses `rm -rf` because the tree it hits may hold the only copy of
+the work. A temporary directory never does: `/tmp`, `/private/tmp` — where every
+session's scratchpad lives — and the per-user `$TMPDIR`. Measured 2026-09-19 → 09-24
+across ten lanes: 23 of 23 `rm -rf` refusals targeted scratch, each one a turn spent
+routing around a guard that protected nothing.
+
+    stdin     the raw command
+    stdout    `scratch` when every `rm` carrying both -r and -f names only paths strictly
+              below a temporary root; `other` otherwise
+    exit 0    the answer is trustworthy
+    exit 1    no answer — the caller keeps refusing
+
+A target counts as scratch only when its literal text proves it: an absolute path, no
+`$`, backtick, `~` or glob character, and still strictly below a root once `..` is
+resolved. The root itself is never scratch, because `rm -rf /tmp` clears every other
+session's scratchpad. Anything the text cannot settle is `other`.
+
+An orphaned proof-run home counts too: exactly `/Users/Shared/nsh-<4 or 8 of a-z0-9>.noindex`,
+holding no `.nutshell-proof-run.json` marker, untouched for ten minutes, and with no
+process holding a file inside it. A launch writes the marker a moment after it makes the
+home, so a younger home may be a run still starting.
+"""
+import os
+import re
+import subprocess
+import sys
+import time
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import hook_shell  # noqa: E402
+
+UNRESOLVED = set("$`~*?[{")
+
+
+def roots():
+    out = ["/tmp", "/private/tmp"]
+    tmpdir = os.environ.get("TMPDIR", "").rstrip("/")
+    if tmpdir.startswith("/"):
+        out.append(tmpdir)
+        if tmpdir.startswith("/var/"):
+            out.append("/private" + tmpdir)
+    return out
+
+
+def is_scratch(target, roots_):
+    if not target.startswith("/") or any(ch in UNRESOLVED for ch in target):
+        return False
+    path = os.path.normpath(target)
+    return any(path.startswith(root + "/") for root in roots_)
+
+
+PROOF_HOME = re.compile(r"/Users/Shared/nsh-(?:[a-z0-9]{4}|[a-z0-9]{8})\.noindex")
+PROOF_MARKER = ".nutshell-proof-run.json"
+PROOF_HOME_SETTLED_SECONDS = 600
+
+
+def is_orphaned_proof_home(target):
+    if any(ch in UNRESOLVED for ch in target):
+        return False
+    path = os.path.normpath(target)
+    if not PROOF_HOME.fullmatch(path) or os.path.islink(path) or not os.path.isdir(path):
+        return False
+    if os.path.lexists(os.path.join(path, PROOF_MARKER)):
+        return False
+    if time.time() - os.lstat(path).st_mtime < PROOF_HOME_SETTLED_SECONDS:
+        return False
+    try:
+        held = subprocess.run(("lsof", "-t", "+D", path), capture_output=True, text=True, timeout=10)
+    except Exception:
+        return False
+    return held.returncode == 1 and not held.stdout.strip()
+
+
+def recursive_force(argv):
+    """The operands of an `rm` that removes recursively and by force, or None."""
+    if not argv or argv[0] != "rm":
+        return None
+    flags, operands, ended = set(), [], False
+    for word in argv[1:]:
+        if not ended and word == "--":
+            ended = True
+        elif not ended and word.startswith("--"):
+            flags.add({"--recursive": "r", "--force": "f"}.get(word, ""))
+        elif not ended and word.startswith("-") and len(word) > 1:
+            flags.update(word[1:].lower())
+        else:
+            operands.append(word)
+    if "r" in flags and "f" in flags:
+        return operands
+    return None
+
+
+def main():
+    command = sys.stdin.read()
+    try:
+        argvs = hook_shell.invocations(command)
+    except Exception:
+        return 1
+    roots_ = roots()
+    found = False
+    for argv in argvs:
+        operands = recursive_force(argv)
+        if operands is None:
+            continue
+        found = True
+        if not operands or not all(
+            is_scratch(t, roots_) or is_orphaned_proof_home(t) for t in operands
+        ):
+            print("other")
+            return 0
+    print("scratch" if found else "other")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

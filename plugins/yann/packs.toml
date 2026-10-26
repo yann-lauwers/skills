@@ -1,0 +1,10 @@
+[impeccable]
+skill = "impeccable"
+source = "pbakaus/impeccable"
+claude = ".claude/agents"
+
+[impeccable.files]
+"impeccable-asset-producer.md" = "854a2da0f67cbe627908aa450115e83985b7d20cf2cc345adf173f228c6130b8"
+"impeccable-documenter.md" = "6bc62a59f6fef0b749927c8d10e9849ab2411199d86d70772a86f8e83ac309f5"
+"impeccable-finish-reviewer.md" = "08398fa2d8e2b06b849f1c0f032e1e93b832e9294aed35c1c7f62b938d62ee80"
+"impeccable-manual-edit-applier.md" = "b2d71ff0df7ed49e06dfc4acfce3d3f7eb48afa68be04763ee8c08354df50a07"

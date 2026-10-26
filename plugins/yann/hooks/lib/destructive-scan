@@ -1,0 +1,125 @@
+#!/usr/bin/env python3
+"""Act or mention? — for one destructive pattern that has ALREADY matched a command.
+
+`auto-allow-bash.sh` owns the patterns and matches them against the raw command first,
+which is cheap and which no spelling can newly trip. That match is necessary and not
+sufficient: it fires on text ABOUT a command as readily as on the command. This decides
+which one it was, and it is invoked only on the 0.3% of calls that already matched.
+
+    argv[1]   the ERE that matched, verbatim from BLOCKED_PATTERNS
+    stdin     the raw command
+    stdout    `act` or `mention`
+    exit 0    the answer on stdout is trustworthy
+    exit 1    NO ANSWER — the caller denies, because an empty parse means "I don't know"
+
+## The rule
+
+A pattern that still matches the ACT VIEW — quoted spans and here-doc bodies blanked —
+is an act. One that only matches the raw text was sitting inside a string or a here-doc
+body, and is a mention, UNLESS that string is handed to something that runs it. Those
+carriers are the whole reason the old rule matched raw text, and each is kept:
+
+* a shell told to run a string: `sh -c`, `sh -s`, a here-doc fed to a shell, `eval`
+* a wrapper that runs a string elsewhere or later: `trap`, `ssh`, `watch`, `timeout`,
+  `nohup`
+* an interpreter here-doc whose body hands a string to a shell — `os.system`,
+  `subprocess`, a backtick. Python text is inert; python text calling out is not
+* a here-doc AUTHORED INTO A FILE that the same command then runs. `cat > x.sh <<EOF …
+  EOF; bash x.sh` writes and executes in one call, and the body is as live as if it had
+  been typed
+
+## What decided the shape
+
+Replayed over 99,850 real Bash calls from the transcripts: 283 commands matched raw,
+265 are acts, and the 18 that are not were read individually — here-doc bodies received
+by `cat > file`, `git commit -F -` and report redirects; `sed` replacement patterns and
+`grep` alternations in quoted spans; one chat message. Not one destructive command
+stops being denied. The carriers above account for 34 of the 283, and 8 of those 34
+were found by the authored-then-executed rule alone.
+"""
+import os
+import re
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+# `[[:space:]]` is POSIX and `re` parses it as an ordinary character set; the rest of
+# the shell patterns are already `re`-compatible. The translation was verified against
+# `grep -E` on 683 real commands with zero disagreements, and a pattern this cannot
+# translate exits 1 rather than being read wrongly.
+SPACE = "[ \t\n\r\f\v]"
+
+
+def translate(ere):
+    if re.search(r"\[:(?!space:)[a-z]+:\]", ere):
+        raise ValueError("unhandled POSIX class")
+    return re.compile(ere.replace("[[:space:]]", SPACE), re.M)
+
+
+SH = r"(ba|z|k|da)?sh"
+CARRIER = re.compile(
+    r"(^|[^A-Za-z0-9_.-])" + SH + r"[ \t]+(-[A-Za-z]*c|-s)([ \t]|$)"
+    r"|(^|[^A-Za-z0-9_.-])eval([ \t]|$)"
+    r"|(^|[^A-Za-z0-9_.-])" + SH + r"[ \t]*<<"
+    r"|(^|[^A-Za-z0-9_.-])(trap|ssh|watch|timeout|nohup)([ \t]|$)", re.M)
+
+INTERP_HEREDOC = re.compile(
+    r"(^|[^A-Za-z0-9_.-])(python3?|perl|ruby|node|deno|bun)[^\n]*<<", re.M)
+SHELLS_OUT = re.compile(
+    r"os\.system|subprocess|popen|Popen|\bexecv|child_process|shell=True|`", re.M)
+
+HEREDOC = re.compile(r"<<-?[ \t]*(['\"]?)([A-Za-z_][A-Za-z0-9_]*)\1")
+REDIRECT = re.compile(r">>?[ \t]*([^\s;&|<>]+)[ \t]*<<-?[ \t]*['\"]?[A-Za-z_]")
+RUNNERS = r"(ba|z|k|da)?sh|source|\.|chmod[ \t]+\+x|exec"
+
+
+def authored_then_run(cmd):
+    """A here-doc written into a file the same command later executes."""
+    for m in HEREDOC.finditer(cmd):
+        line_start = cmd.rfind("\n", 0, m.start()) + 1
+        r = REDIRECT.search(cmd[line_start:m.end()])
+        if not r:
+            continue
+        base = os.path.basename(r.group(1).strip('"\''))
+        if base and re.search(r"(%s)[^\n;&|]*%s" % (RUNNERS, re.escape(base)),
+                              cmd[m.end():]):
+            return True
+    return False
+
+
+def carries(cmd):
+    if CARRIER.search(cmd):
+        return True
+    if INTERP_HEREDOC.search(cmd) and SHELLS_OUT.search(cmd):
+        return True
+    return authored_then_run(cmd)
+
+
+def main():
+    if len(sys.argv) < 2:
+        return 1
+    try:
+        import hook_shell as hs
+        pattern = translate(sys.argv[1])
+        cmd = sys.stdin.read()
+    except Exception:
+        return 1
+    if not cmd:
+        return 1
+    if carries(cmd):
+        sys.stdout.write("act")
+        return 0
+    try:
+        view = hs.act_view(cmd)
+    except Exception:
+        return 1
+    # A view of a different length means the parser dropped or added something, and a
+    # verdict read off it would be about a command nobody typed.
+    if len(view) != len(cmd):
+        return 1
+    sys.stdout.write("act" if pattern.search(view) else "mention")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

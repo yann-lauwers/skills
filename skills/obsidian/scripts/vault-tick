@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+set -uo pipefail
+state="${XDG_STATE_HOME:-$HOME/.local/state}/vault"
+log="$state/tick.log"
+mkdir -p "$state"
+[ -f "$log" ] && [ "$(wc -c < "$log")" -gt 1048576 ] && mv -f "$log" "$log.1"
+exec >> "$log" 2>&1
+root="$(cd / && "$HOME/.claude/skills/agents-config/scripts/agents-config" get --role vault vault_root 2>/dev/null)"
+root="${root/#\~/$HOME}"
+printf '%s ' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+if [ -z "$root" ] || [ ! -x "$root/scripts/vault.sh" ]; then
+  printf 'no vault on this host (vault_root=%s)\n' "${root:-unset}"
+  exit 0
+fi
+printf 'tick %s\n' "$root"
+"$root/scripts/vault.sh" tick
+rc=$?
+marker="$root/.vault-sync-failed"
+if [ -f "$marker" ] && ! cmp -s "$marker" "$state/notified-conflict"; then
+  repo="$(sed -n 's/^repo: \([^ ]*\).*/\1/p' "$marker" | paste -sd, -)"
+  if command -v osascript >/dev/null; then
+    osascript -e "display notification \"${repo:-a vault repo} has a conflict: nothing there is committed, pulled or pushed until vault resolve --continue.\" with title \"Vault sync stopped\""
+  fi
+  cp "$marker" "$state/notified-conflict"
+fi
+exit $rc

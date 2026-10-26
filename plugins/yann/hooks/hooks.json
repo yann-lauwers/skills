@@ -1,0 +1,118 @@
+{
+  "hooks": {
+    "InstructionsLoaded": [
+      {
+        "matcher": "session_start|include|compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$HOME/.pyenv/versions/3.13.3/bin/python3\" \"${CLAUDE_PLUGIN_ROOT}/hooks/record-loaded-context.py\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PermissionRequest": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$HOME/.pyenv/versions/3.13.3/bin/python3\" \"${CLAUDE_PLUGIN_ROOT}/hooks/permission-request.py\""
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Skill",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$HOME/.pyenv/versions/3.13.3/bin/python3\" \"${CLAUDE_PLUGIN_ROOT}/hooks/record-loaded-context.py\""
+          }
+        ]
+      },
+      {
+        "matcher": "Artifact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$HOME/.pyenv/versions/3.13.3/bin/python3\" \"${CLAUDE_PLUGIN_ROOT}/hooks/artifact-mirror-publish.py\"",
+            "timeout": 180
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$HOME/.pyenv/versions/3.13.3/bin/python3\" \"${CLAUDE_PLUGIN_ROOT}/hooks/precompact-capture.py\""
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "b=/opt/homebrew/bin/bash; [ -x \"$b\" ] || b=bash; exec \"$b\" \"${CLAUDE_PLUGIN_ROOT}/hooks/auto-allow-bash.sh\""
+          },
+          {
+            "type": "command",
+            "command": "\"$HOME/.pyenv/versions/3.13.3/bin/python3\" \"${CLAUDE_PLUGIN_ROOT}/hooks/guard-validation-report-layout.py\""
+          },
+          {
+            "type": "command",
+            "command": "\"$HOME/.pyenv/versions/3.13.3/bin/python3\" \"${CLAUDE_PLUGIN_ROOT}/hooks/tool-configs-stay-local.py\""
+          },
+          {
+            "type": "command",
+            "command": "\"$HOME/.pyenv/versions/3.13.3/bin/python3\" \"${CLAUDE_PLUGIN_ROOT}/hooks/pr-merge-approval.py\""
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$HOME/.pyenv/versions/3.13.3/bin/python3\" \"${CLAUDE_PLUGIN_ROOT}/hooks/guard-validation-report-layout.py\""
+          },
+          {
+            "type": "command",
+            "command": "\"$HOME/.pyenv/versions/3.13.3/bin/python3\" \"${CLAUDE_PLUGIN_ROOT}/hooks/house-style-unloaded.py\""
+          }
+        ]
+      }
+    ],
+    "StopFailure": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$HOME/.pyenv/versions/3.13.3/bin/python3\" \"${CLAUDE_PLUGIN_ROOT}/hooks/stopfailure-resume.py\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$HOME/.pyenv/versions/3.13.3/bin/python3\" \"${CLAUDE_PLUGIN_ROOT}/hooks/precompact-rearm.py\""
+          },
+          {
+            "type": "command",
+            "command": "\"$HOME/.pyenv/versions/3.13.3/bin/python3\" \"${CLAUDE_PLUGIN_ROOT}/hooks/bar-reminder.py\""
+          }
+        ]
+      }
+    ]
+  }
+}

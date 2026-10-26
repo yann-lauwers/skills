@@ -1,0 +1,70 @@
+#!/bin/bash
+# requires: python3, open (macOS)
+# The one entry point to the calendar. Every verb, every flag:
+#
+#   cal help
+#
+# It launches CalendarBridge.app through LaunchServices rather than executing the
+# binary inside it. That is not ceremony: a binary run straight from a shell is
+# attributed by macOS to the terminal that spawned it, which yields write-only
+# Calendars access and cannot read a single event. Launched as an app, the bundle
+# is its own responsible process and holds its own grant.
+#
+# Because LaunchServices gives the app no stdout, the bridge writes a
+# {ok, code, error, data} envelope to a temp file and this script unwraps it —
+# JSON on stdout, the diagnostic on stderr, the bridge's own exit code returned.
+set -uo pipefail
+
+SKILL="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+APP="$SKILL/bridge/CalendarBridge.app"
+
+if [ ! -x "$APP/Contents/MacOS/calendar-bridge" ]; then
+	"$SKILL/scripts/build-bridge.sh" >&2 || exit 1
+fi
+
+if [ "$#" -eq 0 ]; then
+	set -- help
+fi
+
+OUT="$(mktemp -t calbridge)"
+trap 'rm -f "$OUT"' EXIT
+
+# `open -W` cannot reliably block on an LSUIElement app — it reports
+# "Unable to block on application" and returns immediately — so the wait is the
+# envelope appearing, not the launcher returning. CAL_TIMEOUT covers the case
+# where macOS is holding a permission prompt on screen.
+open -n -a "$APP" --args "$@" --out "$OUT" 2>/dev/null
+launched=$?
+
+deadline=$(( $(date +%s) + ${CAL_TIMEOUT:-120} ))
+while [ ! -s "$OUT" ] && [ "$(date +%s)" -lt "$deadline" ]; do
+	sleep 0.15
+done
+
+if [ ! -s "$OUT" ]; then
+	echo "cal: the bridge wrote no result within ${CAL_TIMEOUT:-120}s (open exit $launched)." >&2
+	echo "     A Calendars permission prompt may be waiting on screen." >&2
+	echo "     Check that $APP is present and signed: codesign -dv \"$APP\"" >&2
+	exit 70
+fi
+
+python3 - "$OUT" <<'PY'
+import json, sys
+
+try:
+    envelope = json.load(open(sys.argv[1]))
+except Exception as exc:
+    sys.stderr.write("cal: unreadable result envelope (%s)\n" % exc)
+    sys.exit(70)
+
+if envelope.get("ok"):
+    data = envelope.get("data")
+    if isinstance(data, dict) and set(data) == {"help"}:
+        sys.stdout.write(data["help"] + "\n")
+    else:
+        sys.stdout.write(json.dumps(data, ensure_ascii=False) + "\n")
+    sys.exit(0)
+
+sys.stderr.write("calendar-bridge: " + str(envelope.get("error", "failed")) + "\n")
+sys.exit(int(envelope.get("code", 1)))
+PY

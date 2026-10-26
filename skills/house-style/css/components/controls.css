@@ -1,0 +1,87 @@
+/* Paste beneath tokens.css; every colour, radius and duration in it is a token. */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+/* ── Button ─────────────────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  height: var(--control-md); padding: 0 var(--space-control-x);
+  border: 1px solid transparent; border-radius: var(--radius-control);
+  font: 500 var(--text-sm)/1 var(--font-sans); letter-spacing: var(--text-sm--letter-spacing);
+  white-space: nowrap; cursor: pointer; text-decoration: none; user-select: none;
+  background: var(--primary); color: var(--primary-foreground);
+  /* A solid button carries a hairline of depth — a lit top edge, and in light a 1px ground
+     shadow. It reads as pressable without a gradient, and vanishes on the flat variants. */
+  box-shadow: var(--shadow-control);
+  transition: background-color var(--duration-fast) var(--ease-out),
+              border-color var(--duration-fast) var(--ease-out),
+              box-shadow var(--duration-fast) var(--ease-out),
+              transform var(--duration-fast) var(--ease-out);
+}
+.btn:active { transform: scale(0.97); }
+.btn:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+.btn:disabled, .btn[aria-disabled="true"] { opacity: 0.5; pointer-events: none; box-shadow: none; }
+.btn svg { width: 16px; height: 16px; flex: none; }
+.btn.sm { height: var(--control-sm); padding: 0 var(--space-control-x-sm); }
+.btn.lg { height: var(--control-lg); padding: 0 20px; font-size: var(--text-base); }
+.btn.icon { width: var(--control-md); padding: 0; }
+.btn.sm.icon { width: var(--control-sm); }
+.btn.secondary { background: var(--secondary); color: var(--secondary-foreground); box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--foreground) 6%, transparent); }
+.btn.outline { background: var(--card); color: var(--foreground); border-color: var(--border); box-shadow: var(--shadow-outline); }
+.btn.ghost { background: transparent; color: var(--foreground); box-shadow: none; }
+.btn.destructive { background: var(--destructive); color: var(--destructive-foreground); }
+.btn.link { background: transparent; color: var(--primary-text); height: auto; padding: 0; box-shadow: none; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+/* Hover only where a pointer can hover — on touch, a hover state sticks after the tap. */
+@media (hover: hover) {
+  .btn:hover { background: color-mix(in oklab, var(--primary) 88%, var(--foreground)); }
+  .btn.secondary:hover, .btn.outline:hover, .btn.ghost:hover { background: var(--accent); }
+  .btn.destructive:hover { background: color-mix(in oklab, var(--destructive) 88%, var(--foreground)); }
+  .btn.link:hover { background: transparent; text-decoration-thickness: 2px; }
+}
+
+/* ── Input ──────────────────────────────────────────────────────────────── */
+.field { display: grid; gap: 6px; }
+.label { font: 500 var(--text-sm)/1.2 var(--font-sans); color: var(--foreground); }
+.hint { font-size: var(--text-xs); line-height: var(--text-xs--line-height); color: var(--muted-foreground); }
+.input {
+  width: 100%; height: var(--control-md); padding: 0 var(--space-control-x-sm);
+  background: var(--card); color: var(--foreground);
+  border: 1px solid var(--input); border-radius: var(--radius-control);
+  font: 400 var(--text-sm)/1 var(--font-sans);
+  box-shadow: var(--shadow-field);
+  transition: border-color var(--duration-fast) var(--ease-out), box-shadow var(--duration-fast) var(--ease-out);
+}
+.input::placeholder { color: var(--muted-foreground); }
+.input:focus-visible { outline: none; border-color: var(--ring); box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring) 30%, transparent); }
+.input[aria-invalid="true"] { border-color: var(--destructive); }
+.input:disabled { opacity: 0.5; cursor: not-allowed; }
+.field .error { font-size: var(--text-xs); color: var(--destructive-text); display: flex; gap: 6px; align-items: center; }
+.field .error svg { width: 14px; height: 14px; flex: none; }
+
+/* ── Badge — every small labelled box on a page is this, and only this ──── */
+/* Soft by default: a tinted ground under that hue's own text, plus a hairline ring of
+   the same hue, so a column of statuses reads as a column and not as a row of alarms.
+   Solid is for the one verdict a page exists to state. */
+.badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  height: var(--badge-md); padding: 0 10px; border-radius: 9999px;
+  font: 500 var(--text-xs)/1 var(--font-sans); letter-spacing: var(--text-xs--letter-spacing);
+  white-space: nowrap; font-variant-numeric: tabular-nums;
+  background: var(--muted); color: var(--muted-foreground);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, currentColor 14%, transparent);
+}
+.badge.sm { height: var(--badge-sm); padding: 0 8px; }
+.badge.lg { height: var(--badge-lg); padding: 0 12px; font-size: var(--text-sm); letter-spacing: var(--text-sm--letter-spacing); }
+.badge.dot::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex: none; }
+.badge svg { width: 12px; height: 12px; flex: none; }
+.badge.primary     { background: var(--primary-subtle);     color: var(--primary-text); }
+.badge.success     { background: var(--success-subtle);     color: var(--success-text); }
+.badge.warning     { background: var(--warning-subtle);     color: var(--warning-text); }
+.badge.destructive { background: var(--destructive-subtle); color: var(--destructive-text); }
+.badge.info        { background: var(--info-subtle);        color: var(--info-text); }
+.badge.solid { box-shadow: none; }
+.badge.solid.primary     { background: var(--primary);     color: var(--primary-foreground); }
+.badge.solid.success     { background: var(--success);     color: var(--success-foreground); }
+.badge.solid.warning     { background: var(--warning);     color: var(--warning-foreground); }
+.badge.solid.destructive { background: var(--destructive); color: var(--destructive-foreground); }
+.badge.solid.info        { background: var(--info);        color: var(--info-foreground); }

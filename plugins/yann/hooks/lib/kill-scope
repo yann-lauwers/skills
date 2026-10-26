@@ -1,0 +1,336 @@
+#!/usr/bin/env python3
+"""Whose processes would this kill reach? — for a command `auto-allow-bash.sh` has
+already matched on `kill-outside-session`.
+
+    stdin     the raw command
+    stdout    line 1: `own` | `abstain` | `outside`; on `outside`, the block message follows
+    exit 0    the answer on stdout is trustworthy
+    exit 1    NO ANSWER — the caller denies, because an empty parse means "I don't know"
+
+Born of 2026-10-06 15:40: a session hung on a heredoc and ran `pkill -f 'cat' -n` to
+unstick it. BSD getopt stops at the first operand, so `-n` became a second pattern, and
+`-f` matches the whole command line: every path under `/Applications` contains "cat".
+cmux, Codeine, Things, Raycast, Tailscale and ~30 other processes took SIGTERM; every
+Claude session in the terminal died with its pty, lanes included. A regex cannot see
+what a kill's match reaches, so this replays the match, read-only:
+
+  pkill ARGS      -> `pgrep ARGS` minus the signal and `-I` (same getopt, same parse)
+  killall ARGS    -> `killall -s ARGS` (prints `kill -sig PID`, sends nothing)
+  kill PID...     -> the literal PIDs; `-1`, `0` and any negative PID (a process group
+                     or every process) are refused outright, as is the client itself
+  kill / xargs kill fed by `$(pgrep …)`, `pgrep … |`, `pidof`, `lsof -t…`
+                  -> that resolver re-run; its PIDs are the victims
+
+Every victim must descend from the session's own `claude` client (the nearest ancestor
+of this helper so named). `kill %job` passes; `kill $var` cannot be resolved and answers
+`abstain` — the agent wrote that PID itself, typically from `$!`. A resolver that errors
+or times out is no answer, and the caller denies.
+
+A literal PID outside that tree also passes when it is provably an orphan of finished
+work: launchd is its parent, it started after the session's client did, and its executable or its working directory
+sits inside a proof-run home `/Users/Shared/nsh-<name>.noindex` or a
+`.claude/worktrees/agent-<id>` folder that no longer exists. A path named only in its
+arguments never counts. Launched apps hang off launchd and test
+helpers are reparented to it once their parent dies, so descent cannot see them. A
+`pkill`, a `killall` or a resolver's PIDs never take this route.
+"""
+
+import json
+import os
+import re
+import subprocess
+import sys
+import time
+
+HOOKS_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.join(HOOKS_DIR, "lib"))
+try:
+    import hook_shell
+except Exception:
+    hook_shell = None
+
+RESOLVE_TIMEOUT = 3
+_PROOF_HOME_EXE = re.compile(r"(/Users/Shared/nsh-(?:[a-z0-9]{4}|[a-z0-9]{8})\.noindex)/")
+_AGENT_WORKTREE_EXE = re.compile(r"(/.+?/\.claude/worktrees/agent-[a-z0-9]+)/")
+NAMES_SHOWN = 8
+
+# A signal option is a number or a signal NAME — never a bare flag letter, which
+# `pkill -f` and `-n` are. Matching `-[A-Za-z]+` here once dropped `-f` and `-n` from
+# the dry run, so `pkill -f cat -n` was replayed as a name match: 12 victims where the
+# real call reached 169.
+_SIGNALS = frozenset((
+    "HUP INT QUIT ILL TRAP ABRT EMT FPE KILL BUS SEGV SYS PIPE ALRM TERM URG STOP TSTP "
+    "CONT CHLD TTIN TTOU IO XCPU XFSZ VTALRM PROF WINCH INFO USR1 USR2 IOT POLL").split())
+_SIGNAL_RE = re.compile(r"^-(\d+|(?:SIG)?(?:%s))$" % "|".join(sorted(_SIGNALS)), re.I)
+_RESOLVERS = ("pgrep", "pidof", "lsof")
+
+
+class Unresolved(Exception):
+    """A dry run that could not answer — the match is unknown."""
+
+
+# ---- the process table ------------------------------------------------------
+
+def process_table():
+    """{pid: (ppid, name, path)} for every process on the machine.
+
+    `name` is `ucomm`, the kernel's executable name: what the block message shows.
+    `comm` can carry a rewritten argv[0], and one on this machine carries an API key.
+    `path` is `comm`, read only to find the client, whose `ucomm` is its version
+    number (`2.1.291`) rather than `claude`."""
+    def ps(field):
+        out = subprocess.run(("ps", "-axo", "pid=,ppid=,%s=" % field),
+                             capture_output=True, text=True, timeout=RESOLVE_TIMEOUT)
+        rows = {}
+        for line in out.stdout.splitlines():
+            parts = line.strip().split(None, 2)
+            if len(parts) >= 2 and parts[0].isdigit() and parts[1].isdigit():
+                rows[int(parts[0])] = (int(parts[1]), parts[2].strip() if len(parts) > 2 else "")
+        return rows
+    names, paths = ps("ucomm"), ps("comm")
+    table = {}
+    for pid, (ppid, name) in names.items():
+        path = paths.get(pid, (0, ""))[1]
+        if os.path.basename(path.split(" ")[0]) == "claude":
+            name = "claude"
+        table[pid] = (ppid, name, path)
+    return table
+
+
+def session_root(table, start):
+    """The nearest ancestor of `start` that is a `claude` client, else `start`'s parent."""
+    pid, seen = start, set()
+    while pid in table and pid not in seen and pid > 1:
+        seen.add(pid)
+        if table[pid][1] == "claude":
+            return pid
+        pid = table[pid][0]
+    return table.get(start, (start, ""))[0]
+
+
+def started_and_executable(pid):
+    out = subprocess.run(("ps", "-o", "lstart=", "-p", str(pid)),
+                         capture_output=True, text=True, timeout=RESOLVE_TIMEOUT)
+    line = out.stdout.strip()
+    if out.returncode != 0 or len(line) < 24:
+        raise Unresolved("ps could not read pid %d" % pid)
+    started = time.mktime(time.strptime(" ".join(line[:24].split()), "%a %b %d %H:%M:%S %Y"))
+    return started, mapped_file(pid, "txt")
+
+
+def mapped_file(pid, descriptor):
+    out = subprocess.run(("lsof", "-a", "-p", str(pid), "-d", descriptor, "-Fn"),
+                         capture_output=True, text=True, timeout=RESOLVE_TIMEOUT)
+    names = [line[1:] for line in out.stdout.splitlines() if line.startswith("n")]
+    return names[0] if names and names[0].startswith("/") else ""
+
+
+def orphan_of_finished_work(pid, root, table):
+    if table.get(pid, (0,))[0] != 1:
+        return False
+    started, executable = started_and_executable(pid)
+    if not executable.startswith("/") or started < started_and_executable(root)[0]:
+        return False
+    for place in (executable, mapped_file(pid, "cwd")):
+        for pattern in (_PROOF_HOME_EXE, _AGENT_WORKTREE_EXE):
+            match = pattern.match(place + "/")
+            if match and not os.path.lexists(match.group(1)):
+                return True
+    return False
+
+
+
+def descends(table, pid, root):
+    seen = set()
+    while pid in table and pid not in seen:
+        if pid == root:
+            return True
+        seen.add(pid)
+        pid = table[pid][0]
+    return pid == root
+
+
+# ---- dry runs ---------------------------------------------------------------
+
+def _run_pids(argv, pattern=r"(\d+)"):
+    try:
+        out = subprocess.run(argv, capture_output=True, text=True, timeout=RESOLVE_TIMEOUT)
+    except Exception as exc:
+        raise Unresolved("%s: %s" % (argv[0], exc))
+    if out.returncode not in (0, 1):          # 1 is "nothing matched"
+        raise Unresolved("%s exited %d" % (argv[0], out.returncode))
+    return {int(m) for m in re.findall(pattern, out.stdout)}
+
+
+def pkill_victims(args):
+    kept = [a for a in args if not _SIGNAL_RE.match(a) and a != "-I"]
+    if not any(not a.startswith("-") for a in kept) and "-F" not in kept:
+        raise Unresolved("pkill with no pattern")
+    return _run_pids(["pgrep"] + kept)
+
+
+KILLALL_LISTS = sys.platform == "darwin"
+
+
+def killall_victims(args):
+    if not KILLALL_LISTS:
+        raise Unresolved("killall -s lists without signalling only on macOS; elsewhere -s names a signal")
+    return _run_pids(["killall", "-s"] + [a for a in args if a != "-s"],
+                     pattern=r"kill -\S+ (\d+)")
+
+
+def resolver_victims(argv):
+    verb = argv[0]
+    if verb == "pgrep":
+        return _run_pids(argv)
+    if verb == "pidof":
+        return _run_pids(argv)
+    if verb == "lsof" and any(a.startswith("-t") or (a.startswith("-") and "t" in a[1:] and not a.startswith("--"))
+                              for a in argv[1:]):
+        return _run_pids(argv)
+    return None
+
+
+def kill_operands(args):
+    """(literal pids, refused operands, unresolved operands) of a `kill` argv."""
+    pids, refused, unresolved = set(), [], []
+    it = iter(args)
+    options_done = False
+    for a in it:
+        if not options_done:
+            if a == "--":
+                options_done = True
+                continue
+            if a in ("-s", "-n"):
+                next(it, None)
+                continue
+            if a == "-l":
+                return set(), [], []          # lists signal names, sends nothing
+            if _SIGNAL_RE.match(a) and not a[1:].isdigit():
+                continue
+            if re.match(r"^-\d+$", a) and not pids and not refused and not unresolved:
+                # `kill -9 PID`: a numeric first option is the signal.
+                options_done = True
+                continue
+        options_done = True
+        if re.match(r"^-?\d+$", a):
+            n = int(a)
+            (pids.add(n) if n > 0 else refused.append(a))
+        elif a.startswith("%"):
+            continue                          # a job of this shell
+        else:
+            unresolved.append(a)
+    return pids, refused, unresolved
+
+
+# ---- the decision -----------------------------------------------------------
+
+def victims_of(command):
+    """(victims, refusals, abstains) for every signalling act in `command`.
+
+    Returns None when the command signals nothing."""
+    calls = hook_shell.invocations_with_prefix(command)
+    acts = [(p, a) for p, a in calls if a and a[0] in ("kill", "pkill", "killall")]
+    if not acts:
+        return None
+    resolved = set()
+    resolver_ran = False
+    for _p, argv in calls:
+        if argv and argv[0] in _RESOLVERS:
+            got = resolver_victims(argv)
+            if got is not None:
+                resolver_ran = True
+                resolved |= got
+    victims, refusals, abstains, literal = set(), [], [], set()
+    for _prefix, argv in acts:
+        verb, args = argv[0], argv[1:]
+        if verb == "pkill":
+            victims |= pkill_victims(args)
+        elif verb == "killall":
+            victims |= killall_victims(args)
+        else:
+            pids, refused, unresolved = kill_operands(args)
+            victims |= pids
+            literal |= pids
+            refusals += ["kill %s signals a whole process group or every process" % r
+                         for r in refused]
+            via_xargs = bool(_prefix) and _prefix[0] == "xargs"
+            substituted = [u for u in unresolved if u.startswith(("$(", "`")) or u == "{}"]
+            if (substituted or via_xargs) and resolver_ran:
+                victims |= resolved
+            elif unresolved or via_xargs:
+                abstains.append(" ".join(argv))
+    return victims, refusals, abstains, literal
+
+
+def decide(command, table, root):
+    """(verdict, detail, outsiders) — verdict is None for no opinion."""
+    try:
+        got = victims_of(command)
+    except Unresolved as exc:
+        return "deny", "unresolved: %s" % exc, []
+    if got is None:
+        return None, "", []
+    victims, refusals, abstains, literal = got
+    # The client itself is not its own descendant: signalling it ends the session.
+    outsiders = sorted(p for p in victims if p == root or not descends(table, p, root))
+    try:
+        outsiders = [p for p in outsiders
+                     if p == root or p not in literal or not orphan_of_finished_work(p, root, table)]
+    except Unresolved as exc:
+        return "deny", "unresolved: %s" % exc, outsiders
+    if refusals or outsiders:
+        names = ", ".join("%s(%d)" % (table.get(p, (0, "?", ""))[1], p)
+                          for p in outsiders[:NAMES_SHOWN])
+        return "deny", "; ".join(refusals + ([names] if names else [])), outsiders
+    if abstains:
+        return "abstain", "class=unresolved-operand %s" % "; ".join(abstains), []
+    return None, "", []
+
+
+def message(command, detail, outsiders, table):
+    shown = ", ".join(sorted({table.get(p, (0, "?", ""))[1] for p in outsiders}))
+    count = len(outsiders)
+    head = ("This command would signal %d process%s this session did not start: %s." %
+            (count, "" if count == 1 else "es", shown or detail)) if outsiders else \
+           ("This command would signal processes this session cannot name: %s." % detail)
+    return (
+        head + "\n\n"
+        "A kill lands on whatever its match finds, not on what was meant. On 2026-10-06 "
+        "`pkill -f 'cat' -n` matched every app under /Applications (Appli-cat-ions) — "
+        "`-n` after the pattern is a second pattern, not a flag — and took down the "
+        "terminal and every session and lane running in it.\n\n"
+        "Do instead:\n"
+        "  - a process this session started -> kill it by the PID it got (`$!`, the "
+        "background task's own id, or TaskStop)\n"
+        "  - a dev server -> stop it where it was started (its worktrunk dev alias, or Ctrl-C in its terminal)\n"
+        "  - anything else -> say what and why; Yann runs it himself with `! <command>`\n"
+        "Nothing was signalled. Re-issue only a command whose targets descend from this "
+        "session."
+    )
+
+def main():
+    command = sys.stdin.read()
+    if hook_shell is None or not command.strip():
+        return 1
+    try:
+        table = process_table()
+    except Exception:
+        return 1
+    root = session_root(table, os.getppid())
+    verdict, detail, outsiders = decide(command, table, root)
+    if verdict is None:
+        print("own")
+    elif verdict == "abstain":
+        print("abstain")
+    else:
+        print("outside")
+        print(message(command, detail, outsiders, table))
+    return 0
+
+
+if __name__ == "__main__":
+    try:
+        sys.exit(main())
+    except Exception:
+        sys.exit(1)

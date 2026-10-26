@@ -1,0 +1,113 @@
+#!/usr/bin/env python3
+"""Is every branch this force delete removes recoverable elsewhere? — for a command
+`auto-allow-bash.sh` has already matched on `branch-force-delete`.
+
+    stdin     the raw command
+    env       HOOK_CWD, the directory the call runs in
+    stdout    `archived` when the command is nothing but plain `cd` and `git branch -D` (or
+              `-d -f`) statements joined by `&&` or `;`, and every deletion names only branches that
+              no worktree has checked out and whose tip is kept: `refs/archive/<name>`
+              points at it, or `git cherry origin/main <name>` finds every commit on
+              `origin/main`; `other` otherwise
+    exit 0    the answer is trustworthy
+    exit 1    no answer — the caller keeps refusing
+"""
+import os
+import subprocess
+import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import hook_shell  # noqa: E402
+
+TIMEOUT = 10
+SHELL_SYNTAX = set("(){}`$|<>\n\\'\"#!*?[]~")
+
+
+def git(repo, *args):
+    out = subprocess.run(("git", "-C", repo) + args, capture_output=True, text=True, timeout=TIMEOUT)
+    return out.returncode, out.stdout
+
+
+def deletion(prefix, argv, cwd):
+    if not argv or argv[0] != "git":
+        return None
+    if prefix:
+        return ("unknown", [])
+    repo, words = cwd, argv[1:]
+    while words and words[0].startswith("-"):
+        if words[0] == "-C" and len(words) > 1:
+            target = words[1]
+            if any(ch in target for ch in "$`~*?["):
+                return ("unknown", [])
+            repo = target if os.path.isabs(target) else (os.path.join(repo, target) if repo else None)
+            words = words[2:]
+        else:
+            return ("unknown", [])
+    if not words or words[0] != "branch":
+        return None
+    flags, names = set(), []
+    for word in words[1:]:
+        if word.startswith("--"):
+            flags.add(word)
+        elif word.startswith("-"):
+            flags.update("-" + ch for ch in word[1:])
+        else:
+            names.append(word)
+    forced = "-D" in flags or (({"-d", "--delete"} & flags) and ({"-f", "--force"} & flags))
+    if not forced:
+        return None
+    return (repo, names)
+
+
+def kept(repo, name):
+    if not name or name.startswith("-") or any(ch in name for ch in "$`~*?[:@\\") or ".." in name:
+        return False
+    code, porcelain = git(repo, "worktree", "list", "--porcelain")
+    if code != 0 or ("branch refs/heads/%s" % name) in porcelain.splitlines():
+        return False
+    code, tip = git(repo, "rev-parse", "--verify", "--quiet", "refs/heads/%s" % name)
+    if code != 0 or not tip.strip():
+        return False
+    code, archived = git(repo, "rev-parse", "--verify", "--quiet", "refs/archive/%s" % name)
+    if code == 0 and archived.strip() == tip.strip():
+        return True
+    code, cherry = git(repo, "cherry", "origin/main", "refs/heads/%s" % name)
+    return code == 0 and all(line.startswith("-") for line in cherry.splitlines() if line.strip())
+
+
+def plain(command):
+    return not (SHELL_SYNTAX & set(command)) and "&" not in command.replace("&&", "")
+
+
+def main():
+    command = sys.stdin.read()
+    cwd = os.environ.get("HOOK_CWD") or None
+    if not plain(command):
+        print("other")
+        return 0
+    found = False
+    for statement, at in hook_shell.statements_with_cwd(command, cwd):
+        for prefix, argv in hook_shell.invocations_with_prefix(statement):
+            if not prefix and argv[:1] == ["cd"] and len(argv) == 2:
+                continue
+            got = deletion(prefix, argv, at)
+            if got is None:
+                print("other")
+                return 0
+            found = True
+            repo, names = got
+            if repo in (None, "unknown") or not os.path.isdir(repo) or not names:
+                print("other")
+                return 0
+            if not all(kept(repo, name) for name in names):
+                print("other")
+                return 0
+    print("archived" if found else "other")
+    return 0
+
+
+if __name__ == "__main__":
+    try:
+        sys.exit(main())
+    except Exception:
+        sys.exit(1)
