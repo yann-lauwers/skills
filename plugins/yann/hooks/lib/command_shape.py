@@ -19,7 +19,9 @@ READ_VERBS = {
 # parsed: the spellings are many (`-i`, `-i''`, `-i.bak`, `-ni`) and a missed one
 # grants a write.
 _SED_INPLACE = re.compile(r"^-{1,2}[A-Za-z]*i")
-_FIND_ACTIONS = {"-delete", "-exec", "-execdir", "-ok", "-okdir",
+_SED_WRITES = re.compile(r"(^|[;{}\s'\"0-9,/$])[wWe]\s+\S")
+_REDIRECT = re.compile(r"^(?:[0-9]|&)?>>?(.*)$")
+_FIND_ACTIONS = {"-delete", "-exec", "-execdir", "-ok", "-okdir", "-fprint", "-fprint0", "-fprintf", "-fls",
                  "-fprint", "-fprintf", "-fls"}
 
 
@@ -32,11 +34,31 @@ def _segment_reads_only(segment):
     if verb not in READ_VERBS:
         return False
     tokens = segment.split()
+    if _redirects_to_a_file(tokens):
+        return False
+    operands = [t for t in tokens[1:] if not t.startswith("-")]
     if verb == "sed" and any(_SED_INPLACE.match(t) for t in tokens):
         return False
     if verb == "find" and any(t in _FIND_ACTIONS for t in tokens):
         return False
+    if verb == "sort" and any(t == "-o" or t.startswith(("-o", "--output")) for t in tokens):
+        return False
+    if verb in ("uniq", "xxd") and len(operands) > 1:
+        return False
+    if verb == "rg" and any(t.startswith("--pre") for t in tokens):
+        return False
     return True
+
+
+def _redirects_to_a_file(tokens):
+    for i, token in enumerate(tokens):
+        m = _REDIRECT.match(token)
+        if not m:
+            continue
+        target = m.group(1) or (tokens[i + 1] if i + 1 < len(tokens) else "")
+        if target != "/dev/null" and not target.startswith("&"):
+            return True
+    return False
 
 
 def _segments(command):
@@ -55,6 +77,9 @@ def reads_only(command):
     only its first verb would grant it.
     """
     try:
+        if any(hs.command_word(st) == "sed" and _SED_WRITES.search(st)
+               for _, st in hs.statements(command)):
+            return False
         return all(_segment_reads_only(segment) for segment in _segments(command))
     except Exception:
         return False

@@ -16,6 +16,8 @@ _WRAPPERS = frozenset((
 _ASSIGN_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*=")
 
 _LEADING_GROUP = "({"
+_DIRECTORY_MOVERS = {"pushd", "popd", "eval", "source", ".", "exec"}
+_GROUPING = re.compile(r"[(){}`]|\$\(")
 _TRAILING_GROUP = ")};"
 
 _REDIRECT_RE = re.compile(r"(?<![0-9<>])>{1,2}(?!&)|(?<![0-9<>])>&|\|")
@@ -131,7 +133,10 @@ def _spans_with_cwd(cmd, cwd):
     out = []
     for off, statement in statements(cmd):
         out.append((off, statement, cwd))
-        if command_word(statement) == "cd":
+        word = command_word(statement)
+        if word in _DIRECTORY_MOVERS or _GROUPING.search(statement):
+            cwd = None
+        elif word == "cd":
             cwd = _cd_target(statement, cwd)
     return out
 

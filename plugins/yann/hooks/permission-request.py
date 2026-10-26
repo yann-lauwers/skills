@@ -78,7 +78,6 @@ try:
     from deny_patterns import GLOB_CHARS, _anchor, _anchored, _covering, _forms, _pattern_forms, pattern_can_match_under
     import hook_mode
     import hook_decisions
-    from permission_files import NAME_RE as PROTECTED_NAME, writes_permission_file
 except Exception as exc:
     print(json.dumps({"systemMessage": (
         "permission-request did not run: its libraries in %s failed to load (%s: %s), so no "
@@ -275,6 +274,9 @@ def resolve_reads(command, cwd):
             has_cd = True
             continue
         for token in hs.file_operands(statement):
+            if any(c in token for c in "$`{}"):
+                ok = False
+                continue
             tok = os.path.expanduser(token)
             if os.path.isabs(tok):
                 joined = tok
@@ -328,6 +330,9 @@ def verdict(data):
     if any(bash_rule_reaches(command, rule) for rule in bash_asks):
         return None
 
+    if not reads_only(command):
+        return None
+
     paths, has_cd, ok, rel, dirs, empty = resolve_reads(command, cwd)
     if not ok:
         return None
@@ -355,27 +360,6 @@ def verdict(data):
             return None
         empty = {_forms(cwd)}
 
-    # A write aimed at the permission system is never granted here, whatever its
-    # operands resolve to: an allow suppresses the host's own prompt for it.
-    if writes_permission_file(command):
-        return None
-
-    # That test reads a WRITE VERB pointed at a path it can see. Measured on
-    # 2026-09-09, three of the four routes to settings.json carry
-    # neither: a `python3 - <<PY` body, a `python3 -c` one-liner, and `bash relax.sh`.
-    # The one-liner was reaching `allow` here — an explicit grant that suppresses the
-    # host's own prompt on a rewrite of the deny list.
-    #
-    # So a command that is not a pure reader and NAMES one of the four permission-
-    # system files anywhere in its text gets no grant, wherever the name sits and
-    # whatever the verb is. A reader keeps its grant, which is what holds the cost at
-    # nothing: `grep -n deny ~/.claude/settings.json` still runs unprompted.
-    #
-    # This withholds a grant; it does not raise an ask. What a command does to those
-    # files once it runs is decided after the fact, by comparing their bytes.
-    if PROTECTED_NAME.search(command) and not reads_only(command):
-        return None
-
     if follows_links(command):
         return None
 
@@ -384,13 +368,6 @@ def verdict(data):
     # match those by path exactly as they match a file's — so it keeps the plain
     # test. `grep -rn foo .` does not, and its tree goes to reachability.
     trees = dirs if walks_tree(command) else set()
-
-    # WHAT THE VERB IS DOES NOT DECIDE THIS. A reader allowlist here withheld grants
-    # and protected nothing: measured over the census window it cost 18 prompts on
-    # `gh pr merge --help`, `export GIT_DIR=…; git log …` and their shape. What makes a
-    # call safe is that no operand of it resolves onto a denied path, which the walk
-    # below decides.
-
 
     try:
         for forms in paths:
