@@ -51,13 +51,12 @@ def fail(error, detail, code, **fields):
     sys.exit(code)
 
 
-def read_page(secret, query, variables):
+def read_page(query, variables):
     payload = json.dumps({"query": query, "variables": variables})
     argv = [
-        "keyless", "run", "-s", f"LINEAR_KEY={secret}", "--",
         "curl", "-sS", "--max-time", "60", "-X", "POST", "https://api.linear.app/graphql",
         "-H", "Content-Type: application/json",
-        "--variable", "%LINEAR_KEY", "--expand-header", "Authorization: {{LINEAR_KEY}}",
+        "--variable", "%LINEAR_API_KEY=", "--expand-header", "Authorization: {{LINEAR_API_KEY}}",
         "-w", "\n%{http_code}",
         "--data", payload,
     ]
@@ -98,14 +97,14 @@ def first_line(text):
     return lines[0] if lines else ""
 
 
-def read_ticket(ticket, secret, comments_matching):
+def read_ticket(ticket, comments_matching):
     if not comments_matching:
-        issue = read_page(secret, QUERY, {"id": ticket})
+        issue = read_page(QUERY, {"id": ticket})
         return {"state": issue["state"]["name"], "state_type": issue["state"]["type"]}
     pattern = re.compile(comments_matching, re.MULTILINE)
     matching, after = [], None
     while True:
-        issue = read_page(secret, QUERY_WITH_COMMENTS, {"id": ticket, "after": after})
+        issue = read_page(QUERY_WITH_COMMENTS, {"id": ticket, "after": after})
         page = issue.get("comments") or {}
         nodes, info = page.get("nodes"), page.get("pageInfo")
         if nodes is None or info is None:
@@ -153,7 +152,7 @@ def run(args):
     last_ok, wait, gone = time.time(), args.interval, 0
     while True:
         try:
-            facts = read_ticket(ticket, args.secret, args.comments_matching)
+            facts = read_ticket(ticket, args.comments_matching)
             gone = 0
         except Auth as exc:
             fail("auth", str(exc), EXIT_AUTH, ticket=ticket)
@@ -192,7 +191,6 @@ def run(args):
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--ticket", required=True)
-    parser.add_argument("--secret", required=True, help="the secrets-store item the linear config's `secret` names")
     parser.add_argument("--then", required=True, help="the act a woken session runs once the ticket completes; with --comments-matching, once --expect matching comments are in")
     parser.add_argument("--comments-matching", help="a regex over comment bodies; the watch reports each new matching comment")
     parser.add_argument("--expect", type=int, help="with --comments-matching, how many matching comments end the watch")

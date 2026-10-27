@@ -32,7 +32,7 @@
 
 - A tool skill explains one tool — commands, config, failure modes — true whoever calls it · a flow skill runs a process, composing tools and flows.
 - A flow skill names every tool it composes; a tool skill names none of its callers, nor a sibling tool skill.
-- A tool skill carries no other tool's commands, flags or mechanics but the injector's — `keyless run` and the variable it names; a step another tool performs names that tool's role, and its skill owns the how.
+- A tool skill carries no other tool's commands, flags or mechanics; a step another tool performs names that tool's role, and its skill owns the how.
 - A description joining two subjects with "and" → two skills.
 - Two triggers, one procedure → one home, the other skill running it.
 - A sentence that stops holding once the sibling it describes is rewritten → the sibling's; cite it.
@@ -46,7 +46,7 @@
 - What one repo adds to a tool → its values and the body line above, in the project config, reached by role · any other directive in the repo's `AGENTS.md` · a flow only that repo runs in a project skill · never a `docs/agents/` file outside `integrations/` and the files /setup-matt-pocock-skills and /worktrunk write.
 - A value the tool itself defines — its CLI's install path, an env var it exports, a fixed API base → the skill.
 - The skill → the tool's traps and how we work with it · never an API reference the vendor documents, or a checklist repeating its steps' done states.
-- The call kernel — one authenticated call → the skill, once, its secret item read from the config's `secret`, or taken from the resolved entity or location where the config declares `resolves:` · a tool with no kernel → its auth mechanism and header in the skill.
+- The call kernel — one authenticated call → the skill, once, reading its credential from the variable a `Needs: <NAME>` line names, with the header, prefix and hosts it travels to; the command sends no credential when the variable is unset; the host's provider fills it from the config's `secret`, or from the resolved entity or location where the config declares `resolves:` · a tool with no kernel → its auth mechanism and header in the skill.
 - The skill carries a `## Project config` section naming its config path and what it does with none.
 - A config holding a command surface, an operations table or a list of traps → the tool has no skill yet: write one, however thin.
 - A call or two, no procedure → a single-file skill · a rich recurring flow → a cookbook per intent · unsure → the lean shape, said aloud.
@@ -54,12 +54,12 @@
 - A new `role` value → reuse an existing capability word; a new word is the user's to confirm.
 - Never write to the secrets vault: hand the user the item spec the `role: secrets` skill describes, and continue once it exists.
 - A new tool's nearest sibling → the wired tool of its shape — rich flow · thin · project-less personal — its skill and its config both.
-- Name the role, never the tool; only a tool's own config and skill name its vendor or CLI, a repo's line naming the service that fills a role and a path example the user wrote aside. Any file may name `keyless run`, the injector.
+- Name the role, never the tool; only a tool's own config and skill name its vendor or CLI, a repo's line naming the service that fills a role and a path example the user wrote aside. A skill never names the provider filling its `Needs:` variable; each host declares that once, in its own user instructions.
 - A repo's tracked line sending a reader into its project tool configs — the integrations folder under its `docs/agents/` — by path, file name or section → the pointer gives way to the service filling the role, in a few words (`<role> → <service>.`), and the rest of the line stays; a value it needs is named by role and key, left to resolution; a line that was only the path goes.
 - Place a fact by altitude: method, true whichever vendor fills the role → the `AGENTS.md` section or skill owning the act · a tool's own mechanics versus its account values → the lines above.
 - Inside a repo with no project layer for a tool → write it in the turn that found the gap, per the lines above.
 - Record a call shape only after running that exact text end to end, with a provenance line; a recorded call that fails is diagnosed before it is edited.
-- Done when resolution finds the config by role and the secret resolves through the injector, both exercised.
+- Done when resolution finds the config by role and the call authenticates through the host's provider, both exercised.
 
 ## Where a skill lives
 

@@ -10,24 +10,27 @@ GraphQL at `https://api.linear.app/graphql`, no MCP.
 ## Project config
 
 - Secret item, team and state keys → `~/.claude/skills/agents-config/scripts/agents-config get linear --root "$PWD"`; what one repo adds (its project, its marker label, its state notes) → the body of its `docs/agents/integrations/linear.md`.
-- No project file → the team from `teams { nodes { id key } }`, the secret from the store's item names; neither resolves → ask for it by name.
+- No project file → the team from `teams { nodes { id key } }`; no team resolves → ask for it by name.
 - Never fabricate a team key, identifier prefix or token item.
 - Cancel → the state `cancel_state` names · the sprint → the state `sprint_state` names.
 
 ## Call
 
+Needs: `LINEAR_API_KEY` — the account's personal API key, raw as `Authorization`, no prefix, to `api.linear.app` and `uploads.linear.app`.
+
 ```bash
-keyless run -s LINEAR_KEY=<secret> -- curl -s https://api.linear.app/graphql \
+curl -s https://api.linear.app/graphql \
   -H 'Content-Type: application/json' \
-  --variable %LINEAR_KEY --expand-header 'Authorization: {{LINEAR_KEY}}' \
+  --variable "%LINEAR_API_KEY=" \
+  --expand-header 'Authorization: {{LINEAR_API_KEY}}' \
   --data @query.json
 ```
 
-- The raw key, no `Bearer` prefix.
+- `LINEAR_API_KEY` unset → curl sends no `Authorization` header; Linear answers 401 `AUTHENTICATION_ERROR` unless the host attaches the key on egress.
 - A shape not below → the live schema: `__type(name: "<Input>") { inputFields { name type { name kind ofType { name } } } }`.
 - `errors[]` or `success: false` → surface the message verbatim; `RATELIMITED` → wait until `X-RateLimit-Requests-Reset`, retry once.
 
-Provenance: executed 2026-10-22 through `keyless run` against team `NEX` — bootstrap, issue by id, my issues, search, history, issueUpdate, commentCreate and issueRelationCreate all HTTP 200, no `errors`; `issueCreate` unexecuted in this shape.
+Provenance: executed 2026-10-22 against team `NEX` — bootstrap, issue by id, my issues, search, history, issueUpdate, commentCreate and issueRelationCreate all HTTP 200, no `errors`; `issueCreate` unexecuted in this shape · 2026-10-27, this § Call text with `LINEAR_API_KEY` supplied by the host's injector → `viewer` and `team NEX` returned, and `watch-ticket.py --once` → `OPEN`; unset → HTTP 401, `watch-ticket.py` → `WATCHER_ERROR auth`, exit 4.
 
 ## Workflow
 
@@ -97,8 +100,9 @@ mutation { issueRelationCreate(input: { issueId: "<uuid>", relatedIssueId: "<uui
 
 ## Scripts
 
-- `scripts/watch-ticket.py --ticket <id> --secret <NAME> --then <act> [--comments-matching <regex> --expect <n>] [--seen V:K]` → waits until a ticket completes, or until `--expect` comments matching the regex land; arm it per /watching with `run_in_background`, `--secret` the config's `secret`, `--then` the act the woken session runs; `--once` prints the current line.
-- `scripts/upload.py --secret <NAME> <file>...` → prints `<file>\t<assetUrl>` per file; embed an image as `![caption](<assetUrl>)`, any other file as `[name](<assetUrl>)`; an `assetUrl` answers only with the key.
+- Both read `LINEAR_API_KEY` from their environment, as § Call does.
+- `scripts/watch-ticket.py --ticket <id> --then <act> [--comments-matching <regex> --expect <n>] [--seen V:K]` → waits until a ticket completes, or until `--expect` comments matching the regex land; arm it per /watching with `run_in_background`, `--then` the act the woken session runs; `--once` prints the current line.
+- `scripts/upload.py <file>...` → prints `<file>\t<assetUrl>` per file; embed an image as `![caption](<assetUrl>)`, any other file as `[name](<assetUrl>)`; an `assetUrl` answers only with the key.
 
 | Watcher verdict | The woken session |
 | --- | --- |

@@ -12,7 +12,7 @@ description: "Resolves a tool's config and which tool fills a role (tracker, vau
 
 - A config declares what it is (its `role`) and what it needs (its own secret item), never who provides them; no tool config names another tool.
 - A capability a tool needs → named by role, never by the tool filling it, its vault or its CLI.
-- A tool's skill may use `keyless run` — the injector's command, the one tool every consumer reaches a value through, whose own config names the provider; a change of provider edits that config and no consumer.
+- A tool's skill names the variable it reads in a `Needs: <NAME>` line, never the provider; each host declares its provider once, in its own user instructions; a change of provider edits that line and no consumer.
 - Rebinding a capability is a one-line change at the composition level; no tool file moves.
 
 ## Config file shape

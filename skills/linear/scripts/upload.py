@@ -10,16 +10,16 @@ QUERY = ("mutation($c:String!,$f:String!,$s:Int!){ fileUpload(contentType:$c, fi
          "{ success uploadFile { uploadUrl assetUrl headers { key value } } } }")
 
 
-def upload(secret, path):
+def upload(path):
     ctype = mimetypes.guess_type(path)[0] or "application/octet-stream"
     body = {"query": QUERY, "variables": {"c": ctype, "f": os.path.basename(path), "s": os.path.getsize(path)}}
     with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as f:
         json.dump(body, f)
     try:
         out = subprocess.run(
-            ["keyless", "run", "-s", f"LINEAR_KEY={secret}", "--", "curl", "-s", "-X", "POST",
+            ["curl", "-s", "-X", "POST",
              "https://api.linear.app/graphql", "-H", "Content-Type: application/json",
-             "--variable", "%LINEAR_KEY", "--expand-header", "Authorization: {{LINEAR_KEY}}",
+             "--variable", "%LINEAR_API_KEY=", "--expand-header", "Authorization: {{LINEAR_API_KEY}}",
              "--data", "@" + f.name],
             capture_output=True, text=True).stdout
     finally:
@@ -38,11 +38,10 @@ def upload(secret, path):
 
 def main():
     p = argparse.ArgumentParser(description="Upload files to Linear; prints '<file>\\t<assetUrl>' per file.")
-    p.add_argument("--secret", required=True, help="the secrets-store item the project config's secret names")
     p.add_argument("files", nargs="+")
     a = p.parse_args()
     for path in a.files:
-        print(f"{path}\t{upload(a.secret, path)}", flush=True)
+        print(f"{path}\t{upload(path)}", flush=True)
 
 
 if __name__ == "__main__":
