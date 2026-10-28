@@ -1,10 +1,13 @@
 import os
-import re
 import shlex
 
 import hook_shell
 import shell_writes
 
+from domain_canon.expand_operands import (
+    COMPOUND_KEYWORD_PREFIX, MAX_OPERANDS, MAX_STATEMENTS, bind_variables, literal_directory,
+    segment_operands,
+)
 from domain_canon.find_governing_canon import place
 
 WHOLE_FILE_READERS = frozenset(("cat", "bat"))
@@ -21,6 +24,12 @@ NAME_ONLY_VERBS = frozenset((
     "cd", "pushd", "popd", "export", "local", "declare", "typeset", "readonly",
     "unset", "which", "type",
 ))
+CONTENT_READERS = WHOLE_FILE_READERS | frozenset((
+    "head", "tail", "sed", "grep", "egrep", "fgrep", "rg", "awk", "less", "more",
+    "diff", "cut", "sort", "uniq", "jq", "nl", "od", "xxd", "hexdump", "strings",
+    "tac", "column", "fold", "fmt", "pr", "paste", "view", "vim", "vi", "nano",
+    "python", "python3", "node", "perl", "ruby", "sh", "bash", "zsh", "source", ".",
+))
 NAME_FEEDING_VERBS = frozenset(("xargs", "parallel"))
 GIT_CONTENT_SUBCOMMANDS = frozenset((
     "show", "diff", "blame", "annotate", "grep", "cat-file", "format-patch",
@@ -33,9 +42,6 @@ GIT_PATCH_FLAGS = ("-p", "-u", "--patch", "--patch-with-stat", "--patch-with-raw
 GIT_PATCH_FLAG_PREFIXES = ("-L", "-U", "--unified")
 GIT_GLOBALS_TAKING_VALUE = frozenset(("-C", "-c", "--git-dir", "--work-tree", "--namespace",
                                       "--exec-path", "--config-env", "--super-prefix"))
-MAX_STATEMENTS = 20
-MAX_OPERANDS = 40
-COMPOUND_KEYWORD_PREFIX = re.compile(r"^\s*(?:(?:do|then|else|elif|if|while|until|!)\s+)+")
 
 
 def git_opens_and_base(segment, at):
@@ -72,9 +78,10 @@ def git_opens_and_base(segment, at):
     return False, base
 
 
-def reached_files(command, cwd):
-    out, seen = [], set()
+def reached_files(command, cwd, unplaced=None):
+    out, seen, known = [], set(), {}
     for statement, at in hook_shell.statements_with_cwd(command, cwd)[:MAX_STATEMENTS]:
+        bind_variables(statement, at, known)
         piped = hook_shell.has_pipe_or_redirect(statement)
         segments = [COMPOUND_KEYWORD_PREFIX.sub("", s)
                     for s in hook_shell.pipe_segments(statement) or [statement]]
@@ -93,21 +100,27 @@ def reached_files(command, cwd):
                 opens, base = git_opens_and_base(segment, at)
             else:
                 opens = names_feed_a_reader or verb not in NAME_ONLY_VERBS
-            for operand in hook_shell.operands(segment)[:MAX_OPERANDS]:
-                if os.path.isabs(operand):
-                    abs_path = operand
-                elif base is None:
+            for operand, paths in segment_operands(segment, verb, known, base):
+                if paths is None:
+                    if (unplaced is not None and opens and verb in CONTENT_READERS
+                            and not any(c.isspace() for c in operand)):
+                        unplaced.append((literal_directory(operand, base, cwd), operand, verb))
                     continue
-                else:
-                    abs_path = os.path.join(base, operand)
-                abs_path = os.path.normpath(abs_path)
-                if not os.path.isfile(abs_path):
-                    continue
-                where = place(abs_path)
-                if not where or (where[1], credits, opens) in seen:
-                    continue
-                seen.add((where[1], credits, opens))
-                out.append((where[0], where[1], credits, verb, opens))
+                for path in paths:
+                    if os.path.isabs(path):
+                        abs_path = path
+                    elif base is None:
+                        continue
+                    else:
+                        abs_path = os.path.join(base, path)
+                    abs_path = os.path.normpath(abs_path)
+                    if not os.path.isfile(abs_path):
+                        continue
+                    where = place(abs_path)
+                    if not where or (where[1], credits, opens) in seen:
+                        continue
+                    seen.add((where[1], credits, opens))
+                    out.append((where[0], where[1], credits, verb, opens))
     return out
 
 

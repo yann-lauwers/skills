@@ -16,7 +16,7 @@ from domain_canon.find_governing_canon import (
     required_canon,
 )
 from domain_canon.parse_event import (
-    BASH_TOOL, READ_TOOL, as_edits, command_of, coerce_str, cwd_of, read_payload, session_of,
+    BASH_TOOL, GREP_NAME_ONLY_MODES, GREP_TOOL, READ_TOOL, as_edits, command_of, coerce_str, cwd_of, read_payload, session_of,
     target_path, tool_of,
 )
 from domain_canon.trace_shell_command import (
@@ -27,6 +27,7 @@ from domain_canon.trace_shell_command import (
 CHECK_ID_GATE = "canon-read-gate"
 CHECK_ID_GATE_SHELL = "canon-read-gate-shell"
 CHECK_ID_READ_FIRST = "canon-read-first"
+CHECK_ID_UNPLACED = "canon-unplaced-read"
 CHECK_ID_REMINDER = "canon-read-reminder"
 CHECK_ID_CREDIT = "canon-read-credit"
 CHECK_ID_MAP = "canon-map-injection"
@@ -52,13 +53,25 @@ def emit_deny(reason):
     }}))
 
 
-def touched(payload):
+def grep_touched(payload):
+    where = place(target_path(payload))
+    if not where or not os.path.isfile(where[1]):
+        return []
+    tool_input = payload.get("tool_input")
+    mode = coerce_str(tool_input.get("output_mode")) if isinstance(tool_input, dict) else None
+    return [(where[0], where[1], False, GREP_TOOL,
+             (mode or "files_with_matches") not in GREP_NAME_ONLY_MODES)]
+
+
+def touched(payload, unplaced=None):
     tool = tool_of(payload)
+    if tool == GREP_TOOL:
+        return grep_touched(payload)
     if tool != BASH_TOOL:
         where = place(target_path(payload))
         return [(where[0], where[1], tool == READ_TOOL, tool, True)] if where else []
     command = command_of(payload)
-    return reached_files(command, cwd_of(payload)) if command else []
+    return reached_files(command, cwd_of(payload), unplaced) if command else []
 
 
 def handle_session_start(payload):
@@ -171,7 +184,8 @@ def handle_read_first(payload, key):
         return True
 
     facts = remember_reads.facts(key)
-    for root, abs_path, _credited, _verb, opens in touched(payload):
+    unplaced = []
+    for root, abs_path, _credited, _verb, opens in touched(payload, unplaced):
         required = required_canon(root, abs_path) if opens else []
         if not required:
             continue
@@ -194,6 +208,28 @@ def handle_read_first(payload, key):
             return
         log(payload, CHECK_ID_READ_FIRST, "deny", mode, detail)
         refuse_unread(payload, CHECK_ID_READ_FIRST, root, rel, missing)
+        return True
+    return handle_unplaced_reads(payload, unplaced, facts)
+
+
+def handle_unplaced_reads(payload, unplaced, facts):
+    mode = mode_of(CHECK_ID_UNPLACED)
+    for directory, operand, verb in unplaced:
+        where = place(os.path.join(directory, "unplaced-operand"))
+        if not where:
+            continue
+        root, probe = where
+        missing = remember_reads.unread(facts, root, required_canon(root, probe))
+        if not missing:
+            continue
+        rel_dir = os.path.relpath(directory, root)
+        detail = "verb=%s %s :: %d unread" % (verb, rel_dir, len(missing))
+        if mode == "observe":
+            log(payload, CHECK_ID_UNPLACED, "would-deny", mode, detail)
+            return False
+        log(payload, CHECK_ID_UNPLACED, "deny", mode, detail)
+        emit_deny(word_refusals.unplaced_read(
+            CHECK_ID_UNPLACED, tool_of(payload) or "call", root, rel_dir, operand, missing))
         return True
     return False
 
@@ -245,7 +281,7 @@ def handle_pre_tool_use(payload, key):
     tool = tool_of(payload)
     if tool == BASH_TOOL:
         return handle_shell_write_gate(payload, key) or handle_read_first(payload, key)
-    if tool == READ_TOOL:
+    if tool in (READ_TOOL, GREP_TOOL):
         return handle_read_first(payload, key)
     return handle_tool_write_gate(payload, key)
 

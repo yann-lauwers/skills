@@ -5,6 +5,8 @@ import sys
 
 READ_TOOL = "Read"
 BASH_TOOL = "Bash"
+GREP_TOOL = "Grep"
+GREP_NAME_ONLY_MODES = frozenset(("files_with_matches", "count"))
 
 
 def coerce_str(value):
@@ -41,6 +43,8 @@ def target_path(payload):
     path = None
     if isinstance(tool_input, dict):
         path = coerce_str(tool_input.get("file_path")) or coerce_str(tool_input.get("notebook_path"))
+        if tool_of(payload) == GREP_TOOL:
+            path = coerce_str(tool_input.get("path"))
     path = path or coerce_str(payload.get("file_path"))
     if not path:
         return None
