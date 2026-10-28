@@ -1,254 +1,252 @@
 #!/usr/bin/env python3
+import hashlib
 import json
 import os
+import shlex
 import sys
 
-HOOKS_DIR = os.path.dirname(os.path.abspath(__file__))
-sys.path[:0] = [HOOKS_DIR, os.path.join(HOOKS_DIR, "lib")]
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "lib"))
 
 import hook_decisions
 import hook_mode
+import hook_shell
 from hook_run import run
 
-from domain_canon import remember_reads, word_refusals
-from domain_canon.find_governing_canon import (
-    MAP_FILE, is_ignored, is_owed_canon, nearest_glossary, owed_unless_ignored, place, repo_root,
-    required_canon,
-)
-from domain_canon.parse_event import (
-    as_edits, coerce_str, cwd_of, read_payload, session_of, target_path, tool_of,
-)
-from domain_canon import places
-from domain_canon.places import READ_TOOLS, credited_reads, places_of, written_files
-
-CHECK_ID_GATE = "canon-read-gate"
-CHECK_ID_GATE_SHELL = "canon-read-gate-shell"
-CHECK_ID_READ_FIRST = "canon-read-first"
-CHECK_ID_REMINDER = "canon-read-reminder"
-CHECK_ID_CREDIT = "canon-read-credit"
-CHECK_ID_MAP = "canon-map-injection"
+CHECK_READ_FIRST = "canon-read-first"
+CHECK_CREDIT = "canon-read-credit"
+CHECK_MAP = "canon-map-injection"
+FILE_TOOLS = frozenset(("Read", "Edit", "Write", "NotebookEdit"))
+SEARCH_TOOLS = frozenset(("Grep", "Glob"))
+WHOLE_FILE_READERS = frozenset(("cat", "bat"))
+EXPANSION_CHARS = "$`*?["
+GLOSSARY = "GLOSSARY.md"
+MAP_FILE = "GLOSSARY-MAP.md"
+ADR_DIR = os.path.join("docs", "adr")
 MAX_MAP_CHARS = 9000
+PATHS_PER_CAT = 40
+STATE_DIR = os.environ.get("CANON_STATE_DIR") or os.path.expanduser("~/.claude/state/domain-canon")
 REPO_COPIES = (os.path.join(".agents", "hooks", "domain-canon.py"),
                os.path.join(".claude", "hooks", "domain-canon.py"))
 
 
-def log(payload, check_id, verdict, mode, detail):
-    hook_decisions.log(check_id, verdict, detail, session=session_of(payload), mode=mode)
+def text(value):
+    return value if isinstance(value, str) and value else None
 
 
-def mode_of(check_id):
-    return hook_mode.resolve(check_id, "enforce")
+def repo_root(path):
+    while path and path != os.path.dirname(path):
+        if os.path.exists(os.path.join(path, ".git")):
+            return path
+        path = os.path.dirname(path)
+    return None
 
 
-def emit_context(event, text):
-    print(json.dumps({"hookSpecificOutput": {"hookEventName": event, "additionalContext": text}}))
+def is_canon(path):
+    name = os.path.basename(path)
+    return name in (GLOSSARY, MAP_FILE) or (name.endswith(".md") and os.path.dirname(path).endswith(ADR_DIR))
 
 
-def emit_deny(reason):
-    print(json.dumps({"hookSpecificOutput": {
-        "hookEventName": "PreToolUse", "permissionDecision": "deny",
-        "permissionDecisionReason": reason,
-    }}))
+def canon_above(root, directory):
+    rel = os.path.relpath(directory, root)
+    parts = [] if rel == "." else rel.split(os.sep)
+    found = []
+    for depth in range(len(parts) + 1):
+        here = os.path.join(root, *parts[:depth])
+        if os.path.isfile(os.path.join(here, GLOSSARY)):
+            found.append(os.path.relpath(os.path.join(here, GLOSSARY), root))
+        try:
+            records = sorted(n for n in os.listdir(os.path.join(here, ADR_DIR)) if n.endswith(".md") and n != "README.md")
+        except OSError:
+            records = []
+        found.extend(os.path.relpath(os.path.join(here, ADR_DIR, n), root) for n in records)
+    return found
 
 
-def deferred_to_repo_copy(payload):
-    root = repo_root(cwd_of(payload))
-    if not root:
-        return False
-    here = os.path.realpath(__file__)
-    return any(os.path.realpath(os.path.join(root, c)) != here and _same_bytes(os.path.join(root, c), here)
-               and _wired(root, c) for c in REPO_COPIES)
+def fact(root, rel):
+    return "%s:%s" % (hashlib.sha1(os.fsencode(root)).hexdigest()[:12], rel)
 
 
-def _same_bytes(a, b):
+def ledger_path(payload):
+    key = text(payload.get("agent_id")) or text(payload.get("session_id")) or "nosession"
+    return None if "/" in key or ".." in key else os.path.join(STATE_DIR, key + ".txt")
+
+
+def read_facts(path):
     try:
-        with open(a, "rb") as fa, open(b, "rb") as fb:
-            return fa.read() == fb.read()
+        with open(path) as fh:
+            return {line.strip().partition(" ")[2] for line in fh if line.startswith("read ")}
     except OSError:
-        return False
+        return set()
 
 
-def _wired(root, copy):
+def literal_path(word, here):
+    literal = word[:min((word.find(c) for c in EXPANSION_CHARS if c in word), default=len(word))]
+    if not literal or here is None and not os.path.isabs(os.path.expanduser(literal)):
+        return None
+    return os.path.normpath(os.path.join(here or "/", os.path.expanduser(literal)))
+
+
+def words(statement):
     try:
-        with open(os.path.join(root, ".claude", "settings.json")) as fh:
-            groups = json.load(fh)["hooks"]["PreToolUse"]
-        return any(
-            isinstance(g, dict) and all(t in str(g.get("matcher", "")) for t in ("Bash", "Read"))
-            and any(isinstance(h, dict) and isinstance(h.get("command"), str)
-                    and ("/" + copy) in h["command"] for h in g.get("hooks", []))
-            for g in groups)
-    except Exception:
+        return shlex.split(statement, posix=True)
+    except ValueError:
+        return statement.split()
+
+
+def reads_only_canon(statement, here):
+    if hook_shell.command_word(statement) not in WHOLE_FILE_READERS:
         return False
+    paths = [literal_path(w, here) for w in hook_shell.operands(statement)]
+    return bool(paths) and all(p and os.path.isfile(p) and is_canon(p) for p in paths)
 
 
-def handle_session_start(payload):
-    root = repo_root(cwd_of(payload))
-    if not root:
-        log(payload, CHECK_ID_MAP, "silent", "enforcing", "no repo root above cwd")
+def touched_paths(payload, tool, tool_input, cwd):
+    if tool in FILE_TOOLS:
+        return [literal_path(text(tool_input.get("file_path")) or text(tool_input.get("notebook_path")) or "", cwd)]
+    if tool in SEARCH_TOOLS:
+        return [literal_path(text(tool_input.get("path")) or cwd, cwd)]
+    command = text(tool_input.get("command")) if tool == "Bash" else None
+    paths = []
+    for statement, at in hook_shell.statements_with_cwd(command or "", cwd):
+        here = at or cwd
+        if reads_only_canon(statement, here):
+            continue
+        paths.append(here)
+        for word in words(statement):
+            for candidate in {word, word.partition("=")[2], word.lstrip("0123456789<>&|")}:
+                path = literal_path(candidate, here)
+                if path and not os.path.exists(path):
+                    path = os.path.dirname(path)
+                if path and os.path.exists(path):
+                    paths.append(path)
+    return paths
+
+
+def governed_places(paths):
+    places = {}
+    for path in filter(None, paths):
+        if os.path.isfile(path) and is_canon(path):
+            continue
+        directory = path if os.path.isdir(path) else os.path.dirname(path)
+        root = repo_root(directory)
+        if root and ".git" not in os.path.relpath(directory, root).split(os.sep):
+            places.setdefault(directory, root)
+    return places.items()
+
+
+def refusal(tool, root, directory, missing):
+    rel = os.path.relpath(directory, root)
+    subject = "this repository" if rel == "." else rel + "/"
+    paths = [shlex.quote(os.path.join(root, c)) for c in missing]
+    cats = "".join("  cat " + " ".join(paths[i:i + PATHS_PER_CAT]) + "\n" for i in range(0, len(paths), PATHS_PER_CAT))
+    return (f"[{CHECK_READ_FIRST}] {subject} sits under {len(missing)} canon file{'s' if len(missing) != 1 else ''} "
+            f"this session has not read:\n" + "".join(f"  {c}\n" for c in missing)
+            + f"Read them, then retry this {tool}:\n" + cats
+            + "Only a whole read counts: the Read tool with no offset or limit, or `cat` with no pipe or redirect.")
+
+
+def gate(payload, tool, tool_input, cwd, session):
+    facts = read_facts(ledger_path(payload) or "")
+    mode = hook_mode.resolve(CHECK_READ_FIRST, "enforce")
+    for directory, root in governed_places(touched_paths(payload, tool, tool_input, cwd)):
+        missing = [c for c in canon_above(root, directory) if fact(root, c) not in facts]
+        if not missing:
+            continue
+        verdict = "would-deny" if mode == "observe" else "deny"
+        hook_decisions.log(CHECK_READ_FIRST, verdict, "tool=%s %s :: %d unread" % (tool, os.path.relpath(directory, root), len(missing)),
+                           session=session, event="PreToolUse", mode=mode)
+        if verdict == "deny":
+            print(json.dumps({"hookSpecificOutput": {"hookEventName": "PreToolUse", "permissionDecision": "deny",
+                                                     "permissionDecisionReason": refusal(tool, root, directory, missing)}}))
         return
+
+
+def credited_paths(tool, tool_input, cwd):
+    if tool == "Read":
+        whole = tool_input.get("offset") is None and tool_input.get("limit") is None
+        return [literal_path(text(tool_input.get("file_path")) or "", cwd)] if whole else []
+    command = text(tool_input.get("command")) if tool == "Bash" else None
+    return [literal_path(w, at) for statement, at in hook_shell.statements_with_cwd(command or "", cwd)
+            if hook_shell.command_word(statement) in WHOLE_FILE_READERS and not hook_shell.has_pipe_or_redirect(statement)
+            for w in hook_shell.operands(statement)]
+
+
+def credit(payload, tool, tool_input, cwd, session):
+    path = ledger_path(payload)
+    for file in filter(None, credited_paths(tool, tool_input, cwd)):
+        root = repo_root(os.path.dirname(file))
+        if not (root and os.path.isfile(file) and is_canon(file)):
+            continue
+        rel = os.path.relpath(file, root)
+        try:
+            os.makedirs(STATE_DIR, exist_ok=True)
+            with open(path, "a") as fh:
+                fh.write("read %s\n" % fact(root, rel))
+        except (OSError, TypeError):
+            return
+        hook_decisions.log(CHECK_CREDIT, "credited", "tool=%s %s" % (tool, rel), session=session,
+                           event="PostToolUse", mode="enforce")
+
+
+def inject_map(cwd, session):
+    root = repo_root(cwd)
     try:
-        with open(os.path.join(root, MAP_FILE)) as fh:
+        with open(os.path.join(root or "", MAP_FILE)) as fh:
             body = fh.read().strip()
     except OSError:
-        log(payload, CHECK_ID_MAP, "silent", "enforcing", "no %s at repo root" % MAP_FILE)
         return
     if not body:
-        log(payload, CHECK_ID_MAP, "silent", "enforcing", "%s is empty" % MAP_FILE)
         return
-    full = len(body)
-    note = ""
-    if full > MAX_MAP_CHARS:
-        body = body[:MAX_MAP_CHARS]
-        note = (f"\n\n[truncated at {MAX_MAP_CHARS} of {full} characters — "
-                f"the rest is in {MAP_FILE} at the repo root]")
-        log(payload, CHECK_ID_MAP, "truncated", "enforcing",
-            "%s :: %d of %d chars" % (MAP_FILE, MAX_MAP_CHARS, full))
-    else:
-        log(payload, CHECK_ID_MAP, "injected", "enforcing", "%s :: %d chars" % (MAP_FILE, full))
-    emit_context("SessionStart", f"{MAP_FILE}, at the root of this repository, in full:\n\n{body}{note}")
+    verdict = "truncated" if len(body) > MAX_MAP_CHARS else "injected"
+    note = f"\n\n[truncated at {MAX_MAP_CHARS} of {len(body)} characters; the rest is in {MAP_FILE}]" if verdict == "truncated" else ""
+    hook_decisions.log(CHECK_MAP, verdict, "%s :: %d chars" % (MAP_FILE, len(body)), session=session,
+                       event="SessionStart", mode="enforce")
+    print(json.dumps({"hookSpecificOutput": {"hookEventName": "SessionStart", "additionalContext":
+                      f"{MAP_FILE}, at the root of this repository, in full:\n\n{body[:MAX_MAP_CHARS]}{note}"}}))
 
 
-def credit_whole_reads(payload, key):
-    for root, abs_path in credited_reads(payload):
-        rel = os.path.relpath(abs_path, root)
-        if is_owed_canon(rel):
-            remember_reads.record(key, "read", remember_reads.canon_fact(root, rel))
-            log(payload, CHECK_ID_CREDIT, "credited", "enforcing", "verb=%s %s" % (tool_of(payload), rel))
-
-
-def remind_of_unread_canon(payload, key):
-    facts = remember_reads.facts(key)
-    fresh, subjects = [], []
-    for root, directory in places_of(payload):
-        probe = places.probe(directory)
-        missing = [c for c in required_canon(root, probe)
-                   if ("reminded", remember_reads.canon_fact(root, c)) not in facts
-                   and ("read", remember_reads.canon_fact(root, c)) not in facts
-                   and (root, c) not in fresh]
-        missing = owed_unless_ignored(root, directory, missing)
-        if missing:
-            fresh.extend((root, c) for c in missing)
-            subjects.append(_label(root, directory))
-    if not fresh:
-        return
-    for root, c in fresh:
-        remember_reads.record(key, "reminded", remember_reads.canon_fact(root, c))
-    subject = subjects[0] if len(subjects) == 1 else "%s (+%d more)" % (subjects[0], len(subjects) - 1)
-    log(payload, CHECK_ID_REMINDER, "warn", "enforcing", "%s :: %d named" % (subject, len(fresh)))
-    emit_context("PostToolUse", word_refusals.reminder(CHECK_ID_REMINDER, subject, [c for _r, c in fresh]))
-
-
-def handle_post_tool_use(payload, key):
-    credit_whole_reads(payload, key)
-    remind_of_unread_canon(payload, key)
-
-
-def _label(root, directory):
-    rel = os.path.relpath(directory, root)
-    return "this repository" if rel == "." else rel + "/"
-
-
-def refuse(payload, check_id, root, subject, missing):
-    emit_deny(word_refusals.unread_canon(check_id, tool_of(payload) or "call", root, subject, missing))
-
-
-def handle_read_first(payload, key):
-    mode = mode_of(CHECK_ID_READ_FIRST)
-    facts = remember_reads.facts(key)
-    for root, directory in places_of(payload):
-        probe = places.probe(directory)
-        required = required_canon(root, probe)
-        if not required:
-            continue
-        missing = remember_reads.unread(facts, root, required)
-        if missing and is_ignored(root, directory):
-            continue
-        subject = _label(root, directory)
-        glossary = nearest_glossary(root, probe)
-        if ("scored", glossary) not in facts:
-            remember_reads.record(key, "scored", glossary)
-            facts.add(("scored", glossary))
-            if not missing:
-                log(payload, CHECK_ID_READ_FIRST, "preloaded", mode, subject)
-        if not missing:
-            continue
-        detail = "verb=%s %s :: %d unread" % (tool_of(payload), subject, len(missing))
-        if mode == "observe":
-            log(payload, CHECK_ID_READ_FIRST, "would-deny", mode, detail)
-            return False
-        log(payload, CHECK_ID_READ_FIRST, "deny", mode, detail)
-        refuse(payload, CHECK_ID_READ_FIRST, root, subject, missing)
-        return True
+def stands_down(cwd):
+    root = repo_root(cwd)
+    here = os.path.realpath(__file__)
+    try:
+        with open(os.path.join(root or "", ".claude", "settings.json")) as fh:
+            groups = json.load(fh)["hooks"]["PreToolUse"]
+        commands = [h["command"] for g in groups if "Bash" in g.get("matcher", "") and "Read" in g.get("matcher", "")
+                    for h in g.get("hooks", []) if isinstance(h.get("command"), str)]
+    except Exception:
+        return False
+    for copy in REPO_COPIES:
+        path = os.path.join(root, copy)
+        if os.path.realpath(path) != here and any("/" + copy in c for c in commands):
+            try:
+                with open(path, "rb") as theirs, open(here, "rb") as ours:
+                    if theirs.read() == ours.read():
+                        return True
+            except OSError:
+                pass
     return False
-
-
-def handle_shell_write_gate(payload, key):
-    targets = written_files(payload)
-    if not targets:
-        return False
-    facts = remember_reads.facts(key)
-    mode = mode_of(CHECK_ID_GATE_SHELL)
-    for root, abs_path in targets:
-        missing = owed_unless_ignored(
-            root, abs_path, remember_reads.unread(facts, root, required_canon(root, abs_path)))
-        if not missing:
-            continue
-        rel = os.path.relpath(abs_path, root)
-        detail = "%s :: %s" % (rel, ",".join(missing))
-        if mode == "observe":
-            log(payload, CHECK_ID_GATE_SHELL, "would-deny", mode, detail)
-            return False
-        log(payload, CHECK_ID_GATE_SHELL, "deny", mode, detail)
-        refuse(payload, CHECK_ID_GATE_SHELL, root, rel, missing)
-        return True
-    return False
-
-
-def handle_tool_write_gate(payload, key):
-    where = place(target_path(payload))
-    if not where:
-        return False
-    root, abs_path = where
-    missing = owed_unless_ignored(
-        root, abs_path, remember_reads.unread(remember_reads.facts(key), root, required_canon(root, abs_path)))
-    if not missing:
-        return False
-    rel = os.path.relpath(abs_path, root)
-    mode = mode_of(CHECK_ID_GATE)
-    detail = "%s :: %s" % (rel, ",".join(missing))
-    if mode == "observe":
-        log(payload, CHECK_ID_GATE, "would-deny", mode, detail)
-        return False
-    log(payload, CHECK_ID_GATE, "deny", mode, detail)
-    refuse(payload, CHECK_ID_GATE, root, rel, missing)
-    return True
-
-
-def handle_pre_tool_use(payload, key):
-    tool = tool_of(payload)
-    if tool == "Bash":
-        return handle_shell_write_gate(payload, key) or handle_read_first(payload, key)
-    if tool in READ_TOOLS:
-        return handle_read_first(payload, key)
-    return handle_tool_write_gate(payload, key)
 
 
 def main():
-    payload = read_payload()
-    if payload is None or deferred_to_repo_copy(payload):
+    try:
+        payload = json.loads(sys.stdin.read())
+    except (ValueError, TypeError):
         return
-    event = coerce_str(payload.get("hook_event_name")) or ""
+    if not isinstance(payload, dict):
+        return
+    cwd = text(payload.get("cwd")) or os.getcwd()
+    if stands_down(cwd):
+        return
+    event = text(payload.get("hook_event_name"))
+    session = text(payload.get("session_id")) or "unknown"
+    tool = text(payload.get("tool_name")) or ""
+    tool_input = payload.get("tool_input") if isinstance(payload.get("tool_input"), dict) else {}
     if event == "SessionStart":
-        handle_session_start(payload)
-        return
-    key = remember_reads.key_of(payload)
-    if key is None:
-        return
-    calls = as_edits(payload)
-    if event == "PreToolUse":
-        any(handle_pre_tool_use(call, key) for call in calls)
-    elif event in ("PostToolUse", "PostToolUseFailure") and calls:
-        handle_post_tool_use(calls[0], key)
+        inject_map(cwd, session)
+    elif event == "PreToolUse":
+        gate(payload, tool, tool_input, cwd, session)
+    elif event == "PostToolUse":
+        credit(payload, tool, tool_input, cwd, session)
 
 
 if __name__ == "__main__":

@@ -2,23 +2,14 @@
 # Copy the yann plugin's domain-canon hook into a repo whose teammates don't run the plugin.
 # usage: vendor-domain-canon <repo> [--check]   (--check: exit 1 when the repo's copy has drifted)
 set -euo pipefail
-src="$(cd "$(dirname "$0")/../plugins/yann/hooks" && pwd)"
+src="$(cd "$(dirname "$0")/../plugins/yann/hooks" && pwd)/domain-canon.py"
 repo="${1:?usage: vendor-domain-canon <repo> [--check]}"
-dest="$repo/.agents/hooks"
-files=(domain-canon.py domain_canon/__init__.py domain_canon/find_governing_canon.py
-       domain_canon/parse_event.py domain_canon/places.py domain_canon/remember_reads.py
-       domain_canon/word_refusals.py)
+dest="$repo/.agents/hooks/domain-canon.py"
 if [[ "${2:-}" == "--check" ]]; then
-  drift=0
-  for f in "${files[@]}"; do cmp -s "$src/$f" "$dest/$f" || { echo "drift: $dest/$f"; drift=1; }; done
-  for f in "$dest"/domain_canon/*.py; do
-    [[ " ${files[*]} " == *" domain_canon/$(basename "$f") "* ]] || { echo "extra: $f"; drift=1; }
-  done
-  exit "$drift"
+  cmp -s "$src" "$dest" || { echo "drift: $dest"; exit 1; }
+  [[ ! -e "$repo/.agents/hooks/domain_canon" ]] || { echo "extra: $repo/.agents/hooks/domain_canon"; exit 1; }
+  exit 0
 fi
-mkdir -p "$dest/domain_canon"
-for f in "$dest"/domain_canon/*.py; do
-  [[ " ${files[*]} " == *" domain_canon/$(basename "$f") "* ]] || git -C "$repo" rm -q "$f"
-done
-for f in "${files[@]}"; do cp "$src/$f" "$dest/$f"; done
-echo "vendored ${#files[@]} files into $dest"
+cp "$src" "$dest"
+[[ ! -e "$repo/.agents/hooks/domain_canon" ]] || git -C "$repo" rm -q -r "$repo/.agents/hooks/domain_canon"
+echo "vendored $dest"

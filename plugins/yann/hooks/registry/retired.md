@@ -6,6 +6,8 @@
 
 ## The domain-canon move to the plugin, 2026-10-28
 
+**Retired ids — `canon-read-gate`, `canon-read-gate-shell`, `canon-read-reminder`** (2026-10-28). The write gates refused an edit, or a shell write, under unread canon; the reminder named unread canon after a call went through. Once `canon-read-first` gates every directory a call runs in or names, the written file's directory is already gated and nothing unread can go through to be reminded of. Successor: `canon-read-first`.
+
 **Retired id — `canon-unplaced-read`** (2026-10-28). Refused a shell operand the hook could not resolve to a file (a variable, a substitution, a directory searched whole) while the canon above it was unread. It rested on re-parsing each command's flags, and every review round found another spelling it misread. Successor: `canon-read-first`, which gates every directory a call runs in or names, with no flag parsing. The checks also moved from per-repo copies into the `yann` plugin; NexusGPT/nexus and NexusGPT/nutshell vendor its files.
 
 ## The Codex layer, 2026-10-25

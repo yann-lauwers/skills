@@ -43,7 +43,7 @@
         ]
       },
       {
-        "matcher": "^(Read|Edit|Write|NotebookEdit|Bash)$",
+        "matcher": "^(Read|Bash)$",
         "hooks": [
           {
             "type": "command",
