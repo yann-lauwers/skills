@@ -34,7 +34,7 @@ description: >-
 
 ## Re-mint
 
-- The user mints in their own terminal — never through the session, never behind `!`: the login can stop on an MFA prompt, and it prints the new token bundle to stdout.
+- The user mints in their own terminal — never through the session, never behind `!`: the login can stop on a password or MFA prompt, and everything a `!` command prints lands in the transcript.
 - Repeat logins are 429'd account-wide.
 - Two logins at once invalidate each other.
 - Check the person and the item against each other before it runs: a mint carrying another person's login writes that account's data under the person it names and exits 0.
