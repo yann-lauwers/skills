@@ -4,6 +4,10 @@
 - Retirements up to 2026-10-07, and the retired verdicts and pattern names → `registry/retired-to-2026-10-07.md`.
 - A clause states what the check did, why it went, and its successor or that there is none; measurements and the argument behind it are in git history.
 
+## The domain-canon move to the plugin, 2026-10-28
+
+**Retired id — `canon-unplaced-read`** (2026-10-28). Refused a shell operand the hook could not resolve to a file (a variable, a substitution, a directory searched whole) while the canon above it was unread. It rested on re-parsing each command's flags, and every review round found another spelling it misread. Successor: `canon-read-first`, which gates every directory a call runs in or names, with no flag parsing. The checks also moved from per-repo copies into the `yann` plugin; NexusGPT/nexus and NexusGPT/nutshell vendor its files.
+
 ## The Codex layer, 2026-10-25
 
 **Retired id — `codex-inject-integration-roles`** (2026-10-25). A Codex `SessionStart` handler that injected `roles.md` as session context. Went with the Codex wiring: this setup runs on Claude Code only. No successor; Claude reads the roles through `AGENTS.md`.

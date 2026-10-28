@@ -41,6 +41,15 @@
             "timeout": 180
           }
         ]
+      },
+      {
+        "matcher": "^(Read|Edit|Write|NotebookEdit|Bash)$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$HOME/.pyenv/versions/3.13.3/bin/python3\" \"${CLAUDE_PLUGIN_ROOT}/hooks/domain-canon.py\""
+          }
+        ]
       }
     ],
     "PreCompact": [
@@ -87,6 +96,15 @@
             "command": "\"$HOME/.pyenv/versions/3.13.3/bin/python3\" \"${CLAUDE_PLUGIN_ROOT}/hooks/house-style-unloaded.py\""
           }
         ]
+      },
+      {
+        "matcher": "Edit|Write|NotebookEdit|Bash|Read|Grep|Glob",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$HOME/.pyenv/versions/3.13.3/bin/python3\" \"${CLAUDE_PLUGIN_ROOT}/hooks/domain-canon.py\""
+          }
+        ]
       }
     ],
     "StopFailure": [
@@ -110,6 +128,17 @@
           {
             "type": "command",
             "command": "\"$HOME/.pyenv/versions/3.13.3/bin/python3\" \"${CLAUDE_PLUGIN_ROOT}/hooks/bar-reminder.py\""
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "startup|clear|compact|fork",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$HOME/.pyenv/versions/3.13.3/bin/python3\" \"${CLAUDE_PLUGIN_ROOT}/hooks/domain-canon.py\""
           }
         ]
       }

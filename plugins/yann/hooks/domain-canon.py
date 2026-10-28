@@ -16,22 +16,20 @@ from domain_canon.find_governing_canon import (
     required_canon,
 )
 from domain_canon.parse_event import (
-    BASH_TOOL, GREP_NAME_ONLY_MODES, GREP_TOOL, READ_TOOL, as_edits, command_of, coerce_str, cwd_of, read_payload, session_of,
-    target_path, tool_of,
+    as_edits, coerce_str, cwd_of, read_payload, session_of, target_path, tool_of,
 )
-from domain_canon.trace_shell_command import (
-    SLICE_READERS, WHOLE_FILE_READERS, over_parse_cap, reached_files,
-    whole_reads_naming_no_file, written_files,
-)
+from domain_canon import places
+from domain_canon.places import READ_TOOLS, credited_reads, places_of, written_files
 
 CHECK_ID_GATE = "canon-read-gate"
 CHECK_ID_GATE_SHELL = "canon-read-gate-shell"
 CHECK_ID_READ_FIRST = "canon-read-first"
-CHECK_ID_UNPLACED = "canon-unplaced-read"
 CHECK_ID_REMINDER = "canon-read-reminder"
 CHECK_ID_CREDIT = "canon-read-credit"
 CHECK_ID_MAP = "canon-map-injection"
 MAX_MAP_CHARS = 9000
+REPO_COPIES = (os.path.join(".agents", "hooks", "domain-canon.py"),
+               os.path.join(".claude", "hooks", "domain-canon.py"))
 
 
 def log(payload, check_id, verdict, mode, detail):
@@ -53,30 +51,13 @@ def emit_deny(reason):
     }}))
 
 
-def grep_touched(payload, unplaced):
-    tool_input = payload.get("tool_input")
-    mode = coerce_str(tool_input.get("output_mode")) if isinstance(tool_input, dict) else None
-    opens = (mode or "files_with_matches") not in GREP_NAME_ONLY_MODES
-    path = target_path(payload) or cwd_of(payload)
-    if os.path.isdir(path):
-        if opens and unplaced is not None:
-            unplaced.append((path, coerce_str(tool_input.get("path")) or ".", GREP_TOOL))
-        return []
-    where = place(path)
-    if not where or not os.path.isfile(where[1]):
-        return []
-    return [(where[0], where[1], False, GREP_TOOL, opens)]
-
-
-def touched(payload, unplaced=None):
-    tool = tool_of(payload)
-    if tool == GREP_TOOL:
-        return grep_touched(payload, unplaced)
-    if tool != BASH_TOOL:
-        where = place(target_path(payload))
-        return [(where[0], where[1], tool == READ_TOOL, tool, True)] if where else []
-    command = command_of(payload)
-    return reached_files(command, cwd_of(payload), unplaced) if command else []
+def deferred_to_repo_copy(payload):
+    root = repo_root(cwd_of(payload))
+    if not root:
+        return False
+    here = os.path.realpath(__file__)
+    return any(os.path.isfile(os.path.join(root, c)) and os.path.realpath(os.path.join(root, c)) != here
+               for c in REPO_COPIES)
 
 
 def handle_session_start(payload):
@@ -106,54 +87,27 @@ def handle_session_start(payload):
     emit_context("SessionStart", f"{MAP_FILE}, at the root of this repository, in full:\n\n{body}{note}")
 
 
-def log_whole_reads_naming_no_file(payload, reached):
-    command = command_of(payload)
-    if not command:
-        return
-    missed = whole_reads_naming_no_file(command, cwd_of(payload), {r[1] for r in reached})
-    if missed:
-        log(payload, CHECK_ID_CREDIT, "unresolved", "enforcing",
-            "%d operand(s) named no file :: %s" % (len(missed), " ".join(missed[:4])))
-
-
-def credit_whole_reads(key, reached):
-    for root, abs_path, credited, _verb, _opens in reached:
+def credit_whole_reads(payload, key):
+    for root, abs_path in credited_reads(payload):
         rel = os.path.relpath(abs_path, root)
-        if credited and is_owed_canon(rel):
+        if is_owed_canon(rel):
             remember_reads.record(key, "read", remember_reads.canon_fact(root, rel))
+            log(payload, CHECK_ID_CREDIT, "credited", "enforcing", "verb=%s %s" % (tool_of(payload), rel))
 
 
-def log_read_credit(payload, reached):
-    if tool_of(payload) != BASH_TOOL:
-        return
-    classes = {}
-    for root, abs_path, credited, verb, _opens in reached:
-        rel = os.path.relpath(abs_path, root)
-        if not is_owed_canon(rel):
-            continue
-        if credited:
-            verdict = "credited"
-        elif verb in WHOLE_FILE_READERS or verb in SLICE_READERS:
-            verdict = "slice"
-        else:
-            verdict = "unknown-verb"
-        classes.setdefault((verdict, verb), []).append(rel)
-    for (verdict, verb), rels in classes.items():
-        log(payload, CHECK_ID_CREDIT, verdict, "enforcing", "verb=%s n=%d %s" % (verb, len(rels), rels[0]))
-
-
-def remind_of_unread_canon(payload, key, reached):
+def remind_of_unread_canon(payload, key):
     facts = remember_reads.facts(key)
     fresh, subjects = [], []
-    for root, abs_path, _credited, _verb, _opens in reached:
-        missing = [c for c in required_canon(root, abs_path)
+    for root, directory in places_of(payload):
+        probe = places.probe(directory)
+        missing = [c for c in required_canon(root, probe)
                    if ("reminded", remember_reads.canon_fact(root, c)) not in facts
                    and ("read", remember_reads.canon_fact(root, c)) not in facts
                    and (root, c) not in fresh]
-        missing = owed_unless_ignored(root, abs_path, missing)
+        missing = owed_unless_ignored(root, directory, missing)
         if missing:
             fresh.extend((root, c) for c in missing)
-            subjects.append(os.path.relpath(abs_path, root))
+            subjects.append(_label(root, directory))
     if not fresh:
         return
     for root, c in fresh:
@@ -164,84 +118,51 @@ def remind_of_unread_canon(payload, key, reached):
 
 
 def handle_post_tool_use(payload, key):
-    reached = touched(payload)
-    log_whole_reads_naming_no_file(payload, reached)
-    if not reached:
-        return
-    credit_whole_reads(key, reached)
-    log_read_credit(payload, reached)
-    remind_of_unread_canon(payload, key, reached)
+    credit_whole_reads(payload, key)
+    remind_of_unread_canon(payload, key)
 
 
-def refuse_unread(payload, check_id, root, rel, missing):
-    emit_deny(word_refusals.unread_canon(check_id, tool_of(payload) or "call", root, rel, missing))
+def _label(root, directory):
+    rel = os.path.relpath(directory, root)
+    return "this repository" if rel == "." else rel + "/"
+
+
+def refuse(payload, check_id, root, subject, missing):
+    emit_deny(word_refusals.unread_canon(check_id, tool_of(payload) or "call", root, subject, missing))
 
 
 def handle_read_first(payload, key):
     mode = mode_of(CHECK_ID_READ_FIRST)
-    command = command_of(payload) if tool_of(payload) == BASH_TOOL else None
-    if command and over_parse_cap(command, cwd_of(payload)):
-        if mode == "observe":
-            log(payload, CHECK_ID_READ_FIRST, "would-deny", mode, "over parse cap")
-            return
-        log(payload, CHECK_ID_READ_FIRST, "over-cap", mode, "over parse cap")
-        emit_deny(word_refusals.over_parse_cap(CHECK_ID_READ_FIRST))
-        return True
-
     facts = remember_reads.facts(key)
-    unplaced = []
-    for root, abs_path, _credited, _verb, opens in touched(payload, unplaced):
-        required = required_canon(root, abs_path) if opens else []
+    for root, directory in places_of(payload):
+        probe = places.probe(directory)
+        required = required_canon(root, probe)
         if not required:
             continue
         missing = remember_reads.unread(facts, root, required)
-        if missing and is_ignored(root, abs_path):
+        if missing and is_ignored(root, directory):
             continue
-        rel = os.path.relpath(abs_path, root)
-        glossary = nearest_glossary(root, abs_path)
-        first_in_context = ("scored", glossary) not in facts
-        if first_in_context:
+        subject = _label(root, directory)
+        glossary = nearest_glossary(root, probe)
+        if ("scored", glossary) not in facts:
             remember_reads.record(key, "scored", glossary)
             facts.add(("scored", glossary))
+            if not missing:
+                log(payload, CHECK_ID_READ_FIRST, "preloaded", mode, subject)
         if not missing:
-            if first_in_context:
-                log(payload, CHECK_ID_READ_FIRST, "preloaded", mode, rel)
             continue
-        detail = "%s :: %d unread" % (rel, len(missing))
+        detail = "verb=%s %s :: %d unread" % (tool_of(payload), subject, len(missing))
         if mode == "observe":
             log(payload, CHECK_ID_READ_FIRST, "would-deny", mode, detail)
-            return
-        log(payload, CHECK_ID_READ_FIRST, "deny", mode, detail)
-        refuse_unread(payload, CHECK_ID_READ_FIRST, root, rel, missing)
-        return True
-    return handle_unplaced_reads(payload, unplaced, facts)
-
-
-def handle_unplaced_reads(payload, unplaced, facts):
-    mode = mode_of(CHECK_ID_UNPLACED)
-    for directory, operand, verb in unplaced:
-        where = place(os.path.join(directory, "unplaced-operand"))
-        if not where:
-            continue
-        root, probe = where
-        missing = remember_reads.unread(facts, root, required_canon(root, probe))
-        if not missing:
-            continue
-        rel_dir = os.path.relpath(directory, root)
-        detail = "verb=%s %s :: %d unread" % (verb, rel_dir, len(missing))
-        if mode == "observe":
-            log(payload, CHECK_ID_UNPLACED, "would-deny", mode, detail)
             return False
-        log(payload, CHECK_ID_UNPLACED, "deny", mode, detail)
-        emit_deny(word_refusals.unplaced_read(
-            CHECK_ID_UNPLACED, tool_of(payload) or "call", root, rel_dir, operand, missing))
+        log(payload, CHECK_ID_READ_FIRST, "deny", mode, detail)
+        refuse(payload, CHECK_ID_READ_FIRST, root, subject, missing)
         return True
     return False
 
 
 def handle_shell_write_gate(payload, key):
-    command = command_of(payload)
-    targets = written_files(command, cwd_of(payload)) if command else []
+    targets = written_files(payload)
     if not targets:
         return False
     facts = remember_reads.facts(key)
@@ -257,7 +178,7 @@ def handle_shell_write_gate(payload, key):
             log(payload, CHECK_ID_GATE_SHELL, "would-deny", mode, detail)
             return False
         log(payload, CHECK_ID_GATE_SHELL, "deny", mode, detail)
-        refuse_unread(payload, CHECK_ID_GATE_SHELL, root, rel, missing)
+        refuse(payload, CHECK_ID_GATE_SHELL, root, rel, missing)
         return True
     return False
 
@@ -278,22 +199,22 @@ def handle_tool_write_gate(payload, key):
         log(payload, CHECK_ID_GATE, "would-deny", mode, detail)
         return False
     log(payload, CHECK_ID_GATE, "deny", mode, detail)
-    refuse_unread(payload, CHECK_ID_GATE, root, rel, missing)
+    refuse(payload, CHECK_ID_GATE, root, rel, missing)
     return True
 
 
 def handle_pre_tool_use(payload, key):
     tool = tool_of(payload)
-    if tool == BASH_TOOL:
+    if tool == "Bash":
         return handle_shell_write_gate(payload, key) or handle_read_first(payload, key)
-    if tool in (READ_TOOL, GREP_TOOL):
+    if tool in READ_TOOLS:
         return handle_read_first(payload, key)
     return handle_tool_write_gate(payload, key)
 
 
 def main():
     payload = read_payload()
-    if payload is None:
+    if payload is None or deferred_to_repo_copy(payload):
         return
     event = coerce_str(payload.get("hook_event_name")) or ""
     if event == "SessionStart":

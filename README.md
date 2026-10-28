@@ -6,7 +6,7 @@ Yann Lauwers' Claude Code skills and plugins. Every machine installs from this r
 skills/<name>/                   # one skill per folder, installed with npx skills
 plugins/yann/                    # agents and hooks, installed as a plugin
 plugins/continuous-compaction/   # the compaction plugin
-repo-hooks/domain-canon/         # source of the domain-canon hook committed in nexus and nutshell; installs nothing
+repo-hooks/vendor-domain-canon   # copies the plugin's domain-canon hook into nexus and nutshell; --check reports drift
 ```
 
 ## A new machine
