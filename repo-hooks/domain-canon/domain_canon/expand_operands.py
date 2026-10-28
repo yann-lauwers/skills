@@ -9,7 +9,10 @@ import hook_shell
 
 PROGRAM_FIRST_VERBS = frozenset(("grep", "egrep", "fgrep", "rg", "awk", "sed", "jq"))
 PROGRAM_FLAGS = ("-e", "-f", "--regexp", "--file", "--expression")
-PATTERN_FLAGS = ("--regexp", "--expression")
+PATTERN_FLAGS = {
+    "grep": ("--regexp",), "egrep": ("--regexp",), "fgrep": ("--regexp",), "rg": ("--regexp",),
+    "sed": ("--expression",), "awk": ("--source",),
+}
 INLINE_CODE_LETTERS = {
     "python": "c", "python3": "c", "sh": "c", "bash": "c", "zsh": "c",
     "node": "ep", "perl": "eE", "ruby": "e",
@@ -254,13 +257,18 @@ def inline_code(segment, verb):
     return None
 
 
-def pattern_values(segment):
+def pattern_values(segment, verb):
+    longs = PATTERN_FLAGS.get(verb)
+    if longs is None:
+        return []
     try:
         tokens = shlex.split(segment, posix=True)
     except ValueError:
         tokens = segment.split()
+    if "--" in tokens:
+        tokens = tokens[:tokens.index("--")]
     return [following for word, following in zip(tokens, tokens[1:])
-            if word in PATTERN_FLAGS or _PATTERN_CLUSTER_RE.fullmatch(word)]
+            if word in longs or _PATTERN_CLUSTER_RE.fullmatch(word)]
 
 
 def _without_word(raw, word):
@@ -276,7 +284,7 @@ def _without_word(raw, word):
 def segment_operands(segment, verb, known, base):
     raw = hook_shell.operands(segment)[:MAX_OPERANDS]
     if verb in PROGRAM_FIRST_VERBS:
-        patterns = pattern_values(segment)
+        patterns = pattern_values(segment, verb)
         if patterns:
             for pattern in patterns:
                 raw = _without_word(raw, pattern)
