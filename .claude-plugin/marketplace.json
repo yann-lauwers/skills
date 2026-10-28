@@ -15,6 +15,11 @@
       "name": "continuous-compaction",
       "source": "./plugins/continuous-compaction",
       "description": "Summarizes a conversation when a turn ends above a fill floor, then continues it. /compaction shows and changes the floor for one conversation or all of them."
+    },
+    {
+      "name": "domain-canon",
+      "source": "./plugins/domain-canon",
+      "description": "Refuses work in a directory until the session has read the GLOSSARY.md and ADRs above it."
     }
   ]
 }

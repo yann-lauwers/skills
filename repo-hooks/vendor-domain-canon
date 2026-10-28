@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# Copy the yann plugin's domain-canon hook into a repo whose teammates don't run the plugin.
+# Copy the domain-canon plugin's hook into a repo whose teammates don't run the plugin.
 # usage: vendor-domain-canon <repo> [--check]   (--check: exit 1 when the repo's copy has drifted)
 set -euo pipefail
-src="$(cd "$(dirname "$0")/../plugins/yann/hooks" && pwd)/domain-canon.py"
+src="$(cd "$(dirname "$0")/../plugins/domain-canon/hooks" && pwd)/domain-canon.py"
 repo="${1:?usage: vendor-domain-canon <repo> [--check]}"
 dest="$repo/.agents/hooks/domain-canon.py"
 if [[ "${2:-}" == "--check" ]]; then

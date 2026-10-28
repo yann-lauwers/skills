@@ -6,7 +6,8 @@ Yann Lauwers' Claude Code skills and plugins. Every machine installs from this r
 skills/<name>/                   # one skill per folder, installed with npx skills
 plugins/yann/                    # agents and hooks, installed as a plugin
 plugins/continuous-compaction/   # the compaction plugin
-repo-hooks/vendor-domain-canon   # copies the plugin's domain-canon hook into nexus and nutshell; --check reports drift
+plugins/domain-canon/            # refuses work in a directory until its GLOSSARY.md and ADRs are read
+repo-hooks/vendor-domain-canon   # copies the domain-canon plugin's hook into nexus and nutshell; --check reports drift
 ```
 
 ## A new machine
@@ -32,6 +33,7 @@ npx skills add vojtaholik/good-css -g -a claude-code -y -s good-css
 claude plugin marketplace add yann-lauwers/skills   # then set "autoUpdate": true on it in ~/.claude/settings.json
 claude plugin install yann@yannlauwers --scope user
 claude plugin install continuous-compaction@yannlauwers --scope user
+claude plugin install domain-canon@yannlauwers --scope user
 ```
 
 Then this host's two jobs:

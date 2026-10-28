@@ -1,0 +1,17 @@
+{
+  "name": "domain-canon",
+  "displayName": "Domain Canon",
+  "description": "Refuses reads, searches, edits and shell commands in a directory until the session has read the canon above it: each GLOSSARY.md and docs/adr/*.md from the repo root down.",
+  "author": {
+    "name": "Yann Lauwers",
+    "url": "https://github.com/yann-lauwers"
+  },
+  "homepage": "https://github.com/yann-lauwers/skills/tree/main/plugins/domain-canon",
+  "license": "MIT",
+  "keywords": [
+    "glossary",
+    "adr",
+    "domain",
+    "hooks"
+  ]
+}
