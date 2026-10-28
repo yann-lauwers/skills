@@ -53,20 +53,25 @@ def emit_deny(reason):
     }}))
 
 
-def grep_touched(payload):
-    where = place(target_path(payload))
-    if not where or not os.path.isfile(where[1]):
-        return []
+def grep_touched(payload, unplaced):
     tool_input = payload.get("tool_input")
     mode = coerce_str(tool_input.get("output_mode")) if isinstance(tool_input, dict) else None
-    return [(where[0], where[1], False, GREP_TOOL,
-             (mode or "files_with_matches") not in GREP_NAME_ONLY_MODES)]
+    opens = (mode or "files_with_matches") not in GREP_NAME_ONLY_MODES
+    path = target_path(payload) or cwd_of(payload)
+    if os.path.isdir(path):
+        if opens and unplaced is not None:
+            unplaced.append((path, coerce_str(tool_input.get("path")) or ".", GREP_TOOL))
+        return []
+    where = place(path)
+    if not where or not os.path.isfile(where[1]):
+        return []
+    return [(where[0], where[1], False, GREP_TOOL, opens)]
 
 
 def touched(payload, unplaced=None):
     tool = tool_of(payload)
     if tool == GREP_TOOL:
-        return grep_touched(payload)
+        return grep_touched(payload, unplaced)
     if tool != BASH_TOOL:
         where = place(target_path(payload))
         return [(where[0], where[1], tool == READ_TOOL, tool, True)] if where else []

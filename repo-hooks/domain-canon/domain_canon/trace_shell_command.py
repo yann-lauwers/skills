@@ -5,8 +5,8 @@ import hook_shell
 import shell_writes
 
 from domain_canon.expand_operands import (
-    COMPOUND_KEYWORD_PREFIX, MAX_OPERANDS, MAX_STATEMENTS, bind_variables, literal_directory,
-    segment_operands,
+    COMPOUND_KEYWORD_PREFIX, MAX_OPERANDS, MAX_STATEMENTS, bind_variables, bindings_certain,
+    literal_directory, segment_operands,
 )
 from domain_canon.find_governing_canon import place
 
@@ -31,6 +31,14 @@ CONTENT_READERS = WHOLE_FILE_READERS | frozenset((
     "python", "python3", "node", "perl", "ruby", "sh", "bash", "zsh", "source", ".",
 ))
 NAME_FEEDING_VERBS = frozenset(("xargs", "parallel"))
+TREE_SEARCH_NAME_ONLY_LETTERS = {
+    "grep": "lLcq", "egrep": "lLcq", "fgrep": "lLcq", "rg": "lcq", "ag": "lLc", "ack": "lLc",
+}
+TREE_SEARCH_NAME_ONLY_FLAGS = frozenset((
+    "--files", "--files-with-matches", "--files-without-match", "--files-without-matches",
+    "--count", "--count-matches", "--quiet",
+))
+GREP_RECURSIVE_FLAGS = frozenset(("--recursive", "--dereference-recursive"))
 GIT_CONTENT_SUBCOMMANDS = frozenset((
     "show", "diff", "blame", "annotate", "grep", "cat-file", "format-patch",
     "difftool", "range-diff", "merge-file",
@@ -78,10 +86,24 @@ def git_opens_and_base(segment, at):
     return False, base
 
 
+def searches_tree(segment, verb):
+    name_only = TREE_SEARCH_NAME_ONLY_LETTERS.get(verb)
+    if name_only is None:
+        return False
+    words = segment.split()
+    shorts = "".join(w[1:] for w in words if w[:1] == "-" and w[1:2] != "-" and w[1:].isalpha())
+    if any(c in shorts for c in name_only) or any(
+            w.split("=", 1)[0] in TREE_SEARCH_NAME_ONLY_FLAGS for w in words):
+        return False
+    return (not verb.endswith("grep") or "r" in shorts or "R" in shorts
+            or any(w in GREP_RECURSIVE_FLAGS for w in words))
+
+
 def reached_files(command, cwd, unplaced=None):
     out, seen, known = [], set(), {}
-    for statement, at in hook_shell.statements_with_cwd(command, cwd)[:MAX_STATEMENTS]:
-        bind_variables(statement, at, known)
+    statements = hook_shell.statements_with_cwd(command, cwd)[:MAX_STATEMENTS]
+    for (statement, at), certain in zip(statements, bindings_certain(command)):
+        bind_variables(statement, at, known, certain)
         piped = hook_shell.has_pipe_or_redirect(statement)
         segments = [COMPOUND_KEYWORD_PREFIX.sub("", s)
                     for s in hook_shell.pipe_segments(statement) or [statement]]
@@ -100,7 +122,11 @@ def reached_files(command, cwd, unplaced=None):
                 opens, base = git_opens_and_base(segment, at)
             else:
                 opens = names_feed_a_reader or verb not in NAME_ONLY_VERBS
-            for operand, paths in segment_operands(segment, verb, known, base):
+            tree = searches_tree(segment, verb) and unplaced is not None
+            operands = segment_operands(segment, verb, known, base)
+            if tree and not operands and base is not None:
+                unplaced.append((base, ".", verb))
+            for operand, paths in operands:
                 if paths is None:
                     if (unplaced is not None and opens and verb in CONTENT_READERS
                             and not any(c.isspace() for c in operand)):
@@ -114,6 +140,8 @@ def reached_files(command, cwd, unplaced=None):
                     else:
                         abs_path = os.path.join(base, path)
                     abs_path = os.path.normpath(abs_path)
+                    if tree and os.path.isdir(abs_path):
+                        unplaced.append((abs_path, operand, verb))
                     if not os.path.isfile(abs_path):
                         continue
                     where = place(abs_path)

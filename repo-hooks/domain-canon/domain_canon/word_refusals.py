@@ -29,13 +29,13 @@ def unplaced_read(check_id, tool, root, rel_dir, operand, missing):
     where = "this repository" if rel_dir == "." else f"{rel_dir}/"
     plural = "s" if len(missing) != 1 else ""
     one_call_each = " one call per line" if len(missing) > MAX_OPERANDS else ""
-    return (f"[{check_id}] `{operand}` names a path this check cannot resolve — a variable "
-            f"set outside this command, a substitution, or a `cd` into one — so it cannot rule "
-            f"out governed code under {where}. {len(missing)} canon file{plural} governing "
+    return (f"[{check_id}] `{operand}` reaches files this check cannot name one by one — a "
+            f"directory searched as a whole, a variable set outside this command, a substitution, "
+            f"or a `cd` into one — so it cannot rule out governed code under {where}. {len(missing)} canon file{plural} governing "
             f"that path {'are' if len(missing) != 1 else 'is'} unread this session:\n"
             + "".join(f"  {c}\n" for c in missing)
             + f"Read them, then retry this {tool}{one_call_each}:\n" + _cat_lines(root, missing)
-            + WHAT_COUNTS + " Spelling the path out literally, or assigning it inside the same "
+            + WHAT_COUNTS + " Naming each file literally, or assigning the path inside the same "
             "command, lets the check place it instead.")
 
 
