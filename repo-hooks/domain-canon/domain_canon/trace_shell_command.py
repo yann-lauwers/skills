@@ -5,8 +5,8 @@ import hook_shell
 import shell_writes
 
 from domain_canon.expand_operands import (
-    _REDIRECT_OPERATOR_RE, _REDIRECT_WORD_RE, COMPOUND_KEYWORD_PREFIX, MAX_OPERANDS, MAX_STATEMENTS,
-    bind_variables, bindings_certain, literal_directory, segment_operands,
+    COMPOUND_KEYWORD_PREFIX, MAX_OPERANDS, MAX_STATEMENTS, bind_variables, bindings_certain,
+    literal_directory, segment_operands,
 )
 from domain_canon.find_governing_canon import place
 
@@ -111,10 +111,11 @@ def git_opens_and_base(segment, at):
 def tree_search(segment, verb):
     if verb not in TREE_SEARCH_VERBS:
         return None
+    unredirected = hook_shell._without_redirections(segment, hook_shell.act_view(segment))
     try:
-        tokens = shlex.split(segment, posix=True)
+        tokens = shlex.split(unredirected, posix=True)
     except ValueError:
-        tokens = segment.split()
+        tokens = unredirected.split()
     grep = verb.endswith("grep")
     no_value = TREE_SEARCH_NO_VALUE_LETTERS.get(verb)
     valued = TREE_SEARCH_VALUED_LETTERS[verb]
@@ -129,9 +130,6 @@ def tree_search(segment, verb):
         if word == "--":
             positional.extend(tokens[i + 1:])
             break
-        if _REDIRECT_WORD_RE.match(word):
-            i += 2 if _REDIRECT_OPERATOR_RE.fullmatch(word) else 1
-            continue
         if word.startswith("--"):
             name, eq, value = word.partition("=")
             names_only = names_only or (certain and name in TREE_SEARCH_NAME_ONLY_FLAGS)
