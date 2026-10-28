@@ -41,6 +41,7 @@ _SCOPE_CLOSERS = {"fi": "if", "esac": "case", "done": "do", ")": "(", "}": "{"}
 
 def shell_words(text):
     words, value, expands, globs, tilde, quote, started = {}, [], False, False, False, None, False
+    tilde_prefix = False
     i = 0
     while i < len(text):
         ch = text[i]
@@ -61,10 +62,14 @@ def shell_words(text):
         elif ch.isspace():
             if started:
                 _merge_word(words, "".join(value), (expands, globs, tilde))
-            value, expands, globs, tilde, started = [], False, False, False, False
+            value, expands, globs, tilde, started, tilde_prefix = [], False, False, False, False, False
         else:
-            if not started and ch == "~":
-                tilde = True
+            if (not started and ch == "~") or (ch == "~" and value[-1:] == ["="]):
+                tilde = tilde_prefix = True
+            elif tilde_prefix and ch == "/":
+                tilde_prefix = False
+            elif tilde_prefix and ch in "'\"$`\\":
+                tilde = tilde_prefix = False
             started = True
             if ch in "'\"":
                 quote = ch
@@ -74,7 +79,6 @@ def shell_words(text):
             else:
                 expands = expands or ch in "$`"
                 globs = globs or ch in "*?["
-                tilde = tilde or (ch == "~" and value[-1:] == ["="])
                 value.append(ch)
         if quote:
             started = True
@@ -272,12 +276,14 @@ def _without_word(raw, word):
 def segment_operands(segment, verb, known, base):
     raw = hook_shell.operands(segment)[:MAX_OPERANDS]
     if verb in PROGRAM_FIRST_VERBS:
-        if raw and not any(
+        patterns = pattern_values(segment)
+        if patterns:
+            for pattern in patterns:
+                raw = _without_word(raw, pattern)
+        elif raw and not any(
                 w in PROGRAM_FLAGS or w.startswith(("--regexp=", "--file=", "--expression="))
                 for w in segment.split()):
             raw = raw[1:]
-        for pattern in pattern_values(segment):
-            raw = _without_word(raw, pattern)
     else:
         raw = _without_word(raw, inline_code(segment, verb))
     live = shell_words(segment)
