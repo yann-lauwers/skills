@@ -37,6 +37,7 @@ _REDIRECT_OPERATOR_RE = re.compile(r"\d*[<>]+[|&]?")
 _NAME_RE = re.compile(r"[A-Za-z_][A-Za-z0-9_]*")
 _SHORT_FLAGS_RE = re.compile(r"-[A-Za-z]+")
 _PATTERN_CLUSTER_RE = re.compile(r"-[A-Za-z]*e")
+_PROGRAM_FILE_CLUSTER_RE = re.compile(r"-[A-Za-z]*f[A-Za-z]*")
 _NAMED_VARIABLE_RE = re.compile(r"^[({]*([A-Za-z_][A-Za-z0-9_]*)(?:\[|\+?=|[)};]*$)")
 _SCOPE_RE = re.compile(r"\$\{|(?<![^\s;&|()])(?:if|fi|case|esac|do|done)(?![^\s;&|()])|[(){}]")
 _SCOPE_CLOSERS = {"fi": "if", "esac": "case", "done": "do", ")": "(", "}": "{"}
@@ -293,9 +294,9 @@ def segment_operands(segment, verb, known, base):
             for pattern in patterns:
                 raw = _without_word(raw, pattern)
         elif raw and not any(
-                w in PROGRAM_FLAGS or w.startswith(("--regexp=", "--file=", "--expression="))
+                w in PROGRAM_FLAGS or w.startswith(("--regexp=", "--file", "--expression=", "--from-file", "--source"))
                 or (verb in PATTERN_FLAGS and _PATTERN_CLUSTER_RE.fullmatch(w))
-                for w in segment.split()):
+                or _PROGRAM_FILE_CLUSTER_RE.fullmatch(w) for w in segment.split()):
             raw = raw[1:]
     else:
         raw = _without_word(raw, inline_code(segment, verb))
