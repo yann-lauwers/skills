@@ -25,6 +25,7 @@ ADR_DIR = os.path.join("docs", "adr")
 MAX_MAP_CHARS = 9000
 PATHS_PER_CAT = 40
 STATE_DIR = os.environ.get("CANON_STATE_DIR") or os.path.expanduser("~/.claude/state/domain-canon")
+PATCH_FILE_LINES = ("*** Add File:", "*** Update File:", "*** Delete File:", "*** Move to:")
 REPO_COPIES = (os.path.join(".agents", "hooks", "domain-canon.py"),
                os.path.join(".claude", "hooks", "domain-canon.py"))
 
@@ -93,21 +94,28 @@ def words(statement):
         return statement.split()
 
 
+def exact_path(word, here):
+    return None if any(c in word for c in EXPANSION_CHARS) else literal_path(word, here)
+
+
 def reads_only_canon(statement, here):
     if hook_shell.command_word(statement) not in WHOLE_FILE_READERS:
         return False
-    paths = [literal_path(w, here) for w in hook_shell.operands(statement)]
+    paths = [exact_path(w, here) for w in hook_shell.operands(statement)]
     return bool(paths) and all(p and os.path.isfile(p) and is_canon(p) for p in paths)
 
 
 def touched_paths(payload, tool, tool_input, cwd):
+    command = text(tool_input.get("command")) or text(tool_input.get("input")) or ""
+    paths = [literal_path(line.split(":", 1)[1].strip(), cwd) for line in command.splitlines()
+             if line.strip().startswith(PATCH_FILE_LINES)]
     if tool in FILE_TOOLS:
-        return [literal_path(text(tool_input.get("file_path")) or text(tool_input.get("notebook_path")) or "", cwd)]
+        return paths + [literal_path(text(tool_input.get("file_path")) or text(tool_input.get("notebook_path")) or "", cwd)]
     if tool in SEARCH_TOOLS:
-        return [literal_path(text(tool_input.get("path")) or cwd, cwd)]
-    command = text(tool_input.get("command")) if tool == "Bash" else None
-    paths = []
-    for statement, at in hook_shell.statements_with_cwd(command or "", cwd):
+        return paths + [literal_path(text(tool_input.get("path")) or cwd, cwd)]
+    if tool != "Bash":
+        return paths
+    for statement, at in hook_shell.statements_with_cwd(command, cwd):
         here = at or cwd
         if reads_only_canon(statement, here):
             continue
@@ -166,7 +174,7 @@ def credited_paths(tool, tool_input, cwd):
         whole = tool_input.get("offset") is None and tool_input.get("limit") is None
         return [literal_path(text(tool_input.get("file_path")) or "", cwd)] if whole else []
     command = text(tool_input.get("command")) if tool == "Bash" else None
-    return [literal_path(w, at) for statement, at in hook_shell.statements_with_cwd(command or "", cwd)
+    return [exact_path(w, at) for statement, at in hook_shell.statements_with_cwd(command or "", cwd)
             if hook_shell.command_word(statement) in WHOLE_FILE_READERS and not hook_shell.has_pipe_or_redirect(statement)
             for w in hook_shell.operands(statement)]
 
@@ -207,23 +215,22 @@ def inject_map(cwd, session):
 
 def stands_down(cwd):
     root = repo_root(cwd)
-    here = os.path.realpath(__file__)
+    if not root:
+        return False
     try:
-        with open(os.path.join(root or "", ".claude", "settings.json")) as fh:
+        here = os.path.realpath(__file__)
+        with open(os.path.join(root, ".claude", "settings.json")) as fh:
             groups = json.load(fh)["hooks"]["PreToolUse"]
         commands = [h["command"] for g in groups if "Bash" in g.get("matcher", "") and "Read" in g.get("matcher", "")
                     for h in g.get("hooks", []) if isinstance(h.get("command"), str)]
-    except Exception:
-        return False
-    for copy in REPO_COPIES:
-        path = os.path.join(root, copy)
-        if os.path.realpath(path) != here and any("/" + copy in c for c in commands):
-            try:
+        for copy in REPO_COPIES:
+            path = os.path.join(root, copy)
+            if os.path.realpath(path) != here and any("/" + copy in c for c in commands):
                 with open(path, "rb") as theirs, open(here, "rb") as ours:
                     if theirs.read() == ours.read():
                         return True
-            except OSError:
-                pass
+    except Exception:
+        return False
     return False
 
 
