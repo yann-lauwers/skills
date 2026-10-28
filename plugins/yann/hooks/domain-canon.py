@@ -71,10 +71,14 @@ def _same_bytes(a, b):
 def _wired(root, copy):
     try:
         with open(os.path.join(root, ".claude", "settings.json")) as fh:
-            hooks = json.load(fh).get("hooks", {})
-    except (OSError, ValueError, AttributeError):
+            groups = json.load(fh)["hooks"]["PreToolUse"]
+        return any(
+            isinstance(g, dict) and all(t in str(g.get("matcher", "")) for t in ("Bash", "Read"))
+            and any(isinstance(h, dict) and isinstance(h.get("command"), str)
+                    and ("/" + copy) in h["command"] for h in g.get("hooks", []))
+            for g in groups)
+    except Exception:
         return False
-    return any(copy in h.get("command", "") for g in hooks.get("PreToolUse", []) for h in g.get("hooks", []))
 
 
 def handle_session_start(payload):
