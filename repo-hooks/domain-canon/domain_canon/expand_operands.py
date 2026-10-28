@@ -294,7 +294,8 @@ def segment_operands(segment, verb, known, base):
                 raw = _without_word(raw, pattern)
         elif raw and not any(
                 w in PROGRAM_FLAGS or w.startswith(("--regexp=", "--file=", "--expression="))
-                or _PATTERN_CLUSTER_RE.fullmatch(w) for w in segment.split()):
+                or (verb in PATTERN_FLAGS and _PATTERN_CLUSTER_RE.fullmatch(w))
+                for w in segment.split()):
             raw = raw[1:]
     else:
         raw = _without_word(raw, inline_code(segment, verb))
