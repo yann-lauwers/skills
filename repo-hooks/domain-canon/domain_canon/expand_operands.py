@@ -265,10 +265,14 @@ def pattern_values(segment, verb):
         tokens = shlex.split(segment, posix=True)
     except ValueError:
         tokens = segment.split()
-    if "--" in tokens:
-        tokens = tokens[:tokens.index("--")]
-    return [following for word, following in zip(tokens, tokens[1:])
-            if word in longs or _PATTERN_CLUSTER_RE.fullmatch(word)]
+    values, i = [], 0
+    while i < len(tokens) and tokens[i] != "--":
+        if (tokens[i] in longs or _PATTERN_CLUSTER_RE.fullmatch(tokens[i])) and i + 1 < len(tokens):
+            values.append(tokens[i + 1])
+            i += 2
+        else:
+            i += 1
+    return values
 
 
 def _without_word(raw, word):
@@ -290,7 +294,7 @@ def segment_operands(segment, verb, known, base):
                 raw = _without_word(raw, pattern)
         elif raw and not any(
                 w in PROGRAM_FLAGS or w.startswith(("--regexp=", "--file=", "--expression="))
-                for w in segment.split()):
+                or _PATTERN_CLUSTER_RE.fullmatch(w) for w in segment.split()):
             raw = raw[1:]
     else:
         raw = _without_word(raw, inline_code(segment, verb))
