@@ -8,7 +8,7 @@ Rows carry the id and where its source lives; predicate, rollout and tests belon
 | `frontend-skill-unloaded` | `.claude/hooks/frontend-skill-gate.mjs` | NexusGPT/nexus |
 | (none minted) | `.claude/skills/sentinel/sentinel-gate.mjs` | NexusGPT/nexus |
 | `canon-read-first` | `.claude/hooks/domain-canon.py` | NexusGPT/nexus, NexusGPT/nutshell, yann-lauwers/athlete-os, yann-lauwers/lapepite, yann-lauwers/les-gites-du-haras, yann-lauwers/personal-ops |
-| `canon-unplaced-read` | `.claude/hooks/domain-canon.py` | yann-lauwers/athlete-os, yann-lauwers/lapepite, yann-lauwers/les-gites-du-haras, yann-lauwers/personal-ops |
+| `canon-unplaced-read` | `.claude/hooks/domain-canon.py` | NexusGPT/nexus, NexusGPT/nutshell, yann-lauwers/athlete-os, yann-lauwers/lapepite, yann-lauwers/les-gites-du-haras, yann-lauwers/personal-ops |
 | `canon-read-gate` | `.claude/hooks/domain-canon.py` | NexusGPT/nexus, NexusGPT/nutshell, yann-lauwers/athlete-os, yann-lauwers/lapepite, yann-lauwers/les-gites-du-haras, yann-lauwers/personal-ops |
 | `canon-read-gate-shell` | `.claude/hooks/domain-canon.py` | NexusGPT/nexus, NexusGPT/nutshell, yann-lauwers/athlete-os, yann-lauwers/lapepite, yann-lauwers/les-gites-du-haras, yann-lauwers/personal-ops |
 | `canon-read-reminder` | `.claude/hooks/domain-canon.py` | NexusGPT/nexus, NexusGPT/nutshell, yann-lauwers/athlete-os, yann-lauwers/lapepite, yann-lauwers/les-gites-du-haras, yann-lauwers/personal-ops |
