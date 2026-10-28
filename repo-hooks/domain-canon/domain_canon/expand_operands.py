@@ -14,6 +14,11 @@ INLINE_CODE_LETTERS = {
     "node": "ep", "perl": "eE", "ruby": "e",
 }
 INLINE_CODE_LONG_FLAGS = {"node": ("--eval", "--print")}
+INLINE_CODE_BUNDLE_LETTERS = {
+    "python": "bBdEhiIOqsSuvx", "python3": "bBdEhiIOqsSuvx",
+    "sh": "abefhkmnptuvxBCHPilrs", "bash": "abefhkmnptuvxBCHPilrs", "zsh": "abefhkmnptuvxBCHPilrs",
+    "node": "", "perl": "aclnpsTtuUwWX", "ruby": "acdlnpswvy",
+}
 SHELL_SCOPE_VERBS = frozenset(("eval", "source", "."))
 STABLE_ENV = ("HOME", "USER", "TMPDIR")
 MAX_STATEMENTS = 20
@@ -232,7 +237,8 @@ def inline_code(segment, verb):
         tokens = segment.split()
     longs = INLINE_CODE_LONG_FLAGS.get(verb, ())
     for word, following in zip(tokens, tokens[1:]):
-        if word in longs or (_SHORT_FLAGS_RE.fullmatch(word) and word[-1] in letters):
+        if word in longs or (_SHORT_FLAGS_RE.fullmatch(word) and word[-1] in letters
+                             and all(c in INLINE_CODE_BUNDLE_LETTERS[verb] for c in word[1:-1])):
             return following
     return None
 

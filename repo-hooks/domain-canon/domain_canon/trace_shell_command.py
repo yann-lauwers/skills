@@ -39,6 +39,16 @@ TREE_SEARCH_NAME_ONLY_FLAGS = frozenset((
     "--count", "--count-matches", "--quiet",
 ))
 GREP_RECURSIVE_FLAGS = frozenset(("--recursive", "--dereference-recursive"))
+TREE_SEARCH_VALUED_LETTERS = {
+    "grep": "efmABCDd", "egrep": "efmABCDd", "fgrep": "efmABCDd",
+    "rg": "efgtTmABCEjMr", "ag": "GgmABC", "ack": "gmABC",
+}
+TREE_SEARCH_VALUED_FLAGS = frozenset((
+    "--regexp", "--file", "--glob", "--iglob", "--type", "--type-not", "--max-count",
+    "--after-context", "--before-context", "--context", "--encoding", "--threads",
+    "--max-columns", "--replace", "--directories", "--devices", "--include", "--exclude",
+    "--exclude-dir", "--ignore-dir", "--label", "--color", "--colour",
+))
 GIT_CONTENT_SUBCOMMANDS = frozenset((
     "show", "diff", "blame", "annotate", "grep", "cat-file", "format-patch",
     "difftool", "range-diff", "merge-file",
@@ -90,13 +100,41 @@ def searches_tree(segment, verb):
     name_only = TREE_SEARCH_NAME_ONLY_LETTERS.get(verb)
     if name_only is None:
         return False
-    words = segment.split()
-    shorts = "".join(w[1:] for w in words if w[:1] == "-" and w[1:2] != "-" and w[1:].isalpha())
-    if any(c in shorts for c in name_only) or any(
-            w.split("=", 1)[0] in TREE_SEARCH_NAME_ONLY_FLAGS for w in words):
+    try:
+        tokens = shlex.split(segment, posix=True)
+    except ValueError:
+        tokens = segment.split()
+    valued = TREE_SEARCH_VALUED_LETTERS[verb]
+    start = next((k + 1 for k, w in enumerate(tokens) if w.rsplit("/", 1)[-1] == verb), len(tokens))
+    letters, recursive, i = "", not verb.endswith("grep"), start
+    while i < len(tokens):
+        word = tokens[i]
+        if word == "--":
+            break
+        if word.startswith("--"):
+            name, eq, value = word.partition("=")
+            if name in TREE_SEARCH_NAME_ONLY_FLAGS:
+                return False
+            if name in TREE_SEARCH_VALUED_FLAGS and not eq:
+                i += 1
+                value = tokens[i] if i < len(tokens) else ""
+            recursive = recursive or name in GREP_RECURSIVE_FLAGS or (
+                name == "--directories" and value == "recurse")
+        elif word.startswith("-") and len(word) > 1:
+            for k, c in enumerate(word[1:], 2):
+                if c not in valued:
+                    letters += c
+                    continue
+                value = word[k:]
+                if not value:
+                    i += 1
+                    value = tokens[i] if i < len(tokens) else ""
+                recursive = recursive or (c == "d" and verb.endswith("grep") and value == "recurse")
+                break
+        i += 1
+    if any(c in name_only for c in letters):
         return False
-    return (not verb.endswith("grep") or "r" in shorts or "R" in shorts
-            or any(w in GREP_RECURSIVE_FLAGS for w in words))
+    return recursive or "r" in letters or "R" in letters
 
 
 def reached_files(command, cwd, unplaced=None):
@@ -124,7 +162,8 @@ def reached_files(command, cwd, unplaced=None):
                 opens = names_feed_a_reader or verb not in NAME_ONLY_VERBS
             tree = searches_tree(segment, verb) and unplaced is not None
             operands = segment_operands(segment, verb, known, base)
-            if tree and not operands and base is not None:
+            if tree and base is not None and not any(
+                    os.path.exists(os.path.join(base, p)) for _o, ps in operands for p in ps or ()):
                 unplaced.append((base, ".", verb))
             for operand, paths in operands:
                 if paths is None:
