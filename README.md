@@ -7,7 +7,6 @@ skills/<name>/                   # one skill per folder, installed with npx skil
 plugins/yann/                    # agents and hooks, installed as a plugin
 plugins/continuous-compaction/   # the compaction plugin
 plugins/domain-canon/            # refuses work in a directory until its GLOSSARY.md and ADRs are read
-repo-hooks/vendor-domain-canon   # copies the domain-canon plugin's hook into nexus and nutshell; --check reports drift
 ```
 
 ## A new machine

@@ -26,8 +26,6 @@ MAX_MAP_CHARS = 9000
 PATHS_PER_CAT = 40
 STATE_DIR = os.environ.get("CANON_STATE_DIR") or os.path.expanduser("~/.claude/state/domain-canon")
 PATCH_FILE_LINES = ("*** Add File:", "*** Update File:", "*** Delete File:", "*** Move to:")
-REPO_COPIES = (os.path.join(".agents", "hooks", "domain-canon.py"),
-               os.path.join(".claude", "hooks", "domain-canon.py"))
 
 
 def text(value):
@@ -213,27 +211,6 @@ def inject_map(cwd, session):
                       f"{MAP_FILE}, at the root of this repository, in full:\n\n{body[:MAX_MAP_CHARS]}{note}"}}))
 
 
-def stands_down(cwd):
-    root = repo_root(cwd)
-    if not root:
-        return False
-    try:
-        here = os.path.realpath(__file__)
-        with open(os.path.join(root, ".claude", "settings.json")) as fh:
-            groups = json.load(fh)["hooks"]["PreToolUse"]
-        commands = [h["command"] for g in groups if "Bash" in g.get("matcher", "") and "Read" in g.get("matcher", "")
-                    for h in g.get("hooks", []) if isinstance(h.get("command"), str)]
-        for copy in REPO_COPIES:
-            path = os.path.join(root, copy)
-            if os.path.realpath(path) != here and any("/" + copy in c for c in commands):
-                with open(path, "rb") as theirs, open(here, "rb") as ours:
-                    if theirs.read() == ours.read():
-                        return True
-    except Exception:
-        return False
-    return False
-
-
 def main():
     try:
         payload = json.loads(sys.stdin.read())
@@ -242,8 +219,6 @@ def main():
     if not isinstance(payload, dict):
         return
     cwd = text(payload.get("cwd")) or os.getcwd()
-    if stands_down(cwd):
-        return
     event = text(payload.get("hook_event_name"))
     session = text(payload.get("session_id")) or "unknown"
     tool = text(payload.get("tool_name")) or ""
