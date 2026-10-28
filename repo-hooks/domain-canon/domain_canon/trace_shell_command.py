@@ -5,8 +5,8 @@ import hook_shell
 import shell_writes
 
 from domain_canon.expand_operands import (
-    COMPOUND_KEYWORD_PREFIX, MAX_OPERANDS, MAX_STATEMENTS, bind_variables, bindings_certain,
-    literal_directory, segment_operands,
+    _REDIRECT_OPERATOR_RE, _REDIRECT_WORD_RE, COMPOUND_KEYWORD_PREFIX, MAX_OPERANDS, MAX_STATEMENTS,
+    bind_variables, bindings_certain, literal_directory, segment_operands,
 )
 from domain_canon.find_governing_canon import place
 
@@ -129,6 +129,9 @@ def tree_search(segment, verb):
         if word == "--":
             positional.extend(tokens[i + 1:])
             break
+        if _REDIRECT_WORD_RE.match(word):
+            i += 2 if _REDIRECT_OPERATOR_RE.fullmatch(word) else 1
+            continue
         if word.startswith("--"):
             name, eq, value = word.partition("=")
             names_only = names_only or (certain and name in TREE_SEARCH_NAME_ONLY_FLAGS)
@@ -157,7 +160,7 @@ def tree_search(segment, verb):
         i += 1
     if names_only or not recursive:
         return None
-    return bool(positional[0 if pattern_given else 1:])
+    return positional[0 if pattern_given else 1:], certain
 
 
 def reached_files(command, cwd, unplaced=None):
@@ -185,7 +188,8 @@ def reached_files(command, cwd, unplaced=None):
                 opens = names_feed_a_reader or verb not in NAME_ONLY_VERBS
             tree = tree_search(segment, verb) if unplaced is not None else None
             operands = segment_operands(segment, verb, known, base)
-            if tree is False and base is not None:
+            if tree is not None and base is not None and (not tree[1] or not any(
+                    os.path.exists(os.path.join(base, os.path.expanduser(p))) for p in tree[0])):
                 unplaced.append((base, ".", verb))
             for operand, paths in operands:
                 if paths is None:
