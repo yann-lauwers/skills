@@ -31,24 +31,36 @@ CONTENT_READERS = WHOLE_FILE_READERS | frozenset((
     "python", "python3", "node", "perl", "ruby", "sh", "bash", "zsh", "source", ".",
 ))
 NAME_FEEDING_VERBS = frozenset(("xargs", "parallel"))
-TREE_SEARCH_NAME_ONLY_LETTERS = {
-    "grep": "lLcq", "egrep": "lLcq", "fgrep": "lLcq", "rg": "lcq", "ag": "lLc", "ack": "lLc",
+TREE_SEARCH_VERBS = frozenset(("grep", "egrep", "fgrep", "rg", "ag", "ack"))
+TREE_SEARCH_NO_VALUE_LETTERS = {
+    "grep": "abcEFGHhiIlLnoqrRsTUuvVwxyzZ", "egrep": "abcEFGHhiIlLnoqrRsTUuvVwxyzZ",
+    "fgrep": "abcEFGHhiIlLnoqrRsTUuvVwxyzZ", "rg": "abcFHhiIlLnNopqsSuUvVwxz",
 }
-TREE_SEARCH_NAME_ONLY_FLAGS = frozenset((
-    "--files", "--files-with-matches", "--files-without-match", "--files-without-matches",
-    "--count", "--count-matches", "--quiet",
-))
-GREP_RECURSIVE_FLAGS = frozenset(("--recursive", "--dereference-recursive"))
 TREE_SEARCH_VALUED_LETTERS = {
     "grep": "efmABCDd", "egrep": "efmABCDd", "fgrep": "efmABCDd",
-    "rg": "efgtTmABCEjMr", "ag": "GgmABC", "ack": "gmABC",
+    "rg": "defgtTmABCEjMr", "ag": "GgmABCp", "ack": "gmABC",
 }
+TREE_SEARCH_NAME_ONLY_LETTERS = {"grep": "lLcq", "egrep": "lLcq", "fgrep": "lLcq", "rg": "lcq"}
+TREE_SEARCH_NAME_ONLY_FLAGS = frozenset((
+    "--files", "--files-with-matches", "--files-without-match", "--files-without-matches",
+    "--count", "--count-matches", "--quiet", "--silent",
+))
+TREE_SEARCH_NO_VALUE_FLAGS = TREE_SEARCH_NAME_ONLY_FLAGS | frozenset((
+    "--line-number", "--ignore-case", "--smart-case", "--case-sensitive", "--no-heading",
+    "--heading", "--hidden", "--no-ignore", "--fixed-strings", "--word-regexp", "--line-regexp",
+    "--with-filename", "--no-filename", "--follow", "--null", "--invert-match",
+    "--only-matching", "--recursive", "--dereference-recursive", "--no-messages", "--text",
+    "--extended-regexp", "--perl-regexp", "--basic-regexp", "--byte-offset", "--column",
+    "--vimgrep", "--json", "--multiline", "--pcre2", "--unrestricted", "--search-zip",
+))
 TREE_SEARCH_VALUED_FLAGS = frozenset((
     "--regexp", "--file", "--glob", "--iglob", "--type", "--type-not", "--max-count",
-    "--after-context", "--before-context", "--context", "--encoding", "--threads",
-    "--max-columns", "--replace", "--directories", "--devices", "--include", "--exclude",
-    "--exclude-dir", "--ignore-dir", "--label", "--color", "--colour",
+    "--after-context", "--before-context", "--encoding", "--threads", "--max-columns",
+    "--replace", "--directories", "--devices", "--include", "--exclude", "--exclude-dir",
+    "--ignore-dir", "--label", "--max-depth", "--sort", "--sortr", "--pre", "--pre-glob",
 ))
+TREE_SEARCH_PATTERN_SOURCES = ("e", "f", "--regexp", "--file")
+GREP_RECURSIVE_FLAGS = ("--recursive", "--dereference-recursive")
 GIT_CONTENT_SUBCOMMANDS = frozenset((
     "show", "diff", "blame", "annotate", "grep", "cat-file", "format-patch",
     "difftool", "range-diff", "merge-file",
@@ -96,45 +108,56 @@ def git_opens_and_base(segment, at):
     return False, base
 
 
-def searches_tree(segment, verb):
-    name_only = TREE_SEARCH_NAME_ONLY_LETTERS.get(verb)
-    if name_only is None:
-        return False
+def tree_search(segment, verb):
+    if verb not in TREE_SEARCH_VERBS:
+        return None
     try:
         tokens = shlex.split(segment, posix=True)
     except ValueError:
         tokens = segment.split()
+    grep = verb.endswith("grep")
+    no_value = TREE_SEARCH_NO_VALUE_LETTERS.get(verb)
     valued = TREE_SEARCH_VALUED_LETTERS[verb]
+    name_only_letters = TREE_SEARCH_NAME_ONLY_LETTERS.get(verb, "")
     start = next((k + 1 for k, w in enumerate(tokens) if w.rsplit("/", 1)[-1] == verb), len(tokens))
-    letters, recursive, i = "", not verb.endswith("grep"), start
+    recursive = not grep or any(w[:1] == "-" and w[1:2] != "-" and ("r" in w or "R" in w)
+                                for w in tokens[start:])
+    certain, names_only, pattern_given, positional = no_value is not None, False, False, []
+    i = start
     while i < len(tokens):
         word = tokens[i]
         if word == "--":
+            positional.extend(tokens[i + 1:])
             break
         if word.startswith("--"):
             name, eq, value = word.partition("=")
-            if name in TREE_SEARCH_NAME_ONLY_FLAGS:
-                return False
-            if name in TREE_SEARCH_VALUED_FLAGS and not eq:
+            names_only = names_only or (certain and name in TREE_SEARCH_NAME_ONLY_FLAGS)
+            pattern_given = pattern_given or name in TREE_SEARCH_PATTERN_SOURCES
+            if not eq and name not in TREE_SEARCH_NO_VALUE_FLAGS:
+                certain = certain and name in TREE_SEARCH_VALUED_FLAGS
                 i += 1
                 value = tokens[i] if i < len(tokens) else ""
-            recursive = recursive or name in GREP_RECURSIVE_FLAGS or (
-                name == "--directories" and value == "recurse")
+            recursive = recursive or (len(name) > 3 and (
+                any(f.startswith(name) for f in GREP_RECURSIVE_FLAGS)
+                or ("--directories".startswith(name) and "recurse".startswith(value or "-"))))
         elif word.startswith("-") and len(word) > 1:
             for k, c in enumerate(word[1:], 2):
-                if c not in valued:
-                    letters += c
-                    continue
-                value = word[k:]
-                if not value:
-                    i += 1
-                    value = tokens[i] if i < len(tokens) else ""
-                recursive = recursive or (c == "d" and verb.endswith("grep") and value == "recurse")
-                break
+                if c in valued:
+                    pattern_given = pattern_given or c in TREE_SEARCH_PATTERN_SOURCES
+                    value = word[k:]
+                    if not value:
+                        i += 1
+                        value = tokens[i] if i < len(tokens) else ""
+                    recursive = recursive or (grep and c == "d" and "recurse".startswith(value or "-"))
+                    break
+                certain = certain and c in no_value
+                names_only = names_only or (certain and c in name_only_letters)
+        else:
+            positional.append(word)
         i += 1
-    if any(c in name_only for c in letters):
-        return False
-    return recursive or "r" in letters or "R" in letters
+    if names_only or not recursive:
+        return None
+    return bool(positional[0 if pattern_given else 1:])
 
 
 def reached_files(command, cwd, unplaced=None):
@@ -160,10 +183,9 @@ def reached_files(command, cwd, unplaced=None):
                 opens, base = git_opens_and_base(segment, at)
             else:
                 opens = names_feed_a_reader or verb not in NAME_ONLY_VERBS
-            tree = searches_tree(segment, verb) and unplaced is not None
+            tree = tree_search(segment, verb) if unplaced is not None else None
             operands = segment_operands(segment, verb, known, base)
-            if tree and base is not None and not any(
-                    os.path.exists(os.path.join(base, p)) for _o, ps in operands for p in ps or ()):
+            if tree is False and base is not None:
                 unplaced.append((base, ".", verb))
             for operand, paths in operands:
                 if paths is None:
@@ -179,7 +201,7 @@ def reached_files(command, cwd, unplaced=None):
                     else:
                         abs_path = os.path.join(base, path)
                     abs_path = os.path.normpath(abs_path)
-                    if tree and os.path.isdir(abs_path):
+                    if tree is not None and os.path.isdir(abs_path):
                         unplaced.append((abs_path, operand, verb))
                     if not os.path.isfile(abs_path):
                         continue
