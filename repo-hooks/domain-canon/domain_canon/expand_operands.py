@@ -9,6 +9,7 @@ import hook_shell
 
 PROGRAM_FIRST_VERBS = frozenset(("grep", "egrep", "fgrep", "rg", "awk", "sed", "jq"))
 PROGRAM_FLAGS = ("-e", "-f", "--regexp", "--file", "--expression")
+PATTERN_FLAGS = ("--regexp", "--expression")
 INLINE_CODE_LETTERS = {
     "python": "c", "python3": "c", "sh": "c", "bash": "c", "zsh": "c",
     "node": "ep", "perl": "eE", "ruby": "e",
@@ -32,6 +33,7 @@ _REDIRECT_WORD_RE = re.compile(r"^\d*[<>]")
 _REDIRECT_OPERATOR_RE = re.compile(r"\d*[<>]+[|&]?")
 _NAME_RE = re.compile(r"[A-Za-z_][A-Za-z0-9_]*")
 _SHORT_FLAGS_RE = re.compile(r"-[A-Za-z]+")
+_PATTERN_CLUSTER_RE = re.compile(r"-[A-Za-z]*e")
 _NAMED_VARIABLE_RE = re.compile(r"^[({]*([A-Za-z_][A-Za-z0-9_]*)(?:\[|\+?=|[)};]*$)")
 _SCOPE_RE = re.compile(r"\$\{|(?<![^\s;&|()])(?:if|fi|case|esac|do|done)(?![^\s;&|()])|[(){}]")
 _SCOPE_CLOSERS = {"fi": "if", "esac": "case", "done": "do", ")": "(", "}": "{"}
@@ -72,6 +74,7 @@ def shell_words(text):
             else:
                 expands = expands or ch in "$`"
                 globs = globs or ch in "*?["
+                tilde = tilde or (ch == "~" and value[-1:] == ["="])
                 value.append(ch)
         if quote:
             started = True
@@ -199,8 +202,10 @@ def bind_variables(statement, at, known, certain=True):
         return
     if words[0] == "for" and len(words) >= 3 and words[2] == "in":
         values = []
-        for value, (expands, globs, _tilde) in shell_words(" ".join(words[3:])).items():
+        for value, (expands, globs, tilde) in shell_words(" ".join(words[3:])).items():
             expanded = expand_word(value, known) if expands else [value]
+            if expanded is not None and tilde:
+                expanded = [os.path.expanduser(v) for v in expanded]
             if expanded is not None and globs:
                 expanded = (None if at is None else
                             [m for v in expanded for m in (glob_operand(v, at) or [None])])
@@ -222,8 +227,10 @@ def bind_variables(statement, at, known, certain=True):
             if m:
                 known[m.group(1)] = None
         return
-    for m, (expands, _globs, _tilde) in assignments:
+    for m, (expands, _globs, tilde) in assignments:
         value = expand_word(m.group(2), known) if expands else [m.group(2)]
+        if value is not None and tilde:
+            value = [os.path.expanduser(v) for v in value]
         known[m.group(1)] = value if value is not None and len(value) == 1 else None
 
 
@@ -243,19 +250,36 @@ def inline_code(segment, verb):
     return None
 
 
+def pattern_values(segment):
+    try:
+        tokens = shlex.split(segment, posix=True)
+    except ValueError:
+        tokens = segment.split()
+    return [following for word, following in zip(tokens, tokens[1:])
+            if word in PATTERN_FLAGS or _PATTERN_CLUSTER_RE.fullmatch(word)]
+
+
+def _without_word(raw, word):
+    if word is None:
+        return raw
+    trimmed = word.lstrip("({").rstrip(")};").strip("'\"")
+    for i, operand in enumerate(raw):
+        if operand in (word, trimmed):
+            return raw[:i] + raw[i + 1:]
+    return raw
+
+
 def segment_operands(segment, verb, known, base):
     raw = hook_shell.operands(segment)[:MAX_OPERANDS]
-    if verb in PROGRAM_FIRST_VERBS and raw and not any(
-            w in PROGRAM_FLAGS or w.startswith(("--regexp=", "--file=", "--expression="))
-            for w in segment.split()):
-        raw = raw[1:]
+    if verb in PROGRAM_FIRST_VERBS:
+        if raw and not any(
+                w in PROGRAM_FLAGS or w.startswith(("--regexp=", "--file=", "--expression="))
+                for w in segment.split()):
+            raw = raw[1:]
+        for pattern in pattern_values(segment):
+            raw = _without_word(raw, pattern)
     else:
-        code = inline_code(segment, verb)
-        trimmed = code.lstrip("({").rstrip(")};").strip("'\"") if code is not None else None
-        for i, operand in enumerate(raw):
-            if operand in (code, trimmed):
-                raw = raw[:i] + raw[i + 1:]
-                break
+        raw = _without_word(raw, inline_code(segment, verb))
     live = shell_words(segment)
     out, target_next = [], False
     for operand in raw:
