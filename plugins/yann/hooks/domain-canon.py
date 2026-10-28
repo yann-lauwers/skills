@@ -56,8 +56,25 @@ def deferred_to_repo_copy(payload):
     if not root:
         return False
     here = os.path.realpath(__file__)
-    return any(os.path.isfile(os.path.join(root, c)) and os.path.realpath(os.path.join(root, c)) != here
-               for c in REPO_COPIES)
+    return any(os.path.realpath(os.path.join(root, c)) != here and _same_bytes(os.path.join(root, c), here)
+               and _wired(root, c) for c in REPO_COPIES)
+
+
+def _same_bytes(a, b):
+    try:
+        with open(a, "rb") as fa, open(b, "rb") as fb:
+            return fa.read() == fb.read()
+    except OSError:
+        return False
+
+
+def _wired(root, copy):
+    try:
+        with open(os.path.join(root, ".claude", "settings.json")) as fh:
+            hooks = json.load(fh).get("hooks", {})
+    except (OSError, ValueError, AttributeError):
+        return False
+    return any(copy in h.get("command", "") for g in hooks.get("PreToolUse", []) for h in g.get("hooks", []))
 
 
 def handle_session_start(payload):
