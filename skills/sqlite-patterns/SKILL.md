@@ -1,6 +1,6 @@
 ---
 name: sqlite-patterns
-description: "Designs, migrates, proves and maintains an app's own on-device SQLite file (GRDB or raw SQL) — tables, constraints, data-safe migrations and their tests, indexes and plans, WAL and busy handling, FTS5, integrity, corruption, backups. Use on a `DatabaseMigrator` migration, `db.create(table:)`, `ALTER TABLE` on a shipped store, `ValueObservation`, `DatabaseQueue` vs `DatabasePool`, `EXPLAIN QUERY PLAN`, `SQLITE_BUSY`, 'database is locked', `VACUUM`. Not for PostgreSQL — /postgres-patterns and /database-migrations ."
+description: "Designs, migrates, proves and maintains an app's own SQLite file — one file on the person's device, opened through GRDB in Swift or better-sqlite3 in Node or Electron: tables, constraints, data-safe migrations and their tests, indexes and plans, WAL and busy handling, FTS5, integrity, corruption, backups. Use on a new migration or `ALTER TABLE` on a shipped store, a `DatabaseMigrator` or a migrations list, `db.create(table:)`, `new Database(` from `better-sqlite3`, `db.pragma`, `ValueObservation`, `DatabaseQueue` vs `DatabasePool`, `EXPLAIN QUERY PLAN`, `SQLITE_BUSY`, 'database is locked', `VACUUM`. Not for PostgreSQL — /postgres-patterns and /database-migrations ."
 ---
 
 # SQLite patterns

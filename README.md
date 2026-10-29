@@ -55,7 +55,7 @@ Run in the repo: `npx skills add yann-lauwers/skills -a claude-code -y -s <names
 | `~/Code/nexus-project/nexus` | linear sentry supabase daytona infisical prisma redis react-patterns react-performance react-testing frontend-accessibility typescript-patterns vite-patterns nestjs-patterns prisma-patterns postgres-patterns database-migrations redis-patterns docker-patterns | excluded |
 | `~/Code/nexus-project/nexus-ui` | linear react-patterns react-performance react-testing frontend-accessibility typescript-patterns vite-patterns | excluded |
 | `~/Code/nexus-project/nexus-landing` | linear react-patterns react-performance react-testing frontend-accessibility typescript-patterns nextjs-patterns | excluded |
-| `~/Code/nexus-project/nutshell` | linear typescript-patterns swift-patterns sqlite-patterns ffi-boundaries native-app-verification | excluded |
+| `~/Code/nexus-project/nutshell` | linear typescript-patterns swift-patterns sqlite-patterns | committed |
 | `~/Code/nexus-project/nexus-desktop` | linear docker-patterns swift-patterns sqlite-patterns ffi-boundaries native-app-verification | excluded |
 | `~/Code/keyless` | docker-patterns | excluded |
 | `~/Code/codeine` | linear | excluded |
