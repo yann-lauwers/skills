@@ -88,6 +88,17 @@ async function resumeAfter($: EngineInterface, resume: string, closingText: stri
   return true
 }
 
+async function compactWith($: EngineInterface, focus: string): Promise<{ skip?: string; tokensBefore?: number; tokensAfter?: number }> {
+  try {
+    return await $.session.compact({ instructions: focus })
+  } catch (refused) {
+    const reason = refused instanceof Error ? refused.message : String(refused)
+    $.ui.log(`session.compact refused (${reason}); queuing /compact`, { to: 'debug' })
+    await $.command.run({ command: 'compact', args: focus })
+    return {}
+  }
+}
+
 async function summarize($: EngineInterface, trigger: Trigger) {
   let isClaimed = false
   await update($, phase, value => {
@@ -102,7 +113,7 @@ async function summarize($: EngineInterface, trigger: Trigger) {
     $.ui.log(`${trigger} focus from ${focusFrom}: ${focus}`, { to: 'debug' })
     await update($, phase, () => 'summarizing')
     $.ui.status('Summarizing the conversation')
-    const result = await $.session.compact({ instructions: focus })
+    const result = await compactWith($, focus)
     const at = await $.clock.now()
     if (result.skip !== undefined) {
       await record($, { kind: 'skipped', at, trigger, reason: result.skip })
