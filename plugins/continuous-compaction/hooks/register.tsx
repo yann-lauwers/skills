@@ -9,11 +9,11 @@ import {
   clampFloor,
   closesOnQuestion,
   decideAuto,
-  defusePrefix,
   effective,
   allOptions,
   fallbackFocus,
   focusPrompt,
+  framedResume,
   hereOptions,
   inFlightDispatches,
   isInert,
@@ -84,7 +84,7 @@ async function resumeAfter($: EngineInterface, resume: string, closingText: stri
   if (closesOnQuestion(closingText)) return false
   const box = await $.prompt.read().catch(() => null)
   if (!box || box.text.trim()) return false
-  void $.prompt.submit({ text: defusePrefix(resume || GENERIC_RESUME) }).catch(() => $.ui.toast("Couldn't continue after the summary."))
+  void $.prompt.submit({ text: framedResume(resume || GENERIC_RESUME) }).catch(() => $.ui.toast("Couldn't continue after the summary."))
   return true
 }
 

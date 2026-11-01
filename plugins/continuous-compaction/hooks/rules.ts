@@ -8,7 +8,11 @@ export const AUTO_RESUME_GAP_MS = 180_000
 export const LINE_CAP = 500
 
 export const GENERIC_RESUME =
-  'Continue working on the objectives from before the compaction. Pick up at the next unfinished step and keep going.'
+  'Continue working on the objectives from before the summary. Pick up at the next unfinished step and keep going.'
+
+export function framedResume(text: string): string {
+  return `After the summary, picking up where we left off: ${text}`
+}
 
 export const FALLBACK_FOCUS =
   'Preserve: the ticket and its spec, every ticket still open, absolute paths of files changed this session, decisions taken and why, and any correction the owner made. Continue at the first open ticket.'
