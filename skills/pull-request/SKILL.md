@@ -17,6 +17,7 @@ description: "Governs opening, retargeting, readying, describing and merging a p
 | The merged config names `cluster_base_source` or `integration_bases` — which base a new pull request takes, founding or retiring an integration base | /pr-cluster |
 | Merging — the actor for this pull request's base, and what a person-held merge hands over | `references/merge-preflight.md` |
 | Rules 5 and 6 asked as data | `scripts/pr_policy.py --help` |
+| A visual change's Evidence, from a run directory's captures | `references/evidence.md` |
 | Anything else about a pull request | the rules below; none fits → name the closest row |
 
 ## The rules

@@ -15,7 +15,8 @@ defaults:
   review_bots: []
   integration_bases: []
   cluster_base_source: null
+  evidence_branch: pr-evidence
 ---
 # git
 
-Read by the `git`, `pull-request` and `pr-cluster` skills and the `pr-merge-approval` hook, and by any consumer through `agents-config get git <key>`.
+Read by the `git`, `pull-request` and `pr-cluster` skills, the `pull-request` evidence script and the `pr-merge-approval` hook, and by any consumer through `agents-config get git <key>`.
