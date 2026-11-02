@@ -48,7 +48,7 @@ def agents_config_path(rt):
     found = shutil.which("agents-config", path=rt.env.get("PATH", ""))
     if found:
         return found
-    fallback = os.path.join(rt.home, ".agents", "bin", "agents-config")
+    fallback = os.path.join(rt.home, ".claude", "skills", "agents-config", "scripts", "agents-config")
     if os.access(fallback, os.X_OK):
         return fallback
     raise Fail(USAGE, "agents-config not found on PATH or in ~/.claude/skills/agents-config/scripts")
