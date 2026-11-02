@@ -77,5 +77,3 @@ These left with the machinery they guarded, on Yann's word: the build flow is th
 - `breaker` — until 2026-08-26 a third attempt at one path released `canon-read-first`; removed, so a row carrying it is history.
 - `pattern=git-stash` — before 2026-08-27; split into `git-stash-destroy` and `git-stash-push`.
 - `pattern=rm-rf` — before 2026-09-24; replaced by `rm-rf-outside-scratch`.
-
-**Retired id — `domain-drift-nudge`** (2026-10-20). A DENY check in observe mode on `Stop`: every 5th new typed turn a model judged whether the person had argued a project term or retook a structural decision, and blocked the stop to push a glossary or ADR entry. Retired on the owner's word: what goes into `GLOSSARY.md` or an ADR is /domain-modeling 's to decide, during the session, and nothing outside it adds one. No successor. `domain-drift-nudge.py`, `domain-drift-nudge.judge.json`, `lib/domain_drift_judge.py` and `registry/domain-drift-nudge.md` are deleted (git history keeps them).
