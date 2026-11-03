@@ -10,13 +10,7 @@ installs the same libraries through its bundler; the project column says what ch
 
 ## What an artifact may load
 
-| Asset | Admitted from |
-| --- | --- |
-| script | `https://cdnjs.cloudflare.com/`, `https://cdn.jsdelivr.net/npm/`, `https://cdn.tailwindcss.com`, `https://code.jquery.com/` |
-| stylesheet | `https://fonts.googleapis.com/` |
-| font file | `https://fonts.gstatic.com/` |
-| `fetch`, XHR, WebSocket | `same-origin`, `https://fonts.googleapis.com/`, `https://fonts.gstatic.com/` |
-| image, media | nothing — inline it |
+- `fetch`, XHR and WebSocket reach only `same-origin`, `https://fonts.googleapis.com/` and `https://fonts.gstatic.com/`.
 
 ## Which library, for which job
 
