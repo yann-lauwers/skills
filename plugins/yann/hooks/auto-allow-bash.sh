@@ -43,6 +43,15 @@ if [ -r "$HOME/.claude/hooks/lib/log-decision.sh" ]; then
 fi
 command -v log_decision >/dev/null 2>&1 || log_decision() { :; }
 
+# Codex marks its payload with `turn_id` and refuses a PreToolUse `allow` as
+# unsupported, reporting the hook Failed; its own approval policy decides there, so
+# the grant is written for Claude only. Denials (exit 2) are the same on both.
+CODEX_CALL=$(echo "$INPUT" | jq -r 'has("turn_id")' 2>/dev/null)
+grant() {
+  [ "$CODEX_CALL" = true ] && return 0
+  echo '{"hookSpecificOutput": {"hookEventName": "PreToolUse", "permissionDecision": "allow"}}'
+}
+
 # Hard-block destructive commands — always require manual approval.
 # `name|regex`: the name is the log's handle on this pattern, the regex is the test.
 BLOCKED_PATTERNS=(
@@ -164,7 +173,7 @@ if [ "$(printf '%s' "$COMMAND" | wc -l | tr -d ' ')" = "0" ] \
    && printf '%s' "$COMMAND" | grep -qE "$STASH_SAFE_RE"; then
   verb=$(printf '%s' "$COMMAND" | awk '{for(i=1;i<NF;i++) if($i=="stash"){print $(i+1); exit}}')
   log_decision "stash-safe-allow" "allow" "verb=$verb" "$SESSION" "enforce"
-  echo '{"hookSpecificOutput": {"hookEventName": "PreToolUse", "permissionDecision": "allow"}}'
+  grant
   exit 0
 fi
 
@@ -194,7 +203,7 @@ fi
 # Runs AFTER blocked patterns, so destructive ops are still gated
 if echo "$COMMAND" | grep -qE '\.claude/'; then
   log_decision "claude-path-allow" "allow" "path=.claude" "$SESSION" "enforce"
-  echo '{"hookSpecificOutput": {"hookEventName": "PreToolUse", "permissionDecision": "allow"}}'
+  grant
   exit 0
 fi
 
@@ -213,7 +222,7 @@ if echo "$FIRST_LINE" | grep -qE "$ALLOWED_RE"; then
     *) word="env-assignment" ;;
   esac
   log_decision "bash-allowlist-allow" "allow" "cmd=$word" "$SESSION" "enforce"
-  echo '{"hookSpecificOutput": {"hookEventName": "PreToolUse", "permissionDecision": "allow"}}'
+  grant
   exit 0
 fi
 
