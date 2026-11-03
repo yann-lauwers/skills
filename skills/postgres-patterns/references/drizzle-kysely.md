@@ -1,6 +1,6 @@
 # Drizzle and Kysely
 
-The command surface and migration shape for the two TypeScript migration tools a repo runs instead of Prisma. Read when the repo's manifest names `drizzle-orm` or `kysely`; the SQL and the plan are unchanged, and stay in `references/postgres-ddl.md` and `references/planning.md`.
+The command surface and migration shape for the two TypeScript migration tools a repo runs instead of Prisma. Read when the repo's manifest names `drizzle-orm` or `kysely`; the SQL and the plan are unchanged, and stay in `references/migrations.md`.
 
 ## Drizzle
 

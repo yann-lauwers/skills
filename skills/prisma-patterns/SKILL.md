@@ -1,6 +1,6 @@
 ---
 name: prisma-patterns
-description: "Writes and reviews Prisma ORM code in a TypeScript backend — models, relations, ids, indexes, `include` / `select` reads, cursor pagination, soft delete, transactions, `PrismaClient` setup, `P2002` / `P2025` / `P2003`. Use on 'add a model', 'write this query', 'wrap it in a transaction', 'paginate this', 'Transaction already closed', 'too many connections in serverless', or a `.prisma` file or `prisma.$transaction` under edit. Not for the Prisma CLI — /prisma ; not for a live schema change — /database-migrations ; not for the Nest service — /nestjs-patterns ."
+description: "Writes and reviews Prisma ORM code in a TypeScript backend — models, relations, ids, indexes, `include` / `select` reads, cursor pagination, soft delete, transactions, `PrismaClient` setup, `P2002` / `P2025` / `P2003`. Use on 'add a model', 'write this query', 'wrap it in a transaction', 'paginate this', 'Transaction already closed', 'too many connections in serverless', or a `.prisma` file or `prisma.$transaction` under edit. Not for the Prisma CLI — /prisma ; not for a live schema change — /postgres-patterns ; not for the Nest service — /nestjs-patterns ."
 paths:
   - "**/schema.prisma"
   - "**/*.prisma"
@@ -33,4 +33,4 @@ The API surface moved across major releases — package name, whether `PrismaCli
 
 ## Neighbouring skills
 
-The NestJS service layer that wraps these calls is /nestjs-patterns ; multi-step migration planning against a live production database is /database-migrations , which owns the sequencing.
+The NestJS service layer that wraps these calls is /nestjs-patterns ; multi-step migration planning against a live production database is /postgres-patterns , whose `references/migrations.md` owns the sequencing.

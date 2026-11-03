@@ -9,4 +9,4 @@
 | Flag | `boolean` | `varchar`, `int` |
 
 - A deviation from the table → stated where the column is declared.
-- Changing an existing column's type → /database-migrations .
+- Changing an existing column's type → `references/migrations.md` .
