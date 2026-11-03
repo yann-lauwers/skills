@@ -11,8 +11,7 @@ allowed-tools: Bash(~/.local/share/claude-artifacts/bin/artifact *), Bash(launch
 - Which account holds a hosted copy → `$A links <slug>`; from a hosted url → its row in `~/.local/share/claude-artifacts/*/registry.json`; no row → the owning account is unrecorded: say so.
 - Opening a stored page → `$A open <slug> --open`.
 - Which pages a session published → `$A pages`, this session's by default, `--session <id>` for another.
-- A fix to an artifact → `$A links <slug>` first; another account → `AGENTS.md` § Session Accounts. Copy its `source.html` into the session scratchpad, edit the copy, and redeploy it to that `url`, sending in `files` only the files that changed; never edit the stored `source.html` or `current.html`.
-- A page loading files from a tree (stylesheets, scripts, an options page) → the published page is a root page written in the scratchpad as `<dir>.html`, linking that page by its path in the tree its links resolve within; `root` names the tree and `files` maps every file the page loads, followed through the stylesheets and scripts those load; an Artifact's files never sit above its page.
+- A fix to an artifact → `$A links <slug>` names the account owning its hosted copy; a session on another account → name that account to Yann and stop. Otherwise copy its `source.html` into the session scratchpad, edit the copy, and redeploy it to that `url`; never edit the stored `source.html` or `current.html`.
 - A generated index, registry or vault note edited by hand is skipped as `human-edited` → delete it and re-run `$A index`.
 
 ## Project config
