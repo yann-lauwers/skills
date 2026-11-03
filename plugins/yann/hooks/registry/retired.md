@@ -4,6 +4,10 @@
 - Retirements up to 2026-10-07, and the retired verdicts and pattern names → `registry/retired-to-2026-10-07.md`.
 - A clause states what the check did, why it went, and its successor or that there is none; measurements and the argument behind it are in git history.
 
+## The bar reminder, 2026-11-03
+
+**Retired id — `bar-reminder`** (2026-11-03). A `UserPromptSubmit` warn that injected one fixed line restating the bar and the arm-a-watcher-before-ending-on-a-wait reflex, on a session's first prompt and every fifth after. Removed on the owner's direction. No successor.
+
 ## The domain-canon move to the plugin, 2026-10-28
 
 **Retired ids — `canon-read-gate`, `canon-read-gate-shell`, `canon-read-reminder`** (2026-10-28). The write gates refused an edit, or a shell write, under unread canon; the reminder named unread canon after a call went through. Once `canon-read-first` gates every directory a call runs in or names, the written file's directory is already gated and nothing unread can go through to be reminded of. Successor: `canon-read-first`.

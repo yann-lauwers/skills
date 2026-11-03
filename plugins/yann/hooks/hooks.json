@@ -106,10 +106,6 @@
           {
             "type": "command",
             "command": "\"$HOME/.pyenv/versions/3.13.3/bin/python3\" \"${CLAUDE_PLUGIN_ROOT}/hooks/precompact-rearm.py\""
-          },
-          {
-            "type": "command",
-            "command": "\"$HOME/.pyenv/versions/3.13.3/bin/python3\" \"${CLAUDE_PLUGIN_ROOT}/hooks/bar-reminder.py\""
           }
         ]
       }
