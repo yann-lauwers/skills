@@ -48,7 +48,7 @@ Local email lands in `axllent/mailpit:v1.31` (SMTP on 1025, web UI on 8025) rath
 
 ## Dev and prod overrides
 
-`docker-compose.override.yml` is loaded on every bare `docker compose up`, so dev-only settings — a yann:debugger port, `DEBUG=app:*` — go there and never reach a file named explicitly. Production is a second file named on the command line:
+`docker-compose.override.yml` is loaded on every bare `docker compose up`, so dev-only settings — a debugger port, `DEBUG=app:*` — go there and never reach a file named explicitly. Production is a second file named on the command line:
 
 ```yaml
 # docker-compose.prod.yml

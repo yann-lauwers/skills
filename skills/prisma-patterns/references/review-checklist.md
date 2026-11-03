@@ -15,4 +15,4 @@ The one-screen pass over a diff or an existing service: each rule with the failu
 | A unique field as the secondary `orderBy` on any cursor page | Rows sharing a timestamp shuffle between pages | `queries.md` |
 | `@@index` on every foreign key and every `WHERE` / `ORDER BY` column | Sequential scans on the queries that matter | `schema-design.md` |
 | External calls outside `$transaction` | The interactive form closes after 5s | `transactions.md` |
-| Explicit `deletedAt: null` at each call site, no middleware | Middleware hides the filter from the reader and the yann:debugger | `queries.md` |
+| Explicit `deletedAt: null` at each call site, no middleware | Middleware hides the filter from the reader and the debugger | `queries.md` |
