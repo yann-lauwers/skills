@@ -1,7 +1,7 @@
 {
   "name": "continuous-compaction",
   "displayName": "Continuous Compaction",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "description": "Summarizes a conversation natively when a turn ends above the fill floor, then continues it; /compaction asks what to change, for this conversation or all of them, or summarizes now.",
   "author": {
     "name": "Yann Lauwers",
@@ -14,6 +14,7 @@
     "compaction",
     "continuous-sessions"
   ],
+  "hooks": {},
   "userConfig": {
     "pct_floor": {
       "type": "number",
