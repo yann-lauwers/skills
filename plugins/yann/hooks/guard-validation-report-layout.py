@@ -118,7 +118,7 @@ def classify(rel):
         if head.endswith(".md"):
             return False, (
                 f"`{head}` sits at the reports root. The one report kind is "
-                f"validation/<slice>-validation/runs/<YYYY-MM-DD>_<n>/report.md; any other finding goes in the reply"
+                f"validation/<slice>-validation/runs/<YYYY-MM-DD>_<n>/run.md; any other finding goes in the reply"
             )
         return False, (
             f"`{head}/` is not a report kind. The one kind is: {', '.join(sorted(KINDS))}"
@@ -135,7 +135,7 @@ def classify(rel):
     if len(rest) == 1 and rest[0].endswith(".md"):
         return False, (
             f"`{head}/{rest[0]}` is a lone file. A {head} report is a directory: "
-            f"{head}/<slice>-{head}/runs/<YYYY-MM-DD>_<n>/report.md"
+            f"{head}/<slice>-{head}/runs/<YYYY-MM-DD>_<n>/run.md"
         )
 
     slice_name, tail = rest[0], rest[1:]
@@ -146,11 +146,11 @@ def classify(rel):
         if len(tail) == 1 and tail[0].endswith(".md"):
             return False, (
                 f"`{head}/{slice_name}/{tail[0]}` sits loose in the report directory. "
-                f"A run's report is {head}/{slice_name}/runs/<YYYY-MM-DD>_<n>/report.md"
+                f"A run's report is {head}/{slice_name}/runs/<YYYY-MM-DD>_<n>/run.md"
             )
         return False, (
             f"`{head}/{slice_name}/{tail[0]}` is loose inside a report directory. "
-            f"A report holds runs/<YYYY-MM-DD>_<n>/, each with its report.md and <scenario>/ directories — put "
+            f"A report holds runs/<YYYY-MM-DD>_<n>/, each with its run.md and <scenario>/ directories — put "
             f"this run's artifacts in runs/<date>_<n>/{tail[0]}/"
         )
 
@@ -247,7 +247,7 @@ def main():
     message = (
         f"{reason}\n\n"
         "The report tree's shape, beneath the reports dir this repo declares:\n"
-        "  validation/<slice>-validation/runs/<YYYY-MM-DD>_<n>/report.md\n"
+        "  validation/<slice>-validation/runs/<YYYY-MM-DD>_<n>/run.md\n"
         "  validation/<slice>-validation/runs/<YYYY-MM-DD>_<n>/<scenario>/<artifact>\n\n"
         "Writing somewhere else starts a second evidence root that no report links. "
         "Where a validation report lands is /validating 's own; every other pass "
