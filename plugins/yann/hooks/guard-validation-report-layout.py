@@ -62,6 +62,8 @@ IGNORED_NAMES = {".DS_Store", "Thumbs.db", ".gitkeep", ".keep"}
 
 RUN_KEY = re.compile(r"^\d{4}-\d{2}-\d{2}_[1-9]\d*$")
 
+PATCH_WRITE_LINES = ("*** Add File:", "*** Update File:", "*** Move to:")
+
 
 def log(session, verdict, detail):
     """Record every fire. Without rows, 'never fired' and 'fires wrongly every
@@ -167,13 +169,25 @@ def classify(rel):
     return True, ""
 
 
-def candidate_paths(tool, tool_input):
+def candidate_paths(tool, tool_input, cwd):
     """Paths this call would create or write. Unparseable -> empty, i.e. no opinion."""
     out = []
     if tool in ("Write", "Edit", "NotebookEdit"):
         p = tool_input.get("file_path")
         if isinstance(p, str):
             out.append(p)
+        return out
+
+    if tool == "apply_patch":
+        patch = tool_input.get("command")
+        if not isinstance(patch, str):
+            return out
+        for line in patch.splitlines():
+            line = line.strip()
+            if line.startswith(PATCH_WRITE_LINES):
+                p = line.split(":", 1)[1].strip()
+                if p:
+                    out.append(os.path.join(cwd, p) if cwd else p)
         return out
 
     if tool == "Bash":
@@ -224,9 +238,11 @@ def main():
     if not isinstance(tool_input, dict):
         tool_input = {}
     session = str(payload.get("session_id") or "")
+    cwd = payload.get("cwd")
+    cwd = cwd if isinstance(cwd, str) else ""
 
     findings = []
-    for path in candidate_paths(tool if isinstance(tool, str) else "", tool_input):
+    for path in candidate_paths(tool if isinstance(tool, str) else "", tool_input, cwd):
         rel = rel_under_reports(path)
         if rel is None:
             continue
