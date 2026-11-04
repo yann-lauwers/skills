@@ -8,6 +8,7 @@ description: >-
   failing on "No space left on device" or ENOSPC, or `df` showing the data volume past 90%. Not for
   removing one named worktree — /worktrunk .
 argument-hint: "[area to focus on]"
+disable-model-invocation: true
 ---
 
 # Disk cleanup

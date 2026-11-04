@@ -6,11 +6,11 @@ One error shape across the API, and where an unexpected failure is caught. Read 
 
 Read it first: the shared response schema or types package (a `response.schema.ts`, an `ApiResponse` type), the `@Catch()` classes (`grep -rn "@Catch" src`), and `APP_FILTER` / `useGlobalFilters` registrations. Success and error bodies follow the shape found there; a new filter emits that shape, and the order registered filters run in is read from the repo, not assumed.
 
-/api-design owns "one shape per API, held on every endpoint".
+One shape per API, held on every endpoint.
 
 ## Default for a repo with none
 
-The envelope /api-design gives: `{ error: { code, message } }`.
+The envelope: `{ error: { code, message } }`.
 
 ```ts
 @Catch()

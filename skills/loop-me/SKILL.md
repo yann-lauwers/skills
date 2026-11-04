@@ -8,6 +8,7 @@ description: >-
   a `workflows/*.md` spec. Not for a non-workflow design — /grilling ; not for a Workflow tool
   script — /workflow-authoring ; not for arming a settled recurring run — /schedule or /loop .
 argument-hint: "[workflow]"
+disable-model-invocation: true
 ---
 
 # Loop Me

@@ -2,6 +2,7 @@
 name: managing-harness
 description: "Writes, changes and removes this setup's canon — rules, skills, agent files, CLAUDE.md, AGENTS.md — picks the home and config level a fact takes. Use on 'new rule/skill/agent', 'edit CLAUDE.md', 'retire a skill', 'optimize this file', 'where does this fact belong', 'it ignored the rule'. Also fires on a correction about to be recorded so it holds next time, an Agent brief or stored prompt about to be written, a vendor's name about to enter canon, a fact about to go into a file opened for another reason, a tool, a new service or vault item wired or named, a one-home breach the user flags, and on any edit under ~/.agents/{skills,agents,docs,settings,bin}/, a repo's docs/agents/ or its .claude/settings*.json; also a pack authored elsewhere installed. Not for a hook — /hook-development ."
 user-invocable: true
+disable-model-invocation: true
 ---
 
 # Managing Harness

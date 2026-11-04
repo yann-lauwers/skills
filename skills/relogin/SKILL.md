@@ -7,6 +7,7 @@ description: >-
   showing `relogin_required` (or CodexBar flagging one) held fifteen minutes unbroken. An
   `unavailable` account is not a dead login and is left alone. Not for signing an account into
   claude.ai for anything other than a cswap credential — /claude-login .
+disable-model-invocation: true
 ---
 
 # relogin

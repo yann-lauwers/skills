@@ -8,6 +8,7 @@ description: >-
   through Google Calendar, CalDAV, an ICS file or a connector, and before an `osascript` call
   targeting Calendar. Not for a to-do with no time on it — the task list's skill.
 allowed-tools: Bash(${CLAUDE_SKILL_DIR}/scripts/*)
+disable-model-invocation: true
 ---
 
 # Apple Calendar

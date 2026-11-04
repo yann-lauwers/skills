@@ -2,6 +2,7 @@
 name: things
 description: "Reads, adds, schedules, completes, moves and rewrites to-dos in the Things 3 app on this Mac, and carries the house wording for a to-do's title, notes and the tag marking one unclear. Use on \"things\", \"todo list\", \"add a task\", \"what's on today\", \"inbox\", \"schedule this\", \"mark it done\", \"rewrite this task\", \"check for duplicates\", a Things area or project, `osascript` targeting Things3, or a `things:///` URL. Not for a timed calendar event — the calendar's skill; not for a repository's tickets — the tracker's skill."
 allowed-tools: Bash(osascript:*), Bash(open:*), Bash(cat:*)
+disable-model-invocation: true
 ---
 
 # Things 3

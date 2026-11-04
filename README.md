@@ -18,17 +18,13 @@ Naming both agents makes `npx skills` keep each skill in `~/.agents/skills`, whe
 npx skills add yann-lauwers/skills -g -a claude-code codex -y -s agents-config
 
 # skills used everywhere
-npx skills add yann-lauwers/skills -g -a claude-code codex -y -s analysing-recordings api-design apple-calendar apple-mail browser claude-artifacts claude-login cli-patterns cmux contract-first cp dev-team disk-cleanup garden-domain-docs git github gitlab handoff-yann hetzner hook-development house-style keyless local-markdown loop-me managing-harness mcp-development obsidian persona-forging plain pr-cluster proton pull-request regex-vs-llm-structured-text relogin resurrect simplify-comments slack superwhisper tailscale things userjot validating voice watch-pr watching worktrunk x
+npx skills add yann-lauwers/skills -g -a claude-code codex -y -s analysing-recordings apple-calendar apple-mail browser claude-artifacts claude-login cmux cp dev-team disk-cleanup garden-domain-docs git github hetzner hook-development house-style keyless local-markdown loop-me managing-harness obsidian plain pr-cluster proton pull-request relogin simplify-comments slack superwhisper tailscale things userjot validating voice watch-pr watching worktrunk x
 
 # other authors' packs, everywhere
 npx skills add mattpocock/skills -g -a claude-code codex -y -s ask-matt code-review codebase-design diagnosing-bugs domain-modeling grill-me grill-with-docs grilling handoff implement implement-spec improve-codebase-architecture pr prototype research retro setup-matt-pocock-skills tdd teach to-questionnaire to-spec to-tickets triage wait-what wayfinder writing-for-agents
 npx skills add pbakaus/impeccable -g -a claude-code codex -y -s impeccable
 npx skills add humanlayer/skills -g -a claude-code codex -y -s show-me
 npx skills add cloudflare/skills -g -a claude-code codex -y -s cloudflare wrangler
-npx skills add emilkowalski/skill -g -a claude-code codex -y -s animate apple-design emil-design-eng find-animation-opportunities improve-animations review-animations
-npx skills add Leonxlnx/taste-skill -g -a claude-code codex -y -s design-taste-frontend
-npx skills add nextlevelbuilder/ui-ux-pro-max-skill -g -a claude-code codex -y -s ui-ux-pro-max
-npx skills add vojtaholik/good-css -g -a claude-code codex -y -s good-css
 
 # plugins
 claude plugin marketplace add yann-lauwers/skills   # then set "autoUpdate": true on it in ~/.claude/settings.json

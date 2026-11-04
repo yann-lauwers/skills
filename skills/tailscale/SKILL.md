@@ -1,6 +1,7 @@
 ---
 name: tailscale
 description: "Manages the tailnet through the Tailscale API — devices, auth keys, key expiry, policy. Use on \"tailscale\", \"tailnet\", a machine joining or leaving the private network, a call to the Tailscale API, an auth key minted for a joining node, `tailscale up` on a new server, a joined server node with key expiry still on, or an edit to the tailnet's access policy."
+disable-model-invocation: true
 ---
 
 # Tailscale

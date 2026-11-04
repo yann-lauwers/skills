@@ -1,6 +1,7 @@
 ---
 name: claude-login
 description: "Gets a Chrome signed in to claude.ai as one of this machine's accounts, with nobody at the browser, and keeps the session on disk. Use on 'accept those artifact invitations', 'open that artifact as dev-2', 'log in as that account', 'is that account signed in', 'sign it out', 'too many login attempts', or `claude-login status|ensure|forget|ensureSession`. Also fires before driving claude.ai in a browser for an account other than the person's own, and on an edit under `~/.local/share/claude-login/`. Not for reviving a dead cswap credential — /relogin ."
+disable-model-invocation: true
 ---
 
 # claude-login

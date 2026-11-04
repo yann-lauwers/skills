@@ -1,6 +1,6 @@
 ---
 name: redis-patterns
-description: "Designs a Redis key before it is written — structure and TTL, a cache and its invalidation, a lock, a rate limiter, a pub/sub channel or Stream consumer — and sizes the connection pool and eviction policy behind it. Use on 'add a cache', 'rate limit this endpoint', 'distributed lock', 'cache invalidation', 'hash or string', or code calling `SETEX`, `SET NX`, `INCR`, `XADD`, `XREADGROUP` or `PUBLISH`. Not for naming a key by project convention or inspecting an instance — /redis ; not for `X-RateLimit-*` headers — /api-design ."
+description: "Designs a Redis key before it is written — structure and TTL, a cache and its invalidation, a lock, a rate limiter, a pub/sub channel or Stream consumer — and sizes the connection pool and eviction policy behind it. Use on 'add a cache', 'rate limit this endpoint', 'distributed lock', 'cache invalidation', 'hash or string', or code calling `SETEX`, `SET NX`, `INCR`, `XADD`, `XREADGROUP` or `PUBLISH`. Not for naming a key by project convention or inspecting an instance — /redis ."
 metadata:
   origin: ECC
   source: https://github.com/affaan-m/ECC/blob/main/skills/redis-patterns/SKILL.md

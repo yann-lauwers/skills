@@ -25,7 +25,6 @@
 | Entry | Patch | Check |
 | --- | --- | --- |
 | `triage/SKILL.md` | the `disable-model-invocation: true` frontmatter line removed, so a session can start it | absent `^disable-model-invocation:` |
-| `ui-ux-pro-max/SKILL.md` | every `search.py` command reads `${CLAUDE_SKILL_DIR}/scripts/search.py`, since `CLAUDE_PLUGIN_ROOT` is unset for a user skill | absent `skills/ui-ux-pro-max/scripts` |
 
 ## Agents
 

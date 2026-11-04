@@ -1,6 +1,7 @@
 ---
 name: userjot
 description: "Reads, searches, votes on and files to public UserJot feedback boards — a product's feature requests, bug reports and roadmap — and keeps the session a vote or post replays. Use on \"file a feature request\", \"report this bug to them\", \"is that already asked for\", \"vote on that post\", \"what's on their roadmap\", \"userjot\", a product whose board is wired here (SuperWhisper among them), any call to `api.userjot.com`, or a mutation answering `UNAUTHORIZED` or an HTML challenge page."
+disable-model-invocation: true
 ---
 
 # UserJot

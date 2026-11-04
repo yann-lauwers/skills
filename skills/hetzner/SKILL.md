@@ -5,6 +5,7 @@ description: >-
   rescue mode, IPs. Use on "hetzner", "hcloud", "rescale the server", "rebuild the server",
   "rescue mode", or before any Hetzner Cloud API request or a server created, rebuilt, rescaled or
   given a key. Not for a machine joining or leaving the private network — that network's skill.
+disable-model-invocation: true
 ---
 
 # Hetzner

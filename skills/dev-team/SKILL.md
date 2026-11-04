@@ -10,6 +10,7 @@ description: >-
 metadata:
   origin: ECC
   source: https://github.com/affaan-m/ECC/blob/main/skills/dev-team/SKILL.md
+disable-model-invocation: true
 ---
 
 # Dev Team
