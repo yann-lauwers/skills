@@ -24,6 +24,7 @@ import {
   readStart,
   startOptions,
   startQuestion,
+  USAGE,
 } from './rules'
 import type { AllSessions, Command } from './rules'
 
@@ -150,7 +151,11 @@ async function summarizeNow($: EngineInterface): Promise<'now' | 'after-turn'> {
 }
 
 async function setAll($: EngineInterface, key: string, value: boolean | number): Promise<string | null> {
-  const result = await $.config.set({ key, value })
+  const result = await $.config.set({ key, value }).catch(() => null)
+  if (result === null) {
+    const field = key.slice(`${PLUGIN}.`.length)
+    return `This session can't change all conversations. Set pluginConfigs["${PLUGIN}@yannlauwers"].options.${field} to ${value} in ~/.claude/settings.json.`
+  }
   return 'deny' in result && result.deny ? result.deny : null
 }
 
@@ -190,14 +195,14 @@ async function askDialog($: EngineInterface, all: AllSessions): Promise<string |
   })
   const question = startQuestion(here, all, await read($, fill), next)
   const started = await $.ui.ask(question, { header: 'Summary', options: startOptions(here) }).catch(() => null)
-  if (started === null) return undefined
+  if (started === null) return `${question}\n${USAGE}`
   const first = readStart(started, here)
   if ('usage' in first) return first.usage
   if ('kind' in first) return runCommand($, all, first)
   const asked = first.ask === 'here' ? 'Summarize this conversation above which %?' : 'Summarize all conversations above which %?'
   const options = first.ask === 'here' ? hereOptions(here, all) : allOptions(all)
   const picked = await $.ui.ask(asked, { header: 'Summary', options }).catch(() => null)
-  if (picked === null) return undefined
+  if (picked === null) return 'Nothing changed.'
   const chosen = readFloor(first, picked, all)
   return 'usage' in chosen ? chosen.usage : runCommand($, all, chosen)
 }

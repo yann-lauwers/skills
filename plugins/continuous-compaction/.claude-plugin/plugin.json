@@ -1,7 +1,7 @@
 {
   "name": "continuous-compaction",
   "displayName": "Continuous Compaction",
-  "version": "2.1.3",
+  "version": "2.1.4",
   "description": "Summarizes a conversation natively when a turn ends above the fill floor, then continues it; /compaction asks what to change, for this conversation or all of them, or summarizes now.",
   "author": {
     "name": "Yann Lauwers",
