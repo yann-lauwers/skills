@@ -13,7 +13,8 @@ argument-hint: "[ticket-or-spec-id]"
 # Validating
 
 - Slice — the ticket or spec under proof; a spec's criteria are its child tickets'.
-- Report — `$AGENTS_REPORTS_DIR/validation/<slice>-validation/`, `<slice>` the ticket id lower-cased, else the slice's kebab-case slug; setup work or no repo → `~/.agents/reports/validation/<slice>-validation/`; a repo with the variable unset → wire it per /obsidian § Wire a repo's reports, and a declined wiring takes the user level, saying the repo is unwired; the user level unwired too → the report directory sits in the session's scratchpad, and the verdict stays in the reply.
+- Report — `$AGENTS_REPORTS_DIR/validation/<slice>-validation/`, `<slice>` the ticket id lower-cased, else the slice's kebab-case slug.
+- `$AGENTS_REPORTS_DIR` unset in a repo → set it under `env` in the repo's `.claude/settings.local.json` to the vault's `projects/<repo>/reports`; setup work, no repo, or the owner declines → `~/.agents/reports/validation/<slice>-validation/`, the vault's own reports folder.
 - Run — one proof of the slice at one commit: `runs/<key>/` in the report, `<key>` `<YYYY-MM-DD>_<n>`, holding `run.md`, a name Claude Code's Write takes from a subagent, and one directory per scenario.
 - Proof run — the repo's own start-and-finish unit around a launched build, inside a Run; a repo with none has none.
 - Every criterion is proved by using the feature on its vehicle; a passing test is never its proof.
@@ -30,7 +31,7 @@ argument-hint: "[ticket-or-spec-id]"
 
 1. Resolve the slice — the id named, else the ticket id in the branch name, else the slug and objective the request states; none → ask — its base — `git merge-base HEAD <ref>`, `<ref>` the one the request names, else `origin/HEAD`, else the repo's default branch — and whether it is owed, from the ticket and `git diff --stat <base>..HEAD`.
 2. `git status --porcelain` in the worktree prints nothing, and `git log <base>..HEAD` holds the slice's commits; otherwise → name what is uncommitted or missing, and stop. Done when HEAD's hash and the base's hash are noted.
-3. Dispatch the run in the background with the Agent tool — `general-purpose`, `opus`, `run_in_background: true` — a prompt opening `Skills: validating`, then the slice, the worktree, the commit and its base, the report directory, every owner criterion still standing in the owner's words — the `owner` rows of the newest run whose `run.md` (`report.md` in a run before 2026-11-03) carries a verdict line, plus this conversation's, less any the owner withdrew — and what this conversation holds that the ticket does not.
+3. Dispatch the run in the background with the Agent tool — `general-purpose`, `opus`, `run_in_background: true` — a prompt opening `Skills: validating`, then the slice, the worktree, the commit and its base, the report directory, every owner criterion still standing in the owner's words — the `owner` rows of the newest run whose `run.md` carries a verdict line, plus this conversation's, less any the owner withdrew — and what this conversation holds that the ticket does not.
 4. The worktree takes no edit, commit, setup or test run until the agent returns.
 5. The agent returns → read the head of its run's `run.md` and relay that verdict line, then the final reply whole; no `run.md`, or no verdict line in its head → report the run unfinished.
    - Each ask → the owner; the answer → a comment on the ticket naming the criterion it settles; no ticket → the answer joins the next brief's owner criteria.
@@ -45,7 +46,7 @@ argument-hint: "[ticket-or-spec-id]"
 - Blocked at any step → write `run.md`'s head with the verdict line `BLOCKED`, naming the blocker and who must act, and its table holding at least every owner criterion the brief carries; then steps 8–9, step 8 adding to the verdict line.
 
 1. Create `runs/<key>/` in the report, `<n>` one past today's highest.
-2. Read the task per `references/plan.md` § Context, and the newest run's `run.md` (`report.md` in a run before 2026-11-03) carrying a verdict line, where one exists. Done when the slice's direction fits one sentence.
+2. Read the task per `references/plan.md` § Context, and the newest run's `run.md` carrying a verdict line, where one exists. Done when the slice's direction fits one sentence.
 3. `git rev-parse HEAD` in the worktree is the brief's commit, and `git diff --stat <base>..<commit>` carries the change the ticket describes; otherwise → blocked, on the builder.
 4. Plan per `references/plan.md` into `run.md`, before opening any file the diff changes. Done when every criterion has its plan, and each `prove` one its vehicle and expected observation.
 5. Preflight per `references/evidence.md` § Preflight; any failure → blocked.
