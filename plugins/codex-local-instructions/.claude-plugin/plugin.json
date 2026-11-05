@@ -1,0 +1,16 @@
+{
+  "name": "codex-local-instructions",
+  "displayName": "Codex Local Instructions",
+  "description": "Codex only: injects the repository's AGENTS.local.md into every session it starts, clears, compacts or forks, since Codex loads only AGENTS.md and AGENTS.override.md.",
+  "author": {
+    "name": "Yann Lauwers",
+    "url": "https://github.com/yann-lauwers"
+  },
+  "homepage": "https://github.com/yann-lauwers/skills/tree/main/plugins/codex-local-instructions",
+  "license": "MIT",
+  "keywords": [
+    "codex",
+    "agents-md",
+    "hooks"
+  ]
+}

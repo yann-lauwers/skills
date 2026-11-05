@@ -7,6 +7,7 @@ skills/<name>/                   # one skill per folder, installed with npx skil
 plugins/yann/                    # agents and hooks, installed as a plugin
 plugins/continuous-compaction/   # the compaction plugin
 plugins/domain-canon/            # refuses work in a directory until its GLOSSARY.md and ADRs are read
+plugins/codex-local-instructions/ # Codex only: injects a repo's AGENTS.local.md into each session
 ```
 
 ## A new machine
@@ -30,6 +31,10 @@ claude plugin marketplace add yann-lauwers/skills   # then set "autoUpdate": tru
 claude plugin install yann@yannlauwers --scope user
 claude plugin install continuous-compaction@yannlauwers --scope user
 claude plugin install domain-canon@yannlauwers --scope user
+
+# Codex only: Claude Code reads AGENTS.local.md through CLAUDE.local.md
+codex plugin marketplace add yann-lauwers/skills
+codex plugin add codex-local-instructions@yannlauwers
 ```
 
 Then this host's two jobs:
