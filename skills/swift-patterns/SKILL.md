@@ -1,6 +1,6 @@
 ---
 name: swift-patterns
-description: "Writes, reviews and migrates Swift for Apple-platform apps (macOS first, SwiftUI and AppKit) — language modes, actor isolation, Sendable, callbacks from C or other threads, AppKit windows and panels, SwiftUI scenes, @Observable, availability, Swift Testing. Use on '@MainActor', 'Sendable', 'data race', 'Swift 6 migration', 'assumeIsolated', 'NSPanel', 'MenuBarExtra', 'the view hitches', 'swiftlint', '.swift-format', any .swift, Package.swift or .xcodeproj change, or a Swift concurrency diagnostic. Not for a C ABI contract — /ffi-boundaries ; not for proving the launched app — /native-app-verification ."
+description: "Writes, reviews and migrates Swift for Apple-platform apps (macOS first, SwiftUI and AppKit) — language modes, actor isolation, Sendable, callbacks from C or other threads, AppKit windows and panels, SwiftUI scenes, @Observable, availability, Swift Testing. Use on '@MainActor', 'Sendable', 'data race', 'Swift 6 migration', 'assumeIsolated', 'NSPanel', 'MenuBarExtra', 'the view hitches', 'swiftlint', '.swift-format', any .swift, Package.swift or .xcodeproj change, or a Swift concurrency diagnostic. Not for a C ABI contract — /ffi-boundaries ."
 metadata:
   sources: >-
     Apple's documentation; AvdLee's and twostraws' Swift agent skills; openai
