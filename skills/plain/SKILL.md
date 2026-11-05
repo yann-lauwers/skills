@@ -13,7 +13,7 @@ Re-explain the assistant's own previous message for a reader holding none of its
 
 ## Steps
 
-1. **Draw it first.** The picture comes before any prose, in the form `AGENTS.md` § Shape's show-first list picks; it carries the structure, the prose below it the rest. A message whose structure is one fact takes no picture.
+1. **Draw it first.** The picture comes before any prose: logic → pseudocode · runtime calls → a call tree · a UI → a component tree with the state boundaries that matter · ownership → a shallow file tree, one `#` comment per directory · parts over time → an ASCII sequence · a changed shape → a diff of that shape · a comparison → a table · a choice → one example per option. It carries the structure, the prose below it the rest. A message whose structure is one fact takes no picture.
 2. **Re-explain, never re-answer.** The content is fixed — no new claims, no new questions, no tool calls, no work picked up.
 3. **Facts survive verbatim.** Every path, command, file name, number, URL, identifier, and decision stays exactly as it was. Simplify around the facts.
 4. **Simpler, not shorter.** The target is "impossible to misunderstand" — a longer re-explanation that lands beats a tighter one that does not.
