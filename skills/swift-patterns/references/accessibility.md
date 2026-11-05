@@ -166,8 +166,6 @@ the SDK's own target; below 27 they are unverified. SwiftUI rows hold on iOS at 
 - Outside the process → `AXUIElementCreateApplication(pid)` + `AXUIElementCopyAttributeValue`; a
   tree dump, `AXPress` on AppKit and SwiftUI elements, a focus read and an `AXObserver` on
   announcements all ran with the app neither active nor key (**measured**).
-- Launching the app, the reader's grant, a tree of one element, a blind reader, a locked screen →
-  /native-app-verification .
 
 ## Review list
 

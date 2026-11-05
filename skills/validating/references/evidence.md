@@ -7,7 +7,7 @@
   - each prerequisite the repo's `AGENTS.md` leaves to the person → checked, never worked around.
   - `datastore` → the store answers, with every migration the brief's commit carries applied.
   - `browser` or `service` → the served build carries the brief's commit: something the commit introduced answers.
-  - `app` → one isolated instance of a build carrying the brief's commit, launched, read once through the reader its scenarios use, and finished, per /native-app-verification .
+  - `app` → one isolated instance of a build carrying the brief's commit, launched the way the repo's `AGENTS.md` names, read once through the reader its scenarios use, and finished.
   - `ci` → the hosted run for the brief's commit exists.
 - Who must act on a failure: `owner` — a grant, a locked screen, a credential, a decision, a fact the repo's `AGENTS.md` lacks, a service the repo declares no dev server for · `builder` — the build fails, carries another commit, or a service whose dev server the repo declares does not answer.
 
@@ -49,7 +49,7 @@
 
 ## Launched app
 
-- Launched, driven, recorded and stopped on an isolated instance per /native-app-verification ; never through the browser agent.
+- Launched, driven, recorded and stopped on an isolated instance the way the repo's `AGENTS.md` names; never through the browser agent.
 - The repo names a launching party other than the run — a pass that proves the slice counts as the run → write the check and its command into the scenario directory; its criteria take NOT EXERCISED, blocked on that party.
-- A time criterion → measured per /native-app-verification , recorded `raw`: the command, the count, the median and the worst.
+- A time criterion → measured over repeated launches, recorded `raw`: the command, the count, the median and the worst.
 - A sample reads state through the app's control surface or its accessibility tree; a pixel frame of a backgrounded instance is no sample.

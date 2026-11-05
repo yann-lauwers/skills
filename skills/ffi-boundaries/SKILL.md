@@ -1,6 +1,6 @@
 ---
 name: ffi-boundaries
-description: "Designs and reviews a boundary where two languages share memory through a C ABI — a Zig, Rust or C core exporting functions and callbacks to a Swift or C++ shell: allocation and free, pointer lifetime across a callback, teardown order, foreign-thread callbacks, layout, the header as contract. Use on 'add an export', 'change the C header', 'the callback crashes', 'use-after-free in the bridge', `Unmanaged`, `callconv(.c)`, `extern \"C\"`, `#[repr(C)]`, `#[no_mangle]`, `cbindgen`. Not for Swift actor isolation — /swift-patterns ; not for proving the launched app — /native-app-verification ."
+description: "Designs and reviews a boundary where two languages share memory through a C ABI — a Zig, Rust or C core exporting functions and callbacks to a Swift or C++ shell: allocation and free, pointer lifetime across a callback, teardown order, foreign-thread callbacks, layout, the header as contract. Use on 'add an export', 'change the C header', 'the callback crashes', 'use-after-free in the bridge', `Unmanaged`, `callconv(.c)`, `extern \"C\"`, `#[repr(C)]`, `#[no_mangle]`, `cbindgen`. Not for Swift actor isolation — /swift-patterns ."
 ---
 
 # FFI Boundaries
@@ -9,7 +9,7 @@ description: "Designs and reviews a boundary where two languages share memory th
 
 1. Read the header and both sides of every symbol the change touches.
 2. Answer § The contract for every symbol the change touches, before writing either side. Done when each answer sits in a name, a type or a test named for it.
-3. Land the core side and the header first, then the caller. Rebuild whatever artifact carries the header — a module map, a bridging header or generated bindings (`cbindgen`, UniFFI) — and prove it fresh before judging the caller — /native-app-verification , `references/build-graph.md`.
+3. Land the core side and the header first, then the caller. Rebuild whatever artifact carries the header — a module map, a bridging header or generated bindings (`cbindgen`, UniFFI) — and prove it fresh before judging the caller.
 
 ## Routing table
 
