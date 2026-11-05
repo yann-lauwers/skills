@@ -1,6 +1,7 @@
 ---
 name: slack
 description: "Sends and reads Slack — a DM, channel post, threaded reply, channel read, file upload — and arms a watcher that wakes the session when a teammate replies. Use on 'DM Sam', 'ping Sam', 'tell Sam on slack', 'post in #dev', 'what did the team say in #dev', 'watch for Sam's reply', a person named without the word slack, a pasted `slack.com/archives/…` permalink, or before any `curl` to `slack.com/api/*` or `mcp__*_Slack__*` call. Not for email — the mail skill; not for waiting on anything but a Slack conversation — /watching ."
+disable-model-invocation: true
 ---
 
 # Slack

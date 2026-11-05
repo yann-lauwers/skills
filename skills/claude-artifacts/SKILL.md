@@ -2,6 +2,7 @@
 name: claude-artifacts
 description: "Operates the local artifact store, which keeps a local copy of every page published with the Artifact tool, served at http://127.0.0.1:4310 so it opens from every account on this Mac. Use when opening, fixing, superseding or archiving a published page, when a page belongs to another account, or when the store misbehaves. Also fires before an `artifact` command runs or an edit under `~/.local/share/claude-artifacts/`."
 allowed-tools: Bash(~/.local/share/claude-artifacts/bin/artifact *), Bash(launchctl kickstart *), Read, Grep, Glob
+disable-model-invocation: true
 ---
 
 # Claude artifacts

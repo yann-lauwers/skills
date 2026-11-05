@@ -2,6 +2,7 @@
 name: cmux
 description: "Creates, groups, titles, recolours, reads and closes this machine's terminal seats — cmux workspaces and workspace groups. Use on 'cmux', 'workspace group', 'open a terminal for this', 'read that seat's screen', 'rename the seat', 'close the seat', 'the sidebar is messy'. Also fires before any `cmux` invocation that creates, groups, renames, recolours, closes or writes into a seat, and on a `workspace list` row whose `current_directory` is gone from disk. Not for deciding which units of work there are — the caller names them."
 allowed-tools: Bash(/Applications/cmux.app/Contents/Resources/bin/cmux *), Bash(cmux *), Read, Grep, Glob
+disable-model-invocation: true
 ---
 
 # cmux

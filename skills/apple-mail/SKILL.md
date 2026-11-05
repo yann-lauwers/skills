@@ -2,6 +2,7 @@
 name: apple-mail
 description: "Reads, lists, drafts and trashes mail through the Apple Mail app on this Mac, and searches its archive; a message is drafted, never sent. Use on 'check my email', 'did X email me', 'read that mail', 'draft a reply to', 'send an email to', 'search my mail', 'create a mail rule', 'change my signature', or a named address, sender or thread. Also fires before an `osascript` or JXA call targeting Mail, before reading `~/Library/Mail/`, before reaching mail through IMAP or a connector. Not for a team-chat message — the team chat's skill."
 allowed-tools: Bash(${CLAUDE_SKILL_DIR}/scripts/*), Bash(osascript *)
+disable-model-invocation: true
 ---
 
 # Apple Mail
