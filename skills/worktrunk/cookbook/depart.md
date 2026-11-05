@@ -4,9 +4,9 @@ For a session that arrived carrying one ticket: create its worktree, then get th
 
 ## Create
 
-0. No recorded opt-out, the repo has a worktrunk project entry, and `command -v git-wt` is empty → say so and stop.
+0. The repo carries the marker (`SKILL.md` § The worktree marker), has a worktrunk project entry, and `command -v git-wt` is empty → say so and stop.
    - No `~/.config/worktrunk/` on this host → `git wt -C <repo> -y switch --create <branch> --no-cd [--base origin/<base>]`, with no onboarding and no env prefixes; then § Then the work moves into it.
-1. Neither a recorded opt-out in `docs/agents/worktrees.md` nor a project entry for the repo in `~/.config/worktrunk/config.toml` → `cookbook/onboard.md` first.
+1. The marker is absent, or `~/.config/worktrunk/config.toml` holds no project entry for the repo → `cookbook/onboard.md` first.
 2. Create it:
 
 ```bash

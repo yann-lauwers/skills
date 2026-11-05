@@ -2,24 +2,15 @@
 
 Settles whether a repo uses worktrees at all, and where it does, gives it a worktrunk project entry — finds what a fresh tree needs, writes the entry with the decisions recorded beside it, verifies. Steps 0–7 run in order, Prerequisites and Steps 1–7 only once Step 0 chose onboarding; what a tree needs and the branch convention are judgment. A repo that already has an entry → § Change an existing entry.
 
-## Step 0: Read the repo's recorded decision
+## Step 0: Read the marker
 
-```bash
-cat "$(git -C <repo> rev-parse --show-toplevel)/docs/agents/worktrees.md" 2>/dev/null
-```
+Read the repo's marker per `SKILL.md` § The worktree marker.
 
-- Declares the repo runs without worktrees → stop here and report it.
-- Absent → onboarding IS the decision, so it is the user's: put both outcomes to them before Step 1, and where they decline, write the file, then stop here and return to the caller:
+- Present → onboarding goes ahead.
+- Absent → onboarding IS the decision, so it is the user's: put it to them before Step 1. Where they decline, stop here and return to the caller with nothing written: the absent marker already says the repo works in its checkout.
+- Chosen → write the marker into the root `AGENTS.local.md`, creating it; then make sure `CLAUDE.local.md` carries `@AGENTS.local.md` as a line of its own, creating it or adding the line at its top.
 
-```markdown
-# Worktrees
-
-This project runs without worktrees. Work happens in the checkout as it stands.
-
-Recorded <date> by <who>. Reversing it is a worktrunk project entry for this repo, plus deleting this file.
-```
-
-**Done when:** the file has been read, and either it stopped this run, or the user chose onboarding, or their refusal is written to that path.
+**Done when:** the marker has been read, and either the user declined, or both files reach the marker line.
 
 ## Prerequisites — once Step 0 chose onboarding
 
@@ -69,7 +60,7 @@ Copy the existing entry in `~/.config/worktrunk/config.toml` closest in shape, a
 - Git hooks that re-run the canon linker after a rebase → a `relink` step running `wtk-step relink-hooks {{ worktree_path }}`; it refuses a repo whose `core.hooksPath` is set.
 - More than one command per act — servers, a database, a tunnel → a project folder `~/.config/worktrunk/projects/<repo>/`, with its own `AGENTS.md`, contract and tests, per `references/tooling-contracts.md`.
 - Never a `.config/wt.toml` in the repo: its hooks are committed for every clone and each needs approval; this setup's steps stay in the user config.
-- Canon → copy the closest `~/.config/worktrunk/canon/<name>.conf` to the canon name Step 1 resolved, per `cookbook/canon.md` § Sharing a new top-level path.
+- Canon → copy the closest `~/.config/worktrunk/canon/<name>.conf` to the canon name Step 1 resolved, per `cookbook/canon.md` § Sharing a new top-level path; its `CANON_FILES` lists `CLAUDE.local.md AGENTS.local.md`, so the marker reaches every tree.
 
 **Done when:** every need Step 2 found has a step, an alias or a hook, or a recorded reason it has none.
 
