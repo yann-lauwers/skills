@@ -5,8 +5,8 @@ Yann Lauwers' Claude Code skills and plugins. Every machine installs from this r
 ```
 skills/<name>/                   # one skill per folder, installed with npx skills
 plugins/yann/                    # agents and hooks, installed as a plugin
-plugins/continuous-compaction/   # the compaction plugin
-plugins/domain-canon/            # refuses work in a directory until its GLOSSARY.md and ADRs are read
+plugins/continuous-compaction/   # Claude Code only: the compaction plugin; Codex loads no hooks from its `modules` hooks.json
+plugins/domain-canon/            # refuses work in a directory until its GLOSSARY.md and ADRs are read; enabled per repo
 plugins/codex-local-instructions/ # Codex only: injects a repo's AGENTS.local.md into each session
 ```
 
@@ -30,10 +30,12 @@ npx skills add cloudflare/skills -g -a claude-code codex -y -s cloudflare wrangl
 claude plugin marketplace add yann-lauwers/skills   # then set "autoUpdate": true on it in ~/.claude/settings.json
 claude plugin install yann@yannlauwers --scope user
 claude plugin install continuous-compaction@yannlauwers --scope user
-claude plugin install domain-canon@yannlauwers --scope user
 
-# Codex only: Claude Code reads AGENTS.local.md through CLAUDE.local.md
+# Codex: one plugin list for every repo, so domain-canon gates each repo with canon
 codex plugin marketplace add yann-lauwers/skills
+codex plugin add yann@yannlauwers
+codex plugin add domain-canon@yannlauwers
+# Codex only: Claude Code reads AGENTS.local.md through CLAUDE.local.md
 codex plugin add codex-local-instructions@yannlauwers
 ```
 
@@ -70,6 +72,21 @@ Run in the repo: `npx skills add yann-lauwers/skills -a claude-code -y -s <names
 | `~/Code/cswap-laxity` | docker-patterns | committed |
 | `~/Code/immo` | sentry supabase trigger-dev nextjs-patterns | committed |
 | `~/Code/mission-manager` | supabase | committed |
+
+## Plugins one repo uses
+
+`domain-canon` goes in every repo holding a `GLOSSARY.md` or `docs/adr/`. Run `claude plugin install domain-canon@yannlauwers --scope project` in the repo, add the `yannlauwers` marketplace under `extraKnownMarketplaces` in the `.claude/settings.json` it writes, and commit that file, team repos included.
+
+| Repo | Plugins |
+| --- | --- |
+| `~/Code/nexus-project/nexus` | domain-canon |
+| `~/Code/nexus-project/nexus-ui` | domain-canon |
+| `~/Code/nexus-project/nutshell` | domain-canon |
+| `~/Code/les-gites-du-haras` | domain-canon |
+| `~/Code/personal-ops` | domain-canon |
+| `~/Code/athlete-os` | domain-canon |
+| `~/Code/lapepite/lapepite` | domain-canon |
+| `~/Code/cswap-laxity` | domain-canon |
 
 ## Changing a skill or plugin
 
