@@ -1,7 +1,5 @@
 # Planning
 
-- The plan fixes what each criterion must show and how this run treats it, before any file the diff changes is opened.
-
 ## Context
 
 - The owner criteria and anything else the brief carries.
@@ -37,7 +35,7 @@
 | `review` | it states no behaviour — the code's shape, a test's existence, a document's text, how the work was done; /code-review reads it from the diff |
 
 - A criterion its context reads one way carries no ask.
-- A hard driver, a missing tool or a down service is never a skip → `prove`; a hard driver or a missing tool ends NOT EXERCISED with its blocker, a down service fails preflight, per `references/evidence.md` § Preflight.
+- A hard driver, a missing tool or a down service is never a skip → `prove`: the first two end NOT EXERCISED with their blocker, a down service fails preflight.
 - A skip whose closer happened, or an ask a ticket comment has since answered → `prove` on the next run; on a slice with no ticket, the criterion an owner criterion settles leaves the plan.
 - The ticket's direction contradicts its criteria → blocked, on the owner, quoting both; nothing is planned.
 

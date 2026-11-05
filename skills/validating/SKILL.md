@@ -12,48 +12,48 @@ argument-hint: "[ticket-or-spec-id]"
 
 # Validating
 
+A validation **proves** a slice by using it the way its user does, on its **vehicle**: the page, the app window, the API, the command, the stored data.
+
 - Slice — the ticket or spec under proof; a spec's criteria are its child tickets'.
 - Report — `$AGENTS_REPORTS_DIR/validation/<slice>-validation/`, `<slice>` the ticket id lower-cased, else the slice's kebab-case slug.
 - `$AGENTS_REPORTS_DIR` unset in a repo → set it under `env` in the repo's `.claude/settings.local.json` to the vault's `projects/<repo>/reports`; setup work, no repo, or the owner declines → `~/.agents/reports/validation/<slice>-validation/`, the vault's own reports folder.
-- Run — one proof of the slice at one commit: `runs/<key>/` in the report, `<key>` `<YYYY-MM-DD>_<n>`, holding `run.md`, a name Claude Code's Write takes from a subagent, and one directory per scenario.
+- Run — one proof of the slice at one commit: `runs/<YYYY-MM-DD>_<n>/` in the report, holding `run.md` and one directory per scenario.
 - Proof run — the repo's own start-and-finish unit around a launched build, inside a Run; a repo with none has none.
-- Every criterion is proved by using the feature on its vehicle; a passing test is never its proof.
-- A run edits no product code, test, config or canon; its drivers and captures live in its run directory.
-- Owed only where the slice changes something a person or another program uses — a screen, a command, an API, stored data, a launched app; a slice whose every change is read only as text → say so in one line and stop.
+- A run writes only inside its run directory: no product code, test, config or canon.
+- Owed only where the slice changes something a person or another program uses; a slice read only as text → say so in one line and stop.
 
 ## Which half runs here
 
 - A brief opening `Skills: validating` → § The run.
-- A publish ask → `references/publish.md`; no run opens.
+- A publish ask the owner typed → `references/publish.md`; no run opens.
 - Otherwise → § Opening a run.
 
 ## Opening a run
 
-1. Resolve the slice — the id named, else the ticket id in the branch name, else the slug and objective the request states; none → ask — its base — `git merge-base HEAD <ref>`, `<ref>` the one the request names, else `origin/HEAD`, else the repo's default branch — and whether it is owed, from the ticket and `git diff --stat <base>..HEAD`.
-2. `git status --porcelain` in the worktree prints nothing, and `git log <base>..HEAD` holds the slice's commits; otherwise → name what is uncommitted or missing, and stop. Done when HEAD's hash and the base's hash are noted.
-3. Dispatch the run in the background with the Agent tool — `general-purpose`, `opus`, `run_in_background: true` — a prompt opening `Skills: validating`, then the slice, the worktree, the commit and its base, the report directory, every owner criterion still standing in the owner's words — the `owner` rows of the newest run whose `run.md` carries a verdict line, plus this conversation's, less any the owner withdrew — and what this conversation holds that the ticket does not.
+1. Resolve the slice: the id named, else the ticket id in the branch name, else the slug and objective the request states; none → ask. Its base is `git merge-base HEAD <ref>`, `<ref>` the one the request names, else `origin/HEAD`. Whether it is owed comes from the ticket and `git diff --stat <base>..HEAD`.
+2. The worktree is clean and `<base>..HEAD` holds the slice's commits; otherwise name what is uncommitted or missing, and stop. Done when HEAD's and the base's hashes are noted.
+3. Dispatch the run with the Agent tool — `general-purpose`, `opus`, in the background — its prompt opening `Skills: validating`, then the slice, worktree, commit, base and report directory; every owner criterion still standing, in the owner's words: the newest verdicted run's `owner` rows plus this conversation's, less any the owner withdrew; and what this conversation holds that the ticket does not.
 4. The worktree takes no edit, commit, setup or test run until the agent returns.
-5. The agent returns → read the head of its run's `run.md` and relay that verdict line, then the final reply whole; no `run.md`, or no verdict line in its head → report the run unfinished.
-   - Each ask → the owner; the answer → a comment on the ticket naming the criterion it settles; no ticket → the answer joins the next brief's owner criteria.
-   - A process the reply names still running → stop it by its PID.
-   - Replying or not → abandon each proof run still open whose folder sits under the run's `runs/<key>/`, through the repo's command for abandoning one; a machine the repo hands out for the validation then ends by the repo's own rule.
-6. BLOCKED on a dev server the repo declares that does not answer → start it once through this machine's dev-server registry from the worktree — for an app launched in a virtual machine, there through the repo's command for running on that machine, never the registry, its pid on that machine noted and stopped by that pid; its health check, from the repo's `AGENTS.md`, answers within 5 minutes → dispatch again from step 3; it does not, or the run blocks on it again → stop it and relay; every relay from here on names each dev server this step started that is still running.
+5. On return, relay the verdict line from the head of its `run.md`, then its final reply whole; no verdict line → report the run unfinished. Then:
+   - each ask → the owner; the answer → a ticket comment naming the criterion it settles, or with no ticket, an owner criterion in the next brief.
+   - stop every process the reply names as running, and abandon every proof run still open under the run directory through the repo's command; a machine the repo handed out ends by the repo's rule.
+6. BLOCKED on a dev server the repo declares → start it once through this machine's dev-server registry; in a virtual machine, through the repo's command for that machine, noting its pid there. Its `AGENTS.md` health check answers within 5 minutes → dispatch again from step 3; otherwise stop it and relay. Every later relay names each dev server this step left running.
 7. A fix lands as a new commit → again from step 2; the new run proves every criterion at that commit.
 
 ## The run
 
 - Nothing reaches the owner mid-run: a question, a grant or a decision becomes an ask, a skip or a blocker in `run.md`.
-- Blocked at any step → write `run.md`'s head with the verdict line `BLOCKED`, naming the blocker and who must act, and its table holding at least every owner criterion the brief carries; then steps 8–9, step 8 adding to the verdict line.
+- Blocked at any step → write `run.md`'s head with verdict `BLOCKED`, the blocker and who must act, its table holding at least every owner criterion the brief carries; then steps 8–9, step 8 adding to the verdict line.
 
 1. Create `runs/<key>/` in the report, `<n>` one past today's highest.
-2. Read the task per `references/plan.md` § Context, and the newest run's `run.md` carrying a verdict line, where one exists. Done when the slice's direction fits one sentence.
-3. `git rev-parse HEAD` in the worktree is the brief's commit, and `git diff --stat <base>..<commit>` carries the change the ticket describes; otherwise → blocked, on the builder.
-4. Plan per `references/plan.md` into `run.md`, before opening any file the diff changes. Done when every criterion has its plan, and each `prove` one its vehicle and expected observation.
+2. Read the task per `references/plan.md` § Context, and the newest run's `run.md` carrying a verdict line. Done when the slice's direction fits one sentence.
+3. `git rev-parse HEAD` is the brief's commit and `git diff --stat <base>..<commit>` carries the change the ticket describes; otherwise → blocked, on the builder.
+4. Plan per `references/plan.md` into `run.md`. Done when every criterion has its plan, and each `prove` one its vehicle and expected observation.
 5. Preflight per `references/evidence.md` § Preflight; any failure → blocked.
-6. Prove each `prove` criterion per `references/evidence.md`, then the walk where a `prove` criterion's vehicle is `browser` or `app`; finish every proof run opened here before step 7.
+6. Prove each `prove` criterion per `references/evidence.md`, then the walk where a vehicle is `browser` or `app`; finish every proof run opened here.
 7. Grade per § Grading into `run.md`. Done when every `prove` criterion has a verdict and its evidence paths.
-8. HEAD is still the brief's commit and `git status --porcelain` prints nothing; otherwise → blocked, naming what moved.
-9. Stop every process the run started and abandon every proof run still open, then end on the final reply: the verdict line, then each FAIL, defect, ask, skip, `review` criterion and blocker, and anything the run left outside its run directory.
+8. HEAD is still the brief's commit and the worktree is clean; otherwise → blocked, naming what moved.
+9. Stop every process and abandon every proof run this run opened, then end on the final reply: the verdict line, then each FAIL, defect, ask, skip, `review` criterion and blocker, and anything left outside the run directory.
 
 ## run.md
 
@@ -66,11 +66,11 @@ argument-hint: "[ticket-or-spec-id]"
 - A verdict rests on an artifact this run produced at the brief's commit; never on a returned claim, the code read, or a test passing.
 - A probe the run writes counts once it reads differently at the base or before the action.
 - A driver, selector, environment or build-under-test fault → repair the proof and re-run the scenario; never a FAIL.
-- A service that stops answering mid-run → blocked, per `references/evidence.md` § Preflight.
+- A service that stops answering mid-run → blocked.
 - A scenario that cannot run → each criterion it serves takes NOT EXERCISED with its concrete blocker.
-- A FAIL never pauses the run; it carries its dossier.
+- A FAIL carries its dossier and the run goes on.
 - The code following a recorded decision a criterion contradicts → that criterion becomes an ask quoting both.
-- A reproducible defect on the slice's own surface outside every criterion → a defect, naming its steps and the scenario holding it.
+- A reproducible defect on the slice's own surface outside every criterion → a defect, naming its steps and scenario.
 - Behaviour a sibling ticket owns → an observation naming that ticket.
 
 ## Verdict
@@ -82,7 +82,6 @@ argument-hint: "[ticket-or-spec-id]"
 - Two hold → the first in this list.
 - `skip` and `review` never move the verdict.
 - The verdict line opens with its verdict.
-- Publish only on a message the owner typed asking for it, per `references/publish.md`.
 
 | IF | THEN read |
 | --- | --- |

@@ -3,7 +3,7 @@
 ## Preflight
 
 - Every vehicle the `prove` criteria use gets the one act its first scenario needs, all before any scenario, every failure collected:
-  - each service it reaches → the health check the repo's `AGENTS.md` names for it, run on the machine the app runs on — a machine the repo opens at the first proof run → after the `app` preflight's launch opens it; one that does not answer is a failure, naming the dev server the repo declares for it to this machine's dev-server registry, where it declares one — for an app launched in a virtual machine, to the repo's command for running on that machine.
+  - each service it reaches → the health check the repo's `AGENTS.md` names, run on the machine the app runs on, after the `app` launch where the repo opens that machine at the first proof run; one that does not answer is a failure naming the dev server the repo declares for it.
   - each prerequisite the repo's `AGENTS.md` leaves to the person → checked, never worked around.
   - `datastore` → the store answers, with every migration the brief's commit carries applied.
   - `browser` or `service` → the served build carries the brief's commit: something the commit introduced answers.
@@ -13,12 +13,8 @@
 
 ## Isolation
 
-- The worktree stays at the brief's commit with no tracked file changed; the run's step 8 checks it.
-- A driver or a test double on this host — a stub server, a loopback feed — runs as a Bash background task (`run_in_background: true`), so it stays in this session's process tree, on a port no listener holds.
-- An isolated app instance → launched, recorded and stopped per /native-app-verification .
-- A service or driver the app reaches listens on the machine the app runs on → a loopback port on this host never reaches a virtual machine.
-- A driver the app reaches, for an app launched in a virtual machine → started there through the repo's command for running on that machine, after the first proof run opens it, its pid on that machine recorded in the run directory and stopped by that pid at the run's step 9.
-- A test double is a driver; services are the repo's.
+- A driver — a stub server, a loopback feed, any test double — runs as a background Bash task on a free port; services are the repo's.
+- Every service and driver the app reaches listens on the machine the app runs on; in a virtual machine, a driver starts there through the repo's command for that machine after the first proof run opens it, its pid recorded in the run directory and stopped by that pid at the run's step 9.
 - Data the run creates — a record, a flag override, a file — lands only in stores its worktree or its instance owns; the final reply names each.
 - A proof that must write where another checkout or the person works — a shared keyspace, a signed-in account, the person's own app → an owner prerequisite at preflight.
 
@@ -53,7 +49,7 @@
 
 ## Launched app
 
-- The run drives it on an isolated instance, per /native-app-verification ; never through the browser agent.
+- Launched, driven, recorded and stopped on an isolated instance per /native-app-verification ; never through the browser agent.
 - The repo names a launching party other than the run — a pass that proves the slice counts as the run → write the check and its command into the scenario directory; its criteria take NOT EXERCISED, blocked on that party.
 - A time criterion → measured per /native-app-verification , recorded `raw`: the command, the count, the median and the worst.
 - A sample reads state through the app's control surface or its accessibility tree; a pixel frame of a backgrounded instance is no sample.
