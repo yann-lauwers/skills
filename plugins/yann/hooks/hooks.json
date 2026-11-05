@@ -105,6 +105,17 @@
           }
         ]
       }
+    ],
+    "SessionStart": [
+      {
+        "matcher": "startup|clear|compact|fork",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$HOME/.pyenv/versions/3.13.3/bin/python3\" \"${CLAUDE_PLUGIN_ROOT}/hooks/codex-local-instructions.py\""
+          }
+        ]
+      }
     ]
   }
 }
