@@ -1,6 +1,6 @@
 ---
 name: sentry
-description: "Reads error-tracking issues, events, stack traces and release health from Sentry. Use when investigating a production error or crash, or on \"sentry\", \"check the errors\", \"production issue\", \"crash report\", \"what is failing in prod\"; also before a call to a Sentry API host, and for a Sentry issue id, event id or link. Not for root-causing or fixing the raised error — /diagnosing-bugs ; not for wiring the Sentry SDK into app code — the repo's own skill."
+description: "Reads error-tracking issues, events, stack traces and release health from Sentry. Use when investigating a production error or crash, on \"sentry\", \"check the errors\", a Sentry issue id, event id or link, or before a call to a Sentry API host. Not for root-causing or fixing the raised error — /diagnosing-bugs ; not for wiring the Sentry SDK into app code — the repo's own skill."
 user-invocable: false
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: gitlab
-description: "Operates GitLab issues and merge requests through the `glab` CLI — search, publish, fetch, relate, transition, label, comment, close. Use on 'glab', 'merge request', 'MR', 'epic', 'sub-issue', 'blocked by', a `#number` or `!number`, or a skill saying 'publish to the issue tracker' or 'fetch the relevant ticket' in a GitLab-tracked repo; before any `glab issue|mr|label|api` call. Not for opening, readying or merging an MR — /pull-request ; not for a repo whose tracker role resolves elsewhere — that tracker's skill."
+description: "Operates GitLab issues and merge requests through the `glab` CLI. Use on 'glab', 'merge request', 'MR', 'epic', 'sub-issue', 'blocked by', a `#number` or `!number`, or a skill saying 'publish to the issue tracker' or 'fetch the relevant ticket' in a GitLab-tracked repo; before any `glab issue|mr|label|api` call. Not for an MR's body — /pr ; not for a repo whose tracker role resolves elsewhere — that tracker's skill."
 ---
 
 # GitLab

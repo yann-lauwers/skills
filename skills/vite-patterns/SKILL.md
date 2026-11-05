@@ -1,6 +1,6 @@
 ---
 name: vite-patterns
-description: "Configures and debugs Vite — `vite.config.ts`, dev server and proxy, HMR, env variables, dependency pre-bundling, plugins, library mode, a production build that behaves unlike dev. Use on 'the dev server is slow', 'works in dev, breaks in the build', 'proxy the api to the backend', 'the secret ended up in the bundle', `optimizeDeps`, `build.lib`, `manualChunks`, `import.meta.env`, `VITE_` variables, or any `vite.config.*` edit. Not for React bundle-size ranking — /react-performance ; not for Vitest React tests — /react-testing ."
+description: "Configures and debugs Vite. Use on 'the dev server is slow', 'works in dev, breaks in the build', 'proxy the api to the backend', 'the secret ended up in the bundle', HMR, a plugin, `optimizeDeps`, `build.lib`, `manualChunks`, `import.meta.env`, `VITE_` variables, or any `vite.config.*` edit. Not for React bundle-size ranking — /react-performance ; not for Vitest React tests — /react-testing ."
 paths:
   - "**/vite.config.ts"
   - "**/vite.config.js"

@@ -1,6 +1,6 @@
 ---
 name: x
-description: "Reads a public post on X (Twitter) from its URL or id, with no account. Use when the user pastes an x.com or twitter.com link, or says \"what does this post say\", \"read this tweet\", \"summarize this thread\", or asks what the official X API costs or whether reading a post needs a login; also when fetching an x.com status URL returns a page with no post text. Not for another site that returned empty — the harness's built-in browser; not for minting the session a protected account or article body needs — a `yann:browser-pilot` `MODE: DISCOVERY` dispatch."
+description: "Reads a public post on X from its URL or id, with no account. Started only by /x ."
 disable-model-invocation: true
 ---
 

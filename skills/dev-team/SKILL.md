@@ -1,12 +1,8 @@
 ---
 name: dev-team
 description: >-
-  Runs a four-persona gut-check — PM, Architect, Developer, QA — on one proposal already stated,
-  before a line of code. Use when the user says "dev-team review this", "gut check from
-  PM/Architect/Dev/QA", "what would the team think about this", or wants the four stakeholder
-  concerns surfaced at once. Also fires on a proposal fuzzy across product, design, build and test,
-  where the next call is whether a full grill is worth running. Not for depth on one branch —
-  /grilling ; not for reviewing a diff — the `yann:code-reviewer` agent.
+  A four-persona gut-check — PM, Architect, Developer, QA — on one stated proposal. Started only by
+  /dev-team .
 metadata:
   origin: ECC
   source: https://github.com/affaan-m/ECC/blob/main/skills/dev-team/SKILL.md

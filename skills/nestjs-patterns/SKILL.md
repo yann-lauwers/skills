@@ -1,6 +1,6 @@
 ---
 name: nestjs-patterns
-description: "Structures a NestJS backend past the basics — feature modules, validation pipe and DTOs, guards, interceptors, the exception filter that emits the error envelope (the repo's own validation library and envelope win), `ConfigModule` env validation, specs. Use on 'structure this module', 'validate this DTO', 'add a guard', 'validate env at boot', `forwardRef()`, or editing a `*.module.ts`, `*.controller.ts`, `*.service.ts`, `*.dto.ts`, `*.guard.ts`, `*.filter.ts` or `main.ts`. Not for Prisma — /prisma-patterns ."
+description: "Structures a NestJS backend past the basics. Use on 'structure this module', 'validate this DTO', 'add a guard', 'validate env at boot', the error envelope, `forwardRef()`, or editing a `*.module.ts`, `*.controller.ts`, `*.service.ts`, `*.dto.ts`, `*.guard.ts`, `*.filter.ts` or `main.ts`. Not for Prisma — /prisma-patterns ."
 metadata:
   origin: ECC
   source: https://github.com/affaan-m/ECC/blob/main/skills/nestjs-patterns/SKILL.md

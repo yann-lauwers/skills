@@ -1,6 +1,6 @@
 ---
 name: nextjs-patterns
-description: "Writes and reviews Next.js code to the house conventions and against the installed version's own docs. Use on 'next.js', 'app router', 'server action', 'route handler', 'revalidate', 'upgrade next', or editing `page.tsx`, `layout.tsx`, `next.config`, `proxy.ts`, `middleware.ts`, a file under `app/` or `pages/`, a server `fetch` or cache tag, or a `next dev` / `next build` error. Not for component shape or the server/client boundary — /react-patterns ; not for waterfalls or bundle size — /react-performance ."
+description: "Writes and reviews Next.js code. Use on 'next.js', 'app router', 'server action', 'route handler', 'revalidate', 'upgrade next', or editing `page.tsx`, `layout.tsx`, `next.config`, `proxy.ts`, `middleware.ts`, a file under `app/` or `pages/`, a server `fetch` or cache tag, or a `next dev` / `next build` error. Not for component shape or the server/client boundary — /react-patterns ; not for waterfalls or bundle size — /react-performance ."
 ---
 
 # Next.js Patterns

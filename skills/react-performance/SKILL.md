@@ -1,6 +1,6 @@
 ---
 name: react-performance
-description: "Ranks React and Next.js performance work by payoff — request waterfalls and bundle size first, micro-optimisations last — and routes to the fix. Use on 'why is this page slow', 'too many re-renders', 'the bundle is huge', 'kill the waterfall', 'LCP regressed', or when `Promise.all`, a barrel import, `next/dynamic`, `React.memo`, `useMemo`, `React.cache`, list virtualisation or hydration cost is weighed. Not for where state lives — /react-patterns ; not for Vite config — /vite-patterns ."
+description: "Ranks React and Next.js performance work by payoff and routes to the fix. Use on 'why is this page slow', 'too many re-renders', 'the bundle is huge', 'kill the waterfall', 'LCP regressed', or when `Promise.all`, a barrel import, `next/dynamic`, `React.memo`, `useMemo`, `React.cache`, list virtualisation or hydration cost is weighed. Not for where state lives — /react-patterns ; not for Vite config — /vite-patterns ."
 metadata:
   origin: ECC
   source: https://github.com/affaan-m/ECC/blob/main/skills/react-performance/SKILL.md

@@ -1,6 +1,6 @@
 ---
 name: keyless
-description: "Runs a command with a named credential injected into its environment through `keyless run`, without the value reaching the transcript. Use when a command needs an API key, token, DB URL or secret; a `.env` or credential read is refused; auth fails on a store value; on 'keyless', 'keyless ls', 'the token isn't found', a `DEGRADED` banner or a `KL-FILE` refusal. Not for adding, rotating or listing a secret — the secrets store's skill; not for app-runtime secrets — the tool holding `role: app-secrets`."
+description: "Runs a command with a named credential injected through `keyless run`. Started only by /keyless ."
 disable-model-invocation: true
 ---
 

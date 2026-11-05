@@ -1,6 +1,6 @@
 ---
 name: react-testing
-description: "Writes and fixes React component and hook tests with Testing Library, Vitest (or Jest) and MSW — what to assert, which query, how the network is mocked, where JSDOM stops and a real browser starts. Use on 'write a test for this component', 'test this hook', 'mock the API in the test', 'this test is flaky', 'why does act warn', 'no a11y violations'; before writing a `.test.tsx` spec or any test calling `renderHook`; on MSW handlers, `userEvent`, `waitFor`, `vitest-axe`. Not for the red-green-refactor loop — /tdd ."
+description: "Writes and fixes React component and hook tests. Use on 'write a test for this component', 'mock the API in the test', 'this test is flaky', 'why does act warn', 'no a11y violations'; before writing a `.test.tsx` spec or calling `renderHook`; on MSW handlers, `userEvent`, `waitFor`, `vitest-axe`. Not for the red-green-refactor loop — /tdd ."
 metadata:
   origin: ECC
   source: https://github.com/affaan-m/ECC/blob/main/skills/react-testing/SKILL.md

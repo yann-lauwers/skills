@@ -1,6 +1,6 @@
 ---
 name: daytona
-description: "Calls the Daytona sandbox platform — REST API, SDK and CLI under this machine's key — and answers how its sandboxes and snapshots behave. Use on a sandbox cold start, a sandbox that stopped or got deleted, a create rejecting `cpu` or `memory`, an inactive or renamed snapshot, 'autoStop', 'ephemeral sandbox', 'activate snapshot'. Also fires before a Daytona API, SDK or CLI call and before setting `autoStopInterval`, `autoDeleteInterval` or `ephemeral`. Not for a project's own snapshot pipeline — that project's sandbox-ops skill."
+description: "Calls the Daytona sandbox platform and answers how its sandboxes and snapshots behave. Use on a sandbox cold start, a sandbox stopped or deleted, a create rejecting `cpu` or `memory`, an inactive or renamed snapshot, and before a Daytona API, SDK or CLI call or setting `autoStopInterval`, `autoDeleteInterval` or `ephemeral`. Not for a project's own snapshot pipeline — that project's sandbox-ops skill."
 user-invocable: false
 ---
 

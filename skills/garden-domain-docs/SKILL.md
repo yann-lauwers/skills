@@ -1,6 +1,6 @@
 ---
 name: garden-domain-docs
-description: Walk the decision records and glossaries against today's code, propose what to keep, update, supersede, fold into code or move, and apply only what the user picks. Started only by the user typing /garden-domain-docs , with a folder or a record to narrow it.
+description: "Walks the decision records and glossaries against today's code and applies only what the user picks. Started only by /garden-domain-docs , with a folder or a record to narrow it."
 disable-model-invocation: true
 ---
 

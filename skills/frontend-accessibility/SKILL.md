@@ -1,6 +1,6 @@
 ---
 name: frontend-accessibility
-description: "Builds the keyboard model of a hand-rolled composite widget — dropdown, combobox, menu, tab set — to the WAI-ARIA Authoring Practices pattern, and checks a surface against WCAG 2.2's Redundant Entry and Focus Appearance. Use on 'aria-activedescendant', 'roving tabindex', 'WCAG 2.2', 'redundant entry', 'focus appearance', or writing `role=\"combobox\"`, `\"listbox\"`, `\"menu\"` or `\"tablist\"`, or an arrow-key handler in a custom list. Not for labels, semantics or focus management on a React surface — /react-patterns ."
+description: "Builds the keyboard model of a hand-rolled composite widget to the WAI-ARIA Authoring Practices, and checks WCAG 2.2's Redundant Entry and Focus Appearance. Use on 'aria-activedescendant', 'roving tabindex', 'WCAG 2.2', or writing `role=\"combobox\"`, `\"listbox\"`, `\"menu\"` or `\"tablist\"`, or an arrow-key handler in a custom list. Not for labels, semantics or focus management on a React surface — /react-patterns ."
 metadata:
   origin: nexus-generalized
   generalized-from: "ECC's frontend-a11y skill, checked against the WAI-ARIA Authoring Practices Guide and WCAG 2.2 — trimmed after a canon review found most of it already stated, at the same or greater specificity, in react-patterns/references/accessibility.md"

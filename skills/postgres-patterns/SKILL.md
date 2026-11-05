@@ -1,6 +1,6 @@
 ---
 name: postgres-patterns
-description: "Chooses an index or column type, writes a Row Level Security policy, sets a fresh database's defaults, diagnoses a slow query by reading its plan, and lands a schema change on a populated table without a lock — expand, backfill, switch, contract — at the SQL layer of a PostgreSQL server. Use on 'this query is slow', 'add a column', 'backfill this table', 'rename this column', 'drop the old column', 'which index should this have', 'write the RLS policy', 'why is this doing a seq scan', 'what type for this column', or a `.sql` file, `EXPLAIN` output, `CREATE INDEX`, `CREATE POLICY`, `ALTER TABLE` or a large `UPDATE` under edit. Not for Prisma — /prisma-patterns ; not for on-device SQLite — /sqlite-patterns ."
+description: "Shapes a PostgreSQL schema, query or policy at the SQL layer. Use on 'this query is slow', 'add a column', 'backfill this table', 'rename this column', 'drop the old column', 'which index should this have', 'write the RLS policy', 'what type for this column', a fresh database's defaults, or a `.sql` file, `EXPLAIN` output, `CREATE INDEX`, `CREATE POLICY`, `ALTER TABLE` or a large `UPDATE` under edit. Not for Prisma — /prisma-patterns ; not for on-device SQLite — /sqlite-patterns ."
 metadata:
   origin: ECC
   source: https://github.com/affaan-m/ECC/blob/main/skills/postgres-patterns/SKILL.md

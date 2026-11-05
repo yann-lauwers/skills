@@ -1,6 +1,6 @@
 ---
 name: agents-config
-description: "Resolves a tool's config and which tool fills a role (tracker, vault, secrets…) through `agents-config get|role|resolve|list`, and owns the config shape every tool's config follows. Use before calling any wired tool, on 'which tracker', 'which vault', a `docs/agents/integrations/<tool>.md` read or written, or an `agents-config` call failing. Not for writing a tool's skill — /managing-harness ."
+description: "Resolves a tool's config and which tool fills a role (tracker, vault, secrets…), and owns the shape every tool's config follows. Use before calling any wired tool, on 'which tracker', 'which vault', a `docs/agents/integrations/<tool>.md` read or written, or an `agents-config` call failing. Not for writing a tool's skill — /managing-harness ."
 ---
 
 # Integration Config — Shape & Resolution

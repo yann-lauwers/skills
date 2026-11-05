@@ -1,6 +1,6 @@
 ---
 name: superwhisper
-description: "Changes SuperWhisper's dictation config and finds why a change did not take — the recogniser's vocabulary, a mode's prompt, and the spoken slash-command listing kept in sync with the skills on disk. Use on \"superwhisper\", \"dictation\", \"vocabulary\", \"mode prompt\", \"slash commands are misheard\", a dictated name that keeps coming out wrong, `superwhisper-skills`, a file under its `settings/` or `modes/` folder, its iPhone app, or its launchd sync job. Not for its public feedback board or roadmap — the feedback board's skill."
+description: "Changes SuperWhisper's dictation config and finds why a change did not take. Started only by /superwhisper ."
 disable-model-invocation: true
 ---
 

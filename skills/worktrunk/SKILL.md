@@ -1,12 +1,11 @@
 ---
 name: worktrunk
 description: >-
-  Creates, lists, removes and repairs git worktrees through worktrunk (`git wt`) and this
-  machine's layer on it — setup steps, shared canon, managed dev servers. Use on "create a
+  Creates, lists, removes and repairs git worktrees through worktrunk (`git wt`). Use on "create a
   worktree", "show worktrees", "remove the worktree", "is the worktree running", "canon missing",
-  "set up worktrees for this repo", "the worktree is broken"; also before any `git wt` or
-  `git worktree add|remove` command, before cutting a tree for a ticket, a repro or a spike, and
-  before an edit under `~/.config/worktrunk/`.
+  "set up worktrees for this repo", "the worktree is broken"; also before any `git wt` or `git
+  worktree add|remove` command, before cutting a tree for a ticket, a repro or a spike, and before
+  an edit under `~/.config/worktrunk/`.
 ---
 
 # Worktrunk

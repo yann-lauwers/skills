@@ -1,6 +1,6 @@
 ---
 name: enable-banking
-description: "Operates the Enable Banking PSD2 account-information API for a resolved entity — reading a bank account's transactions and balances. Use on 'enable banking', 'open banking', 'PSD2', 'the consent expired', linking a bank account, refreshing a statement, or a fetch returning fewer transactions than expected. Also fires on a call to `api.enablebanking.com`, a JWT being signed for one, and an application, key pair or whitelist being registered. Not for where a fetched statement goes — the repo's own finance pipeline."
+description: "Operates the Enable Banking account-information API — a bank account's transactions and balances. Use on 'enable banking', 'open banking', 'PSD2', 'the consent expired', linking a bank account, refreshing a statement, a fetch returning fewer transactions than expected, a call to `api.enablebanking.com` or a JWT signed for one, or an application, key pair or whitelist registered. Not for where a fetched statement goes — the repo's own finance pipeline."
 ---
 
 # enable-banking

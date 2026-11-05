@@ -1,11 +1,9 @@
 ---
 name: garmin
 description: >-
-  Mints and re-mints a Garmin Connect login's tokens through the unofficial `garminconnect`
-  library, and carries its traps. Use on "garmin token expired", "re-mint the garmin token",
-  "garmin login", or a Garmin call failing on "Token is not active",
-  `GarminConnectAuthenticationError` or a 429; also before a Garmin login runs or its item is read
-  from the secrets store.
+  Mints and re-mints a Garmin Connect login's tokens. Use on "garmin token expired", "garmin login",
+  or a Garmin call failing on "Token is not active", `GarminConnectAuthenticationError` or a 429;
+  also before a Garmin login runs or its item is read from the secrets store.
 ---
 
 # Garmin
