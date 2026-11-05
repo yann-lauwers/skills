@@ -52,6 +52,8 @@
 
 **Retired ids — `compact-at-seam`, `postcompact-resume`** (2026-10-13). The continuous-compaction plugin's Stop and PostCompact hooks that typed `/compact` and a resume line into the session's pane. The plugin is a hooks module from 2.0.0 and writes no rows here; its outcomes show on `/compaction` and in `claude --debug`.
 
+**Retired id — `artifact-mirror-publish`** (2026-11-05). Copied every Artifact publish into the local store at `~/.local/share/claude-artifacts`. No successor: the Artifact tools are denied and the store is gone.
+
 **Retired id — `artifact-publish-route`** (2026-10-12). A once-per-session advisory injecting the local store's publish command when a standalone HTML page was written. No successor: a page stays where its skill writes it, and only a page published with the Artifact tool reaches the local store, through `artifact-mirror-publish`. `lib/artifact_page.py` stays for `house-style-unloaded`.
 
 **Retired ids — `user-rule-ban`, `managing-harness-unloaded`, `ticket-overlap-gate`** (2026-10-12). The last checks of `skills-line-unloaded.py`: a write under `~/.claude/rules/` denied, a canon write before /managing-harness loaded, a tracker create before the overlap check (both observing, never flipped). None blocked a call in 30 days, at an interpreter start per call. No successor; `lib/tracker_create.py` went too.

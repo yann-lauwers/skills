@@ -15,25 +15,14 @@ Two events deliver what it captures, and both are documented context channels:
 `{"decision": "block"}` — carrying the payload out through this event instead would
 put the obligation in the one place a compaction is free to discard.
 
-Three feeds, every one of them already on disk:
+Two feeds, both already on disk:
 
   skills    $HOOK_STATE_ROOT/read-log/<session>, written by record-loaded-context.py
   artifacts the session's own transcript, for the files it wrote
-  pages     the same transcript for what it PUBLISHED, resolved against the local
-            artifact store's own registries for the second address
 
-The first answers what the session FORGOT; the last two answer where its work
+The first answers what the session FORGOT; the second answers where its work
 LIVES. A summary that describes an edit without naming the file it landed in sends
 the resumed session to rebuild something that is already on disk and current.
-
-A published page has TWO addresses and neither one substitutes for the other: the
-hosted URL belongs to one account and reaches anyone, the served local URL reaches
-every account on this machine and survives the scratchpad being cleaned. They exist
-together in exactly one place before the seam — the tool response and the mirror
-hook's message, both of which the summary replaces — so a page is captured as a
-PAIR or not at all, and a missing half is recorded as missing rather than dropped.
-The pairing itself is read from the store's registries rather than from the
-transcript, because the store is the copy that is still true after the seam.
 
 What the session was DOING needs no feed here either: the compaction summary is
 the record of that, and this hook's own instructions say what a summary must
@@ -49,9 +38,6 @@ import json
 import os
 import re
 import sys
-
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "lib"))
-import published_pages
 
 MAX_ITEMS_PER_KIND = 25
 
@@ -272,10 +258,6 @@ def main():
         # drops the file that was being edited when the window filled.
         "artifacts": artifacts_written(
             transcript_path)[-MAX_ITEMS_PER_KIND:],
-        # Tail-sliced for the same reason as the artifacts above: a long session's
-        # most recent page is the one being worked on when the window filled.
-        "pages": published_pages.pages_published(
-            transcript_path, stream_lines)[-MAX_ITEMS_PER_KIND:],
     }
 
     try:
@@ -316,9 +298,9 @@ def main():
         import hook_decisions
         hook_decisions.log(
             "precompact-capture", "captured",
-            "epoch=%d skills=%d artifacts=%d pages=%d" % (
+            "epoch=%d skills=%d artifacts=%d" % (
                 captured["epoch"], len(captured["skills"]),
-                len(captured["artifacts"]), len(captured["pages"])),
+                len(captured["artifacts"])),
             session=session, event="PreCompact")
     except Exception:
         pass
