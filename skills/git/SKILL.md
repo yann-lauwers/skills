@@ -1,11 +1,10 @@
 ---
 name: git
 description: >-
-  This setup's git policy — a repo's base and production branch, commit subject and trailers,
-  branch naming, push and force-push rules, and which ignore file takes an entry. Use on "commit",
-  "push", "rebase", "cherry-pick", "branch", a named base branch, `base_branch: auto`,
-  `branch_pattern: auto`, `docs/agents/integrations/git.md`, or an entry going into `.gitignore`,
-  `.git/info/exclude` or the global excludes file. Not for pull requests — /pull-request .
+  This setup's git policy. Use on "commit", "push", "force push", "rebase", "cherry-pick", "branch",
+  a named base branch, `base_branch: auto`, `branch_pattern: auto`,
+  `docs/agents/integrations/git.md`, or an entry going into `.gitignore`, `.git/info/exclude` or the
+  global excludes file. Not for a pull request's body — /pr .
 ---
 
 # Git
@@ -25,7 +24,7 @@ description: >-
 - Parent squash-merged or rewritten → `git rebase --onto origin/<base> <parent's old tip>`, never a plain rebase.
 - Retarget → the new base was cut from the base the branch sits on → retarget alone; otherwise rebase first; then `git diff <new-base>...HEAD`.
 - Rewriting published history → only on an instruction naming that branch; a /watch-pr line whose `rewrite` is `allow` is that instruction; a local-only branch rewrites freely.
-- A branch other pull requests merge into → takes its base by merge, never rebase: /pull-request rule 6.
+- A branch other pull requests merge into → takes its base by merge, never rebase.
 - Cherry-pick → always `-x`.
 
 ## Routing

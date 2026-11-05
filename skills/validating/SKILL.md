@@ -1,9 +1,8 @@
 ---
 name: validating
 description: >-
-  Proves a built ticket or spec against its acceptance criteria by using it the way its user
-  does — the page, the app, the API, the command, the stored data. Use on "validate <ticket>",
-  "prove it works", "does this meet the criteria", "re-validate", or a
+  Proves a built ticket or spec against its acceptance criteria by using it the way its user does.
+  Use on "validate <ticket>", "prove it works", "does this meet the criteria", "re-validate", or a
   brief opening `Skills: validating`. Not for whether the diff matches its spec on paper —
   /code-review ; root-causing a failure — /diagnosing-bugs .
 argument-hint: "[ticket-or-spec-id]"

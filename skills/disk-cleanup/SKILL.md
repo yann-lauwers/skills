@@ -1,12 +1,8 @@
 ---
 name: disk-cleanup
 description: >-
-  Frees disk space on this Mac: maps every folder of 1 GB or more on the data volume, has research
-  agents sort what is stale, merged, rebuildable or temporary into safe and risky candidates, and
-  cleans the ones the owner picks. Use when the request says "disk full", "free up disk", "what is
-  taking space", "System Data is huge", "no space left". Also fires on a write, build or test
-  failing on "No space left on device" or ENOSPC, or `df` showing the data volume past 90%. Not for
-  removing one named worktree — /worktrunk .
+  Frees disk space on this Mac, cleaning only the candidates the owner picks. Started only by
+  /disk-cleanup .
 argument-hint: "[area to focus on]"
 disable-model-invocation: true
 ---

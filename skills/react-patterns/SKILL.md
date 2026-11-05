@@ -1,6 +1,6 @@
 ---
 name: react-patterns
-description: "Shapes a React 18/19 component tree — what render may compute, what an effect is for, where state lives, the server/client boundary, Suspense and error boundary placement, form submission, re-renders, keyboard reach. Use on 'where should this state live', 'why does this re-render', 'server or client component', 'this form needs an action', `useEffect`, `\"use client\"`, `useActionState`, TanStack Query; when writing a `.tsx` / `.jsx` component or hook. Not for a slow page — /react-performance ; not for tests — /react-testing ; not for a hand-rolled combobox — /frontend-accessibility ."
+description: "Shapes a React 18/19 component tree. Use on 'where should this state live', 'why does this re-render', 'server or client component', 'this form needs an action', a label, focus or keyboard reach, `useEffect`, `\"use client\"`, `useActionState`, `Suspense`, TanStack Query, or writing a `.tsx` / `.jsx` component or hook. Not for a slow page — /react-performance ; not for tests — /react-testing ; not for a hand-rolled combobox — /frontend-accessibility ."
 metadata:
   origin: ECC
   source: https://github.com/affaan-m/ECC/blob/main/skills/react-patterns/SKILL.md

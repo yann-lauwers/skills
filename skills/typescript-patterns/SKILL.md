@@ -1,6 +1,6 @@
 ---
 name: typescript-patterns
-description: "Writes and reviews TypeScript types, assertions, generics, imports and tsconfig to the house conventions — `satisfies`, discriminated unions, `as const` over `enum`, parsing at the boundary, exhaustive `never`, `NoInfer`, TypeScript 6/7 tsconfig and module rules. Use on 'type this', 'fix the types', 'tsconfig', 'generic', 'type guard', 'enum or union', 'branded type', `as`, `!`, `import type`, or any `.ts`, `.tsx`, `.mts`, `.cts` or `tsconfig*.json` edit. Not for components — /react-patterns ; not for NestJS — /nestjs-patterns ; not for Next.js — /nextjs-patterns ."
+description: "Writes and reviews TypeScript types, imports and tsconfig. Use on 'type this', 'fix the types', 'tsconfig', 'generic', 'type guard', 'enum or union', 'branded type', `as`, `!`, `satisfies`, `import type`, or any `.ts`, `.tsx`, `.mts`, `.cts` or `tsconfig*.json` edit. Not for components — /react-patterns ; not for NestJS — /nestjs-patterns ; not for Next.js — /nextjs-patterns ."
 ---
 
 # TypeScript Patterns

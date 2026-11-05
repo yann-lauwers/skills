@@ -1,6 +1,6 @@
 ---
 name: watch-pr
-description: "Watches one pull request until it merges, acting only on its watcher's lines. Use on \"watch the pr\", \"observe the pr until it's merged\", \"keep the pr green until merge\", \"watch pr and close the worktree\"; also when a pull request was just opened or pushed with intent to land it, a watcher line needs acting on, or a merged pull request this session watched still has its worktree on disk. Not for a watcher over anything else — /watching ; not for bulk worktree pruning — /worktrunk ."
+description: "Watches one pull request until it merges, acting only on its watcher's lines. Use on \"watch the pr\", \"keep the pr green until merge\", \"watch pr and close the worktree\"; also when a pull request was just opened or pushed with intent to land it, a watcher line needs acting on, or a merged pull request this session watched still has its worktree on disk. Not for a watcher over anything else — /watching ; not for bulk worktree pruning — /worktrunk ."
 argument-hint: "[pr-number] [--repo]"
 allowed-tools: Bash(${CLAUDE_SKILL_DIR}/scripts/*), Bash(uv run *), Bash(gh pr *), Bash(gh api *), Bash(gh run *), Bash(git worktree *), Bash(git rev-parse *), Bash(git wt *), Bash(git branch *), Read, Skill, TaskStop, PushNotification
 ---

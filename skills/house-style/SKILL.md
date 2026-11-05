@@ -1,6 +1,6 @@
 ---
 name: house-style
-description: "Gives a generated page, chart, deck or dashboard the house look — one brand, the house tokens by CSS variable name — and changes the house system itself. Use on 'house style', 'house palette', 'brand colour', before writing any standalone HTML page or stylesheet. Not for an unbuilt screen's look or judging a shipped interface — /impeccable ."
+description: "Gives a generated page, chart, deck or dashboard the house look, and changes the house system itself. Use on 'house style', 'house palette', 'brand colour', before writing any standalone HTML page or stylesheet. Not for an unbuilt screen's look or judging a shipped interface — /impeccable ."
 allowed-tools: Read, Grep, Glob, Write(**/*.html), Write(**/*.css), Edit(**/*.html), Edit(**/*.css)
 ---
 

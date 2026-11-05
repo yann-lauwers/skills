@@ -1,6 +1,6 @@
 ---
 name: trigger-dev
-description: "Writes, runs and deploys Trigger.dev v4 background tasks — task config, schedules, build extensions — and carries the SDK's traps. Use on \"trigger.dev\", \"background job\", \"scheduled task\", \"cron task\", \"deploy the tasks\", a schedule that did not fire, `trigger.config.ts`, a `task`, `schemaTask` or `schedules.task`, or the `trigger.dev` CLI's `dev` or `deploy`."
+description: "Writes, runs and deploys Trigger.dev v4 background tasks. Use on \"trigger.dev\", \"background job\", \"scheduled task\", \"deploy the tasks\", a schedule that did not fire, `trigger.config.ts`, a `task`, `schemaTask` or `schedules.task`, or the `trigger.dev` CLI's `dev` or `deploy`."
 ---
 
 # Trigger.dev (v4)

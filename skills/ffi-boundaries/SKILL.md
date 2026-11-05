@@ -1,6 +1,6 @@
 ---
 name: ffi-boundaries
-description: "Designs and reviews a boundary where two languages share memory through a C ABI — a Zig, Rust or C core exporting functions and callbacks to a Swift or C++ shell: allocation and free, pointer lifetime across a callback, teardown order, foreign-thread callbacks, layout, the header as contract. Use on 'add an export', 'change the C header', 'the callback crashes', 'use-after-free in the bridge', `Unmanaged`, `callconv(.c)`, `extern \"C\"`, `#[repr(C)]`, `#[no_mangle]`, `cbindgen`. Not for Swift actor isolation — /swift-patterns ."
+description: "Designs and reviews a boundary where two languages share memory through a C ABI. Use on 'add an export', 'change the C header', 'the callback crashes', 'use-after-free in the bridge', `Unmanaged`, `callconv(.c)`, `extern \"C\"`, `#[repr(C)]`, `#[no_mangle]`, `cbindgen`. Not for Swift actor isolation — /swift-patterns ."
 ---
 
 # FFI Boundaries

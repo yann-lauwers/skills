@@ -1,11 +1,10 @@
 ---
 name: analysing-recordings
 description: >-
-  Reads what a video or audio recording shows and says, and settles whether a recording handed over
-  needs reading at all. Use when one is handed over — 'what does this show', 'watch this', 'here is
-  a recording of the bug', 'transcribe this .m4a', 'summarise the call' — or when asked whether
-  Claude understands a video. Also fires on a .mp4, .mov or .m4a arriving with a question or a bare
-  note, and on a recording handed over to store, attach or upload.
+  Reads what a video or audio recording shows and says. Use when one is handed over — 'what does
+  this show', 'watch this', 'here is a recording of the bug', 'transcribe this', 'summarise the
+  call' — or a .mp4, .mov or .m4a arrives with a question, a bare note, or to store, attach or
+  upload; also when asked whether Claude understands a video.
 ---
 
 # Analysing Recordings

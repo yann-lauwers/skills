@@ -1,6 +1,6 @@
 ---
 name: obsidian
-description: "The vault tool — navigates, searches, captures into and links notes in the Obsidian vault (personal notes, synthesis, every wired repo's validation reports). Use on 'note this down', 'search the vault', 'find the handoff/report on X', 'link this note', 'set up reports for this repo', 'backlinks', or a bare pasted link or one-line idea (a capture into `inbox/`, never a cue to act). Also fires on `vault setup|status|save`, a `.vault-sync-failed` file, an edit under `.obsidian/`. Not for where a validation report lands — /validating ."
+description: "Navigates, searches, captures into and links notes in the Obsidian vault. Started only by /obsidian ."
 allowed-tools: Read, Grep, Glob, Bash(ls:*), Bash(find:*), Bash(readlink:*), Bash(/usr/bin/grep:*), Bash(~/.claude/skills/agents-config/scripts/agents-config:*)
 disable-model-invocation: true
 ---

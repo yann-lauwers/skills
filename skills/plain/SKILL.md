@@ -1,9 +1,8 @@
 ---
 name: plain
 description: >-
-  Re-explains the previous assistant message in plain language, visual first. Use when the user
-  types '/plain ', says 'say that again simply' or 'plain english please', or signals the last reply
-  was too dense. Not for drawing something the last reply did not explain.
+  Re-explains the previous assistant message in plain language, visual first. Started only by /plain
+  .
 disable-model-invocation: true
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: supabase
-description: "Reaches Supabase through the `supabase` CLI, the Management API and the database's connection endpoints. Use on \"supabase cli\", \"supabase login\", \"query supabase\", \"run a migration on supabase\", \"inspect supabase\", a database connection that fails, hangs or reports \"no route to host\", a call to `api.supabase.com`, or a Supabase connection string about to be stored. Not for writing the migration, an index, column type, RLS policy or query plan — /postgres-patterns ."
+description: "Reaches Supabase through its CLI, Management API and connection endpoints. Use on \"supabase login\", \"query supabase\", \"run a migration on supabase\", \"inspect supabase\", a database connection that fails, hangs or reports \"no route to host\", a call to `api.supabase.com`, or a Supabase connection string about to be stored. Not for writing the migration, an index, column type, RLS policy or query plan — /postgres-patterns ."
 user-invocable: false
 ---
 

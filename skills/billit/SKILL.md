@@ -1,6 +1,6 @@
 ---
 name: billit
-description: "Operates Billit, the invoicing tool, for a resolved entity through the `billit` command. Use when a supplier document is handed over to encode ('add this expense', 'encode this invoice', or an invoice PDF or photo pasted with no instruction), when documents wait in the quick-entry queue ('saisie rapide', Billit's screen label), when bank rows and orders need linking ('link them', 'reconcile the bank'), when a client is invoiced ('invoice September'), when hours are encoded on a project, or when a `billit` command or a Billit call fails."
+description: "Operates Billit, the invoicing tool, through the `billit` command. Use when a supplier document is handed over to encode ('add this expense', or an invoice PDF or photo pasted with no instruction), on the quick-entry queue ('saisie rapide'), linking bank rows and orders ('reconcile the bank'), invoicing a client ('invoice September'), encoding hours on a project, or a failing `billit` command or Billit call."
 ---
 
 # billit

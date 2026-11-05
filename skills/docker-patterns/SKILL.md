@@ -1,6 +1,6 @@
 ---
 name: docker-patterns
-description: "Writes or fixes a Dockerfile or Compose service — adding a service to a stack, volumes and networks, multi-stage builds, dropping privileges, keeping a secret out of the image, a container that will not start or reach its neighbour. Use on 'write a Dockerfile', 'add this to docker compose', 'the container can't reach the database', 'the image is huge', or `Dockerfile`, `compose.yaml`, `depends_on`, `healthcheck`, a bind mount, `.dockerignore`, `docker build`."
+description: "Writes or fixes a Dockerfile or Compose service. Use on 'add this to docker compose', 'the container can't reach the database', 'the image is huge', a container that will not start, a secret headed into an image, or `Dockerfile`, `compose.yaml`, `depends_on`, `healthcheck`, a bind mount, `.dockerignore`, `docker build`."
 metadata:
   origin: ECC
   source: https://github.com/affaan-m/ECC/blob/main/skills/docker-patterns/SKILL.md

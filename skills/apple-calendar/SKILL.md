@@ -1,12 +1,8 @@
 ---
 name: apple-calendar
 description: >-
-  Reads the calendars signed in on this Mac, answers questions about them, and creates, moves or
-  deletes events. Use when the request says "what's on my calendar", "am I free", "when is my next
-  meeting", "add an event", "book a slot", "move that meeting", "find a time for", "invite them", or
-  names a day, meeting or attendee and asks what is happening. Also fires before reaching a calendar
-  through Google Calendar, CalDAV, an ICS file or a connector, and before an `osascript` call
-  targeting Calendar. Not for a to-do with no time on it — the task list's skill.
+  Reads, creates, moves and deletes events in this Mac's calendars. Started only by /apple-calendar
+  .
 allowed-tools: Bash(${CLAUDE_SKILL_DIR}/scripts/*)
 disable-model-invocation: true
 ---
