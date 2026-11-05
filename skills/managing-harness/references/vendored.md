@@ -5,7 +5,8 @@
 - A block authored elsewhere inside a file this setup owns, between its own begin and end markers → register it under `## Blocks`; edit the file around it, never inside it.
 - A provenance marker alone — an `origin` key, a `source:` URL, an upstream name in prose — registers nothing.
 - Every skill `~/.agents/.skill-lock.json` lists → vendored.
-- Every agent `~/Code/skills/plugins/yann/packs.toml` lists → vendored, and registered under `## Agents` too, which the sweep's scanner reads; refreshing it → `references/agents.md` § The agents layer.
+- Every agent a pack's installer writes into a project's `.claude/agents/` → vendored, and registered under `## Agents` too, which the sweep's scanner reads.
+- Impeccable → per clone, never at user level: `npx impeccable install -y --project --providers=claude --no-hooks` in the main checkout, its paths in `.git/info/exclude`, worktrees fed by the repo's canon conf; refresh every clone with `for d in $(find ~/Code -maxdepth 6 -path '*/.claude/skills/impeccable/SKILL.md' | sed 's|/.claude/skills/impeccable/SKILL.md||'); do (cd "$d" && npx -y impeccable update -y --project --no-hooks); done`.
 - None present → nothing is vendored; everything is judged as authored here.
 - A `## Skills` entry with a `/` → that path inside the skill, the rest of the skill authored here.
 - `## Skills`, `## Agents`, `## Blocks`, each row's first cell and a Blocks row's File cell are parsed by the sweep's scanner → keep them verbatim.

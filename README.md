@@ -22,7 +22,6 @@ npx skills add yann-lauwers/skills -g -a claude-code codex -y -s analysing-recor
 
 # other authors' packs, everywhere
 npx skills add mattpocock/skills -g -a claude-code codex -y -s ask-matt code-review codebase-design diagnosing-bugs domain-modeling grill-me grill-with-docs grilling handoff implement implement-spec improve-codebase-architecture pr prototype research retro setup-matt-pocock-skills tdd teach to-questionnaire to-spec to-tickets triage wait-what loop-me wayfinder writing-for-agents
-npx skills add pbakaus/impeccable -g -a claude-code codex -y -s impeccable
 npx skills add humanlayer/skills -g -a claude-code codex -y -s show-me
 npx skills add cloudflare/skills -g -a claude-code codex -y -s cloudflare wrangler
 
