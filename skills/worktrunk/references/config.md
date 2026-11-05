@@ -23,7 +23,7 @@ deps = "$HOME/.config/worktrunk/bin/wtk-step run {{ worktree_path }} deps -- <in
 
 - The key is the origin URL as `<host>/<owner>/<repo>`.
 - `[[…pre-start]]` blocks run in order; the keys inside one block run concurrently; a failing block aborts the rest. A single-step entry may write `pre-start.<name> = "…"` instead.
-- Each key names its step: `git wt -C <tree> -y hook pre-start <name>` re-runs it. `WT_SKIP` names the groups a repo's `wtk-step run` steps declare — `git wt -C <repo> hook show` lists them; `db` is nexus's.
+- Each key names its step: `git wt -C <tree> -y hook pre-start <name>` re-runs it. `WT_SKIP` names the groups a repo's `wtk-step run` steps declare — `git wt -C <repo> hook show` lists them.
 - `aliases.<name>` → `git wt -C <tree> <name> [args]`; `{{ args }}` passes the arguments through.
 - `pre-*` hooks block and a failure aborts the command; `post-*` hooks run in the background.
 

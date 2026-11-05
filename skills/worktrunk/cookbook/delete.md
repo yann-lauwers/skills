@@ -10,9 +10,9 @@ Removes a worktree without losing work: what each removal destroys is checked be
 
 1. A dirty tree — staged, modified or untracked files — is refused before any hook runs, unless `--force`.
 2. The global `pre-remove` fence refuses a tree with no `wtk-owner` token → `cookbook/troubleshoot.md` § No ownership token; never `--no-hooks`, which skips the fence and every teardown with it.
-3. The project's `pre-remove` runs: nexus sweeps worktree-born canon into the main checkout, then stops the dev stack; a `wtk-web` repo stops its dev server.
+3. The project's `pre-remove` runs: a `wtk-web` repo stops its dev server; a project folder runs its own teardown.
 4. The tree goes — in the background unless `--foreground`. The branch goes with it only when it is integrated into the default branch (`_` or `⊂` in `git wt list`); `--no-delete-branch` always keeps it, `-D` deletes it unmerged.
-5. `post-remove` runs in the background: `wt-dev forget` stops what the tree's units left running and deletes their records; nexus also reaps clusters no live tree names and destroys the tree's tunnel.
+5. `post-remove` runs in the background: `wt-dev forget` stops what the tree's units left running and deletes their records; a project folder's own `post-remove` runs after it.
 
 - Gitignored files are no dirt to the guard and go with the tree: env copies, build output, and canon authored inside the tree that no step adopted.
 - `--format json` prints one object per removal; its `branch_outcome` — `deleted`, `retained_unmerged`, `retained_checked_out`, `not_attempted`, … — says what happened to the branch, which the exit code never does.
@@ -52,7 +52,7 @@ git -C <repo> worktree list
 
 - Removal takes the directory from under anything still standing in it — a shell, a running process, a terminal seat — and tells none of them → whatever put them there takes them down.
 
-**Done when:** the tree is absent from both listings, its branch is gone or kept as chosen, and canon it authored sits in the main checkout. A path still in `git worktree list` but gone from disk clears with `git -C <repo> worktree prune`; what its units and cluster left behind → `cookbook/troubleshoot.md` § A tree deleted by hand.
+**Done when:** the tree is absent from both listings, its branch is gone or kept as chosen, and canon it authored sits in the main checkout. A path still in `git worktree list` but gone from disk clears with `git -C <repo> worktree prune`; what its units and project folder left behind → `cookbook/troubleshoot.md` § A tree deleted by hand.
 
 ## When the worktree should survive
 

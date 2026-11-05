@@ -7,7 +7,7 @@ Keeps a repo's gitignored canon — `CLAUDE.md`, `.claude/`, docs the repo does 
 ## How sharing works
 
 - Gitignored canon lives once, in the main checkout, and every worktree holds symlinks to it: one inode, so an edit through either path is the same edit — no copies, no merge, no daemon.
-- Timing — the `canon` pre-start step links it at create; a repo whose entry carries a `relink` step also re-links after every checkout, merge and rewrite through git hooks; nexus's `pre-remove` runs it once more before removal.
+- Timing — the `canon` pre-start step links it at create; a repo whose entry carries a `relink` step also re-links after every checkout, merge and rewrite through git hooks; a project folder's `pre-remove` can run it once more before removal.
 - Mechanism — one repo-agnostic engine, `~/.config/worktrunk/bin/wt-sync-shared.sh`, enumerates each side's gitignored paths and reconciles them.
 - Policy — `~/.config/worktrunk/canon/<name>.conf`, `<name>` the main checkout's directory name, lists the shared roots (`CANON_ROOTS`), filenames (`CANON_FILES`) and nested doc dirs (`NESTED_DOC_DIRS`); no conf → the step is a no-op.
 - Per path, on every run: main has it → symlink the worktree at it · only the worktree has it → adopt it, moving the file into main and linking back · both hold real content → warn and leave the worktree's copy untouched; it never merges.
@@ -48,7 +48,7 @@ find <tree> -type l ! -exec test -e {} \; -print
 
 ## Authoring canon from inside a worktree
 
-- A gitignored doc created inside a tree exists only there until the engine next runs and adopts it; removing that tree by any route but nexus's `pre-remove` — `git wt remove` in another repo, `git worktree remove`, deleting the directory — destroys it.
+- A gitignored doc created inside a tree exists only there until the engine next runs and adopts it; removing that tree by any route that skips a sweeping `pre-remove` — `git wt remove` in another repo, `git worktree remove`, deleting the directory — destroys it.
 - Author shared canon in the main checkout; already written inside a tree → run the `canon` step to adopt it before the tree goes anywhere.
 
 ## Sharing a new top-level path

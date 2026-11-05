@@ -3,7 +3,7 @@
 ## Preflight
 
 - Every vehicle the `prove` criteria use gets the one act its first scenario needs, all before any scenario, every failure collected:
-  - each service it reaches → the health check the repo's `AGENTS.md` names, run on the machine the app runs on, after the `app` launch where the repo opens that machine at the first proof run; one that does not answer is a failure naming the dev server the repo declares for it.
+  - each service it reaches → the health check the repo's `AGENTS.md` names, run where the app runs; one that does not answer is a failure naming the dev server the repo declares for it.
   - each prerequisite the repo's `AGENTS.md` leaves to the person → checked, never worked around.
   - `datastore` → the store answers, with every migration the brief's commit carries applied.
   - `browser` or `service` → the served build carries the brief's commit: something the commit introduced answers.
@@ -14,7 +14,7 @@
 ## Isolation
 
 - A driver — a stub server, a loopback feed, any test double — runs as a background Bash task on a free port; services are the repo's.
-- Every service and driver the app reaches listens on the machine the app runs on; in a virtual machine, a driver starts there through the repo's command for that machine after the first proof run opens it, its pid recorded in the run directory and stopped by that pid at the run's step 9.
+- Every service and driver the app reaches listens where the app runs; one started off this host has its pid recorded in the run directory and is stopped by that pid at the run's step 9.
 - Data the run creates — a record, a flag override, a file — lands only in stores its worktree or its instance owns; the final reply names each.
 - A proof that must write where another checkout or the person works — a shared keyspace, a signed-in account, the person's own app → an owner prerequisite at preflight.
 

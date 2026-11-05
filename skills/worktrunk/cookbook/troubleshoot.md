@@ -7,7 +7,7 @@ Diagnoses and fixes common failures — refusals, failed steps, locks, stale sta
 ```bash
 git wt -C <repo> list
 git wt -C <tree> dev status
-git wt -C <tree> doctor          # nexus: managed env keys by name, the cluster and its holders
+git wt -C <tree> doctor          # a project folder's own health check, where it has one
 ```
 
 - Read the output before applying any fix below; a fix matched by guess lands in the wrong section.
@@ -16,9 +16,9 @@ git wt -C <tree> doctor          # nexus: managed env keys by name, the cluster 
 ## No ownership token
 
 - `git -C <tree> rev-parse --git-dir` fails → the link broke, not the token: § `fatal: not a git repository` inside a tree `git worktree list` still lists, then re-run `~/.config/worktrunk/bin/wtk-step fence <tree>`.
-- The session made it itself with `git wt … --no-hooks` → to keep working in it: `[WT_DB=… WT_SKIP=…] git wt -C <tree> -y hook pre-start`, repeating the create's prefixes; to remove it: `~/.config/worktrunk/bin/wtk-step own <tree>`, then the removal.
+- The session made it itself with `git wt … --no-hooks` → to keep working in it: `[WT_SKIP=…] git wt -C <tree> -y hook pre-start`, repeating the create's prefixes; to remove it: `~/.config/worktrunk/bin/wtk-step own <tree>`, then the removal.
 - Otherwise → nothing proves this setup made it; leave it to whatever made it.
-- Never `--no-hooks`: it skips the fence and every teardown, leaving units, a cluster and a tunnel behind.
+- Never `--no-hooks`: it skips the fence and every teardown, leaving units and a project folder's resources behind.
 
 ## Exit 75
 
@@ -29,10 +29,6 @@ git wt -C <tree> doctor          # nexus: managed env keys by name, the cluster 
 - `2` with "portless proxy is not running" → `portless proxy start`, once per boot; it runs as root on 443.
 - `2` on the `ports` edge → a port already held; the message names its holder.
 - `5` → a `dev down` arrived while it waited and won; start again only if the stop was not meant.
-
-## A tunnel left pending
-
-- A destroy that failed — Cloudflare unreachable — stays recorded and never blocks the cluster sweep → `~/.config/worktrunk/projects/nexus/nexus-wt tunnel-retry` once it is reachable; it destroys every recorded tunnel whose tree is gone.
 
 ## Setup step failed
 
@@ -55,7 +51,7 @@ git wt -C <tree> -y hook pre-start <step> [<later-step>…]   # re-run them
 
 - The two link files stopped agreeing: a tree's `.git` names the repo and `.git/worktrees/<id>/gitdir` names the tree back, both absolute unless `worktree.useRelativePaths` is set, so renaming or moving either rots them.
 - From the repo, `git worktree list` keeps listing the tree as present; from inside it, every git command fails — each reads a different half of a link that no longer round-trips.
-- A directory renamed under `~/Code` breaks the canon match at the same moment → § Repo not matched to its entry.
+- A main checkout's directory renamed breaks the canon match at the same moment → § Repo not matched to its entry.
 
 1. Read the link: `cat <tree>/.git` — starts `gitdir: ..` is relative, `gitdir: /` is absolute.
 2. Repair, and make future ones relative:
@@ -71,7 +67,7 @@ git -C <repo> worktree repair <tree>
 - The directory went without `git wt remove`, so no teardown ran:
   1. `git -C <repo> worktree prune` drops git's entry.
   2. `~/.config/worktrunk/bin/wt-dev forget <tree-path>` stops what its units left running and deletes their records.
-  3. nexus → `~/.config/worktrunk/projects/nexus/nexus-wt pg-sweep <main-checkout>` reaps clusters no live tree names, then `~/.config/worktrunk/projects/nexus/nexus-wt tunnel-retry` destroys every recorded tunnel whose tree is gone.
+  3. A repo with a project folder → the cleanup its `AGENTS.md` names for a removal that skipped hooks.
 
 ## Node clients fail TLS against a `.localhost` URL
 

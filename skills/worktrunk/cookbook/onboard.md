@@ -36,7 +36,7 @@ git wt --version
 git -C <repo> remote get-url origin
 ```
 
-- The entry's key is that URL as `<host>/<owner>/<repo>`: `git@github.com:NexusGPT/nexus.git` → `github.com/NexusGPT/nexus`.
+- The entry's key is that URL as `<host>/<owner>/<repo>`: `git@github.com:<owner>/<repo>.git` → `github.com/<owner>/<repo>`.
 - `grep -nF 'projects."<key>"' ~/.config/worktrunk/config.toml` finds an entry → § Change an existing entry instead.
 - The canon conf takes another name: the main checkout's directory name (`basename "$(dirname "$(git -C <repo> rev-parse --path-format=absolute --git-common-dir)")"`).
 
@@ -67,7 +67,7 @@ Copy the existing entry in `~/.config/worktrunk/config.toml` closest in shape, a
 - One dev server → `aliases.dev` running `wtk-web {{ worktree_path }} <app> {{ args }} -- <command reading $PORT>`, plus `pre-remove` running `wtk-web {{ worktree_path }} <app> down`.
 - A server pinning its port in tracked files cannot run twice → no `dev` alias, and the reason recorded per Step 5.
 - Git hooks that re-run the canon linker after a rebase → a `relink` step running `wtk-step relink-hooks {{ worktree_path }}`; it refuses a repo whose `core.hooksPath` is set.
-- More than one command per act — servers, a database, a tunnel → a project folder `~/.config/worktrunk/projects/<repo>/` like nexus's, with its own contract and tests, per `references/tooling-contracts.md`.
+- More than one command per act — servers, a database, a tunnel → a project folder `~/.config/worktrunk/projects/<repo>/`, with its own `AGENTS.md`, contract and tests, per `references/tooling-contracts.md`.
 - Never a `.config/wt.toml` in the repo: its hooks are committed for every clone and each needs approval; this setup's steps stay in the user config.
 - Canon → copy the closest `~/.config/worktrunk/canon/<name>.conf` to the canon name Step 1 resolved, per `cookbook/canon.md` § Sharing a new top-level path.
 

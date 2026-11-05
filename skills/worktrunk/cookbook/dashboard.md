@@ -4,7 +4,7 @@ Answers what worktrees exist and what state each is in — the default for a wor
 
 ## Step 1: Gather
 
-- The repos → every `[projects."<host>/<owner>/<repo>"]` key in `~/.config/worktrunk/config.toml`, each resolved to its base checkout — the checkout under `~/Code` whose `git remote get-url origin` matches the key.
+- The repos → every `[projects."<host>/<owner>/<repo>"]` key in `~/.config/worktrunk/config.toml`, each resolved to its base checkout — the main checkout whose `git remote get-url origin` matches the key.
 
 ```bash
 git -C <base-checkout> worktree list          # every tree, whoever made it
