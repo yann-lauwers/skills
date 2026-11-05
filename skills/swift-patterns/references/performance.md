@@ -23,7 +23,7 @@ they measure ("parse", "layout", "encode"), never by the function.
 | a scripted, repeatable capture | `xctrace record --recording-options …` (27) |
 | a main-thread block, and a frame delivered late | `--instrument Hangs --instrument Hitches` added to a Time Profiler recording |
 | where the main thread spends a few seconds, with no trace | `sample <pid> <seconds>` |
-| which `ForEach` in a lazy container takes the slow path | the launch argument `-LogForEachSlowPath YES` — /xcode-integration:swiftui-specialist , `references/foreach.md` § Diagnosing with `-LogForEachSlowPath` |
+| which `ForEach` in a lazy container takes the slow path | the launch argument `-LogForEachSlowPath YES` |
 
 ## Costs in Foundation and the standard library
 

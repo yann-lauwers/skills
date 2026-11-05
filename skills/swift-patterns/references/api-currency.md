@@ -59,14 +59,9 @@ an answer.
 
 On each Xcode update, in order:
 
-1. `sh ${CLAUDE_SKILL_DIR}/scripts/sync-apple-skills.sh` — Apple's skills for the new Xcode replace
-   the old copy. A `not in this Xcode's pack` line → every row naming that skill moves in the same
-   edit.
-2. Each row's API compiled one per file at the project's deployment target (SKILL.md step 3); a row
+1. Each row's API compiled one per file at the project's deployment target (SKILL.md step 3); a row
    whose result changed moves in the same edit, in whichever reference states it.
-3. `sh ${CLAUDE_SKILL_DIR}/scripts/apple-doc.sh updates/<framework>` for `swiftui`, `appkit` and
+2. `sh ${CLAUDE_SKILL_DIR}/scripts/apple-doc.sh updates/<framework>` for `swiftui`, `appkit` and
    `swift`, and `apple-doc.sh xcode-release-notes/xcode-<major>-release-notes`. A deprecation the
    compiler does not warn about reaches this table only from these pages; it gets a snippet before it
    gets a row.
-4. /xcode-integration:swiftui-specialist , `references/soft-deprecated-apis.md` for SwiftUI renames —
-   searched, not read whole.

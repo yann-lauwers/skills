@@ -3,9 +3,7 @@
 Measured on Xcode 27.0 / macOS SDK 27.0, `-O` builds, a 120 Hz display, in a SwiftUI and AppKit
 Mac app whose 120-row list took 1.2 s of main-thread time per streamed update before these
 rules, and in probes beside it; a number below names what it was measured on. Floors of the
-macOS 15 scroll and time APIs: `swiftui-macos.md` § Views and state. Apple's worked examples for
-identity, data flow, the environment and view structure: /xcode-integration:swiftui-specialist ,
-`references/foreach.md`, `dataflow.md`, `environment.md`, `structure.md`.
+macOS 15 scroll and time APIs: `swiftui-macos.md` § Views and state.
 
 ## A change re-runs one view
 
