@@ -5,8 +5,7 @@ description: >-
   branch naming, push and force-push rules, and which ignore file takes an entry. Use on "commit",
   "push", "rebase", "cherry-pick", "branch", a named base branch, `base_branch: auto`,
   `branch_pattern: auto`, `docs/agents/integrations/git.md`, or an entry going into `.gitignore`,
-  `.git/info/exclude` or the global excludes file. Not for pull requests — /pull-request ; not for
-  issue and PR reads through the forge's CLI — /github .
+  `.git/info/exclude` or the global excludes file. Not for pull requests — /pull-request .
 ---
 
 # Git

@@ -1,6 +1,6 @@
 ---
 name: pull-request
-description: "Governs opening, retargeting, readying, describing and merging a pull request — its base, assignee, draft state, body and who merges. Use on 'open a PR', 'PR my changes', 'update the PR description', 'retarget the PR', 'mark ready for review', 'approve PR', 'merge the PR', 'wrap up <ticket>'; also before a `gh pr create|edit|ready|merge`, or a rebase or force-push of a branch other PRs merge into. Not for the `git` and `gh` invocations — /git and /github ; not for a watcher verdict — /watch-pr ."
+description: "Governs opening, retargeting, readying, describing and merging a pull request — its base, assignee, draft state, body and who merges. Use on 'open a PR', 'PR my changes', 'update the PR description', 'retarget the PR', 'mark ready for review', 'approve PR', 'merge the PR', 'wrap up <ticket>'; also before a `gh pr create|edit|ready|merge`, or a rebase or force-push of a branch other PRs merge into. Not for the `git` invocations — /git ; not for a watcher verdict — /watch-pr ."
 ---
 
 # Pull requests

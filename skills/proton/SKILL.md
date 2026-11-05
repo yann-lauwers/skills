@@ -2,6 +2,7 @@
 name: proton
 description: "Specifies, rotates, renames and reads developer-tooling credentials in Proton Pass, the `role: secrets` store, and keeps the injector daemon's vault session alive. Use on 'vault locked', 'add a secret to the vault', 'rotate a secret', 'list vault items', 'the daemon lost its Proton session', 'renew the agent token', 'proton pass'; also before a `<NAME>__<FIELD>` read or `pass-cli` runs, and when `keyless run` injects nothing. Not for app-runtime secrets — the tool holding `role: app-secrets`."
 user-invocable: false
+disable-model-invocation: true
 ---
 
 # Proton

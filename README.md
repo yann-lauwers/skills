@@ -18,10 +18,10 @@ Naming both agents makes `npx skills` keep each skill in `~/.agents/skills`, whe
 npx skills add yann-lauwers/skills -g -a claude-code codex -y -s agents-config
 
 # skills used everywhere
-npx skills add yann-lauwers/skills -g -a claude-code codex -y -s analysing-recordings apple-calendar apple-mail browser claude-artifacts claude-login cmux cp dev-team disk-cleanup garden-domain-docs git github hetzner hook-development house-style keyless local-markdown loop-me managing-harness obsidian plain pr-cluster proton pull-request relogin simplify-comments slack superwhisper tailscale things userjot validating voice watch-pr watching worktrunk x
+npx skills add yann-lauwers/skills -g -a claude-code codex -y -s analysing-recordings apple-calendar apple-mail browser claude-artifacts cmux cp dev-team disk-cleanup garden-domain-docs git hetzner hook-development house-style keyless managing-harness obsidian plain proton pull-request simplify-comments slack superwhisper tailscale things userjot validating voice watch-pr watching worktrunk x
 
 # other authors' packs, everywhere
-npx skills add mattpocock/skills -g -a claude-code codex -y -s ask-matt code-review codebase-design diagnosing-bugs domain-modeling grill-me grill-with-docs grilling handoff implement implement-spec improve-codebase-architecture pr prototype research retro setup-matt-pocock-skills tdd teach to-questionnaire to-spec to-tickets triage wait-what wayfinder writing-for-agents
+npx skills add mattpocock/skills -g -a claude-code codex -y -s ask-matt code-review codebase-design diagnosing-bugs domain-modeling grill-me grill-with-docs grilling handoff implement implement-spec improve-codebase-architecture pr prototype research retro setup-matt-pocock-skills tdd teach to-questionnaire to-spec to-tickets triage wait-what loop-me wayfinder writing-for-agents
 npx skills add pbakaus/impeccable -g -a claude-code codex -y -s impeccable
 npx skills add humanlayer/skills -g -a claude-code codex -y -s show-me
 npx skills add cloudflare/skills -g -a claude-code codex -y -s cloudflare wrangler
@@ -50,7 +50,7 @@ Run in the repo: `npx skills add yann-lauwers/skills -a claude-code -y -s <names
 
 | Repo | Skills | Copies |
 | --- | --- | --- |
-| `~/Code/nexus-project/nexus` | linear sentry supabase daytona infisical prisma redis react-patterns react-performance react-testing frontend-accessibility typescript-patterns vite-patterns nestjs-patterns prisma-patterns postgres-patterns redis-patterns docker-patterns | excluded |
+| `~/Code/nexus-project/nexus` | linear pr-cluster sentry supabase daytona infisical prisma redis react-patterns react-performance react-testing frontend-accessibility typescript-patterns vite-patterns nestjs-patterns prisma-patterns postgres-patterns redis-patterns docker-patterns | excluded |
 | `~/Code/nexus-project/nexus-ui` | linear react-patterns react-performance react-testing frontend-accessibility typescript-patterns vite-patterns | excluded |
 | `~/Code/nexus-project/nexus-landing` | linear react-patterns react-performance react-testing frontend-accessibility typescript-patterns nextjs-patterns | excluded |
 | `~/Code/nexus-project/nutshell` | linear typescript-patterns swift-patterns sqlite-patterns | committed |
@@ -61,7 +61,7 @@ Run in the repo: `npx skills add yann-lauwers/skills -a claude-code -y -s <names
 | `~/Code/effigest-site` | react-patterns react-performance react-testing frontend-accessibility typescript-patterns vite-patterns nextjs-patterns | committed |
 | `~/Code/personal-coach` | react-patterns react-performance react-testing frontend-accessibility typescript-patterns | committed |
 | `~/Code/playground` | react-patterns react-performance react-testing frontend-accessibility typescript-patterns nextjs-patterns | committed |
-| `~/Code/personal-ops` | billit enable-banking unifi | committed |
+| `~/Code/personal-ops` | billit enable-banking unifi local-markdown | committed |
 | `~/Code/athlete-os` | garmin | committed |
 | `~/Code/cswap-laxity` | docker-patterns | committed |
 | `~/Code/immo` | sentry supabase trigger-dev nextjs-patterns | committed |

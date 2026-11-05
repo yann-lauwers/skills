@@ -1,6 +1,7 @@
 ---
 name: pr-cluster
 description: "Runs the PR cluster — one integration branch several child pull requests merge into, then one promotion pull request to the trunk: whether a wave takes one, founding it, which base a child targets, shipping and retiring it. Use on 'cluster', 'start a cluster', 'ship the cluster', 'promote the cluster', 'which base does this PR target', 'is cluster/… still live', a `cluster/…` branch, or a repo declaring `integration_bases`. Not for one PR's own base or merge actor — /pull-request ; not for the body — /pr ."
+disable-model-invocation: true
 ---
 
 # PR cluster

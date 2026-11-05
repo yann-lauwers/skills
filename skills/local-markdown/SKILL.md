@@ -1,6 +1,7 @@
 ---
 name: local-markdown
 description: "Operates a repo's local-markdown issue tracker — tickets as files under `.scratch/`, no remote service: search, publish, fetch, relate, transition, close. Use on '.scratch', 'local tickets', 'markdown tracker', a skill saying 'publish to the issue tracker' or 'fetch the relevant ticket' in such a repo, an edit to a ticket file under `.scratch/<effort>/issues/` or its `PRD.md` / `map.md`, or a changed `Status:`, `Type:`, `Blocked by:` or `Duplicate of:` line. Not for a repo whose tracker role resolves elsewhere — that tracker's skill."
+disable-model-invocation: true
 ---
 
 # Local markdown
