@@ -1,16 +1,11 @@
 # Stack
 
-Which library draws which job, and how it loads in a published artifact. Every URL below sits on
-a host the CSP admits, and every tag carries the hash of the bytes the CDN served when the row
+Which library draws which job, and how it loads in a standalone page. Every tag carries the hash of the bytes the CDN served when the row
 was recorded, so a CDN that serves different bytes is refused rather than executed. A row records
 no hash where none can hold — a URL that tracks the latest of a major, or an ESM import map, which
 carries no integrity attribute — and its own note says which; those rows are what the audit
 excuses. A repo
 installs the same libraries through its bundler; the project column says what changes there.
-
-## What an artifact may load
-
-- `fetch`, XHR and WebSocket reach only `same-origin`, `https://fonts.googleapis.com/` and `https://fonts.gstatic.com/`.
 
 ## Which library, for which job
 

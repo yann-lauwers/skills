@@ -31,16 +31,6 @@
             "command": "\"$HOME/.pyenv/versions/3.13.3/bin/python3\" \"${CLAUDE_PLUGIN_ROOT}/hooks/record-loaded-context.py\""
           }
         ]
-      },
-      {
-        "matcher": "Artifact",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "\"$HOME/.pyenv/versions/3.13.3/bin/python3\" \"${CLAUDE_PLUGIN_ROOT}/hooks/artifact-mirror-publish.py\"",
-            "timeout": 180
-          }
-        ]
       }
     ],
     "PreCompact": [

@@ -73,8 +73,7 @@ and never stand in for a series.
 - **Mono:** Geist Mono — code, numeric table columns, identifiers, timestamps, a figure a reader compares down a column.
 - **Editorial:** Instrument Serif italic — report and deck title cards only; never on a product surface.
 
-All three resolve on Google Fonts — `https://fonts.googleapis.com/`, the stylesheet host a published artifact
-admits. The sans is neutral: the palette and the density carry the character, never the
+All three resolve on Google Fonts — `https://fonts.googleapis.com/`. The sans is neutral: the palette and the density carry the character, never the
 letterforms.
 
 | Step | Size | Leading | Tracking | Weight | Carries |
@@ -166,7 +165,6 @@ on overlays; dark drops shadow and lets the border separate.
 - Do commit to one world by stamping the root and saying so. A page built dark still pastes the whole block; `<html data-theme="dark">` is what commits it.
 - Don't put a coloured edge on a card.
 - Don't use `--accent` as the brand colour; it is the hover surface. The brand is `--primary`.
-- Don't load an image from a remote host inside a published artifact — it renders blank. Name the gap.
 - Don't animate layout. Motion moves transform and opacity; a state change may cross-fade colour, border or shadow over `--duration-fast`, and nothing else moves. Enter and exit run `--duration-fast` to `--duration-base` on `--ease-out`; anything past `--duration-slow` (300ms) is a scroll-linked sequence rather than a transition. Exits run about 20% faster than entrances, and repeated keyboard actions animate nothing. The loading skeleton's `--duration-pulse` is the one loop, and `prefers-reduced-motion` stops it.
 
 ## 8. Responsive Behavior

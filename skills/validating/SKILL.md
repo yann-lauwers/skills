@@ -3,7 +3,7 @@ name: validating
 description: >-
   Proves a built ticket or spec against its acceptance criteria by using it the way its user
   does — the page, the app, the API, the command, the stored data. Use on "validate <ticket>",
-  "prove it works", "does this meet the criteria", "re-validate", "publish the validation", or a
+  "prove it works", "does this meet the criteria", "re-validate", or a
   brief opening `Skills: validating`. Not for whether the diff matches its spec on paper —
   /code-review ; root-causing a failure — /diagnosing-bugs .
 argument-hint: "[ticket-or-spec-id]"
@@ -22,7 +22,6 @@ A validation is owed only where the slice changes something a person or a progra
 ## Pick a branch
 
 - A brief opening `Skills: validating` → § The run.
-- A publish ask the owner typed → `references/publish.md`; no run opens.
 - Otherwise → § Opening a run.
 
 ## Opening a run
@@ -81,4 +80,4 @@ The first that holds:
 3. **PASS** — at least one `prove` criterion, each passed in this run, every owner criterion in the table, no ask, no defect.
 4. **INCOMPLETE** — anything else; the line names each criterion holding it, or that nothing was proved.
 
-The verdict line opens with its verdict. `skip` and `review` never move it. Publish only when the owner asks, per `references/publish.md`.
+The verdict line opens with its verdict. `skip` and `review` never move it.

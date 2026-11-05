@@ -16,14 +16,6 @@ It carries the session's own written files in the same message, for the mirror-i
 failure: those outlive the summary, so a session told only that "the hook was
 updated" rebuilds a file that is already on disk and correct.
 
-Published pages are carried the same way and always as a PAIR. A page has a hosted
-address and a served local one; both exist in the transcript the summary replaces,
-and a session that resumes holding one of them hands the reader half an answer —
-usually the hosted half, since that is what the tool returned and what the reply
-quoted. The local address is the half that keeps working after the scratchpad is
-cleaned and from an account that does not own the hosted page, so it is the half
-that must not be the one lost.
-
 Why the delivery lives here rather than at the seam itself: an injection emitted
 at `PreCompact` lands in the material being summarised and can be discarded with
 the context it warns about. `additionalContext` at `UserPromptSubmit` is the
@@ -93,29 +85,6 @@ def load_capture(session):
         return None
 
 
-def dedupe_pages(pages):
-    """One entry per page, the most recent republish kept.
-
-    `local` is the stable key: it is served from the store's group/slug and
-    identical across every artifact id a page is republished under, where
-    `hosted` changes on every republish. Pages already come in the list
-    oldest-first, so the LAST occurrence of a key is the most recent republish
-    and every earlier one under the same key is the page it superseded.
-    `hosted` stands in when a page never got a local copy at all.
-    """
-    keyed, order = {}, []
-    for page in pages:
-        if not isinstance(page, dict):
-            continue
-        key = page.get("local") or page.get("hosted") or page.get("title")
-        if not key:
-            continue
-        if key not in keyed:
-            order.append(key)
-        keyed[key] = page
-    return [keyed[k] for k in order]
-
-
 def name_list(items, limit=MAX_NAMED):
     shown = [str(i) for i in items[:limit]]
     extra = len(items) - len(shown)
@@ -143,7 +112,6 @@ def build_message(capture, capture_path):
     skills = capture.get("skills") or []
     canon = capture.get("canon") or []
     artifacts = capture.get("artifacts") or []
-    pages = dedupe_pages(capture.get("pages") or [])
 
     out = ["[PC-REARM] A compaction ended this session's context at epoch %d."
            % capture.get("epoch", 0)]
@@ -185,28 +153,7 @@ def build_message(capture, capture_path):
             "writing anything it may already hold."
             % (len(artifacts), name_list([short_path(a) for a in artifacts])))
 
-    if pages:
-        lines = []
-        for page in pages:
-            if not isinstance(page, dict):
-                continue
-            title = page.get("title") or "untitled"
-            hosted = page.get("hosted") or ""
-            local = page.get("local") or ""
-            lines.append("%s — hosted %s · local %s" % (
-                title, hosted or "none", local or "NO LOCAL COPY"))
-        out.append(
-            "This session published %d page(s), each with two addresses: %s. "
-            "Both belong together in anything said about a page — the hosted URL "
-            "reaches anyone and belongs to one account, the local URL is served "
-            "from this machine's artifact store and survives the scratchpad being "
-            "cleaned and the account being switched. A page reported with one "
-            "address gives the reader no way to reach the other, and this message "
-            "is the only place the pairing survives the summary. \"NO LOCAL COPY\" "
-            "means the mirror did not run for that page."
-            % (len(lines), "; ".join(lines)))
-
-    if skills or canon or artifacts or pages:
+    if skills or canon or artifacts:
         out.append(
             "The full lists are at %s. "
             "Already re-read since the compaction, and the next action enters none "
@@ -256,11 +203,10 @@ def main():
         import hook_decisions
         hook_decisions.log(
             "precompact-rearm", "warn",
-            "epoch=%d skills=%d canon=%d artifacts=%d pages=%d" % (
+            "epoch=%d skills=%d canon=%d artifacts=%d" % (
                 epoch, len(capture.get("skills") or []),
                 len(capture.get("canon") or []),
-                len(capture.get("artifacts") or []),
-                len(capture.get("pages") or [])),
+                len(capture.get("artifacts") or [])),
             session=session, event="UserPromptSubmit")
     except Exception:
         pass
