@@ -2,7 +2,7 @@
 
 ## The tree
 
-- `SKILL.md` → what every use needs, then the routing table, both inside the first 5,000 tokens a compaction re-attaches (`wc -c` ÷ 3.6) · `cookbook/*.md` one file per procedure · `references/*.md` tables, traps, conventions · `scripts/*` a deterministic sequence, executed, never paraphrased.
+- `SKILL.md` → what every use needs, then the routing table, both inside the first 5,000 tokens a compaction re-attaches (`wc -c` ÷ 3.6) · `cookbook/*.md` one file per procedure · `references/*.md` tables, traps, conventions, templates · `scripts/*` a deterministic sequence, executed, never paraphrased · `assets/*` a file copied as is — a scaffold, a token file.
 - The routing table names every file, each one level deep from `SKILL.md`.
 - A skill carries no tests: no `tests/` directory and no test files.
 - Format — the shape of one artifact a skill or agent writes: a report, a ticket, a PR body; the only place its length and shape are decided, reply rules deferring to it; it states its reader, none stated → a person.

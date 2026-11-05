@@ -15,20 +15,26 @@ Every canon body — rule, skill, agent, format, command, prompt, `CLAUDE.md`/`A
   - an act → an order: `Follow hexagonal architecture.`
   - a standing property → a norm: `One concern per file.`
   - a trigger → `condition → action`: `Simple question → plain prose, 1–3 sentences.`
-  - a term's definition → `term — what it is`: `Port — a Sendable protocol with one async requirement.`
+  - a term's definition → `term — what it is`: `Port — a Sendable protocol with one async requirement.`; a rival word in use → `_Avoid_: <words>` beside it.
 - Drop what the file already implies — its own subject, the reader as actor ("you", "we", "a session", "Claude"), a lead-in: `Nutshell follows hexagonal architecture.` in Nutshell's own rule → `Follow hexagonal architecture.`; an actor who isn't the reader — the user, another agent — stays.
 - A bare line is the default, held unless the case gives a reason to depart; `never`, `always`, `only`, `no` and `every` mark a line with no exception.
 - A set of options takes one line: `nothing owed · their decision · something running`.
 - Every word earns its place; a dash, `only` or `where` that narrows is meaning: dropping one widens the line, adding one narrows it.
 - Only this setup's own conventions, setup and decisions; a line the model's default, Claude Code, the output style, another file that loads wherever this one loads, a check, a permission rule or a hook in `~/Code/skills/plugins/yann/hooks/REGISTRY.md` enforcing it already covers → cut; a skill whose subject is canon keeps the facts of its own subject, per `references/skills.md` § Citing a sibling.
+- A technique or tool the model knows → its name and the job it does here, never how it works.
+- A house choice the model's default would undo → the default in one line, the house choice beside it, under `## Rejected framings`.
+- A model default that is itself the failure → one line, `<the default> → <the fix>`; never a bare don't-list.
 - State the mechanism, never the incident: delete the domain noun and what survives is the line; nothing survives → drop it, and judge it afresh if it recurs.
-- A directive a reader would otherwise judge by quality → names what checks it — the command, path, value or tool.
+- A directive a reader would otherwise judge by quality → names what checks it — the command, path, value or tool; a size → a number or a cap, never "brief" or "a few".
+- One common answer → the default and the one condition overriding it; never a tree of rare branches.
 - No reasons: measurements, dates, "why" and stories stay out; a reason that sets the line's scope or stops a reader refusing a legitimate step stays as one clause.
 - A recorded call keeps its one-line provenance: date, route, result.
-- No examples, unless the example is the rule.
+- No examples, unless the example is the rule — an output's template in a fence with `<placeholders>`, a voice's 3–4 sample lines, a near miss on a subtle line.
 - Draw the boundary between an agent, a skill, an instruction file and a config where their concepts differ.
 - A set that grows on its own → name where it lives, never its members.
-- Markdown: an H1, a few `##` groups, bullets; a tag only where a reader parses it or it delimits a prompt template; emphasis — capitals, bold, a warning glyph — only on a line seen ignored, never on two in one file.
+- A pointer names a stable target — a file, a heading, a symbol; never a line number.
+- A target whose absence makes the output wrong → read it before the step; one that only sharpens it → "read X if it exists".
+- Markdown: an H1, 2–5 `##` groups, bullets; a tag only where a reader parses it or it delimits a prompt template; emphasis — capitals, bold, a warning glyph — only on a line seen ignored, never on two in one file.
 - Frontmatter → every key matches the supported-fields table in Claude Code's skills, sub-agents or commands reference, since a misspelt key is dropped without error and no validator catches it; a skill, agent or command touched → `claude plugin validate --strict` on its `skills/`, `agents/` or `commands/` directory exits 0 before it lands, which proves only that the YAML parses.
 - Many acceptable answers → a direction · a wrong step breaks something — a migration, a guard, an irreversible act → numbered steps, each with its done state · otherwise → bullets.
 - Restructuring or rewriting a file's lines wholesale → bring the whole file to this section in the same change, through `cookbook/optimize.md`; a fix, a repoint or an added line → those lines alone; every other edit → the lines it touches.
