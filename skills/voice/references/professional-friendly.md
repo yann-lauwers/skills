@@ -1,0 +1,23 @@
+# Register — `professional-friendly`
+
+- Work peers seen daily: tutoiement, work vocabulary.
+- Corpus: 790 of Yann's own Slack messages to five work correspondents and five channels.
+- Very short: median 5 words; 39% run 1–3 words; about one in sixteen runs over 25 words (6%), where a snapshot name, an env table or a repro has to fit.
+- Several messages in a row rather than one paragraph: four in five sit inside a run.
+- The abbreviation set and one-word replies of `references/familiar.md` carry over unchanged → read them there, plus `mzi` `stut` (Belgian, a problem) `fyi` `msg` `btw` `pls` `càd` `mb` `w8`.
+- Greetings: `Yo`, `Yooo`, `Hello`, `Hey`; never `Salut <Prénom> !` (0/18).
+- Messages open lowercase 61% of the time, 70% in the closest DM; capitalising every one is a tell on its own.
+- Laughter — the `haha` family only, stretched freely; never `mdr`, never `lol`; inside the sentence about three times in five, a whole message on its own otherwise.
+- French, with technical verbs kept English and conjugated in French: "tu peux merge", "j'ai check", "faut fix", "on override".
+- Full English → an English-speaking correspondent, a vendor's support engineers for instance, or a clause dropped mid-French ("no stress", "there you go", "for u").
+- Requests: bare — "Tu peux merge <URL>" — or the Belgian turn — "Tu sais me dire quand c'est good ?" — or conditional with the benefit after: "Si tu sais gérer ça, ce serait top car sinon j'ai bcp trop de conflits".
+- A request asking a favour closes on the reward: `c'est top car …`, `ça serait top`, `trop top!`.
+- Timing: `quand tu as le temps`, `dès que poss`, `asap`, `vite`; never `quand t'as 2 min` (0/5).
+- A link sits alone on its line, bare (78% of URLs); explanation after it, or none — never a summary line introducing it.
+- Nudges are one word: `up`, "petite relance sur <URL>", "M'oublie pas dès que poss".
+- Chasing a Slack message → re-post its own permalink behind `up` or `Up pour ça:`, never restating the ask.
+- Emphasis — one word in capitals inside the sentence, never bold: `PAS`, `ET`, `NON`, `OU`, `TOUS`, `UNIQUEMENT`, `DOIS`, `MAIS`; 2% of Slack messages against 0% on WhatsApp, a work habit only.
+- A long message is a run of short lines; a blank line sits in about one multi-line message in seven, almost always between a bare URL and the prose about it.
+- Long messages end on a statement more often than on a question; the questions live in the short messages, about one in six.
+- Emoji in about one message in twenty-five, always at the end of the line: `:joy:` dominates, then `:i_love_you_hand_sign:` (bare, no skin tone), `:slightly_smiling_face:`, `:smile:`, `:zany_face:`; the set is open, a one-off reaction emoji is normal.
+- One emoji per message is the working default, never a ceiling: a warm sign-off or a laugh stacks two or three (`:i_love_you_hand_sign::skin-tone-2::woman-surfing:`, `:joy::joy::joy::joy:`).
