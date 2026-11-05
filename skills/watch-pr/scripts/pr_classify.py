@@ -7,7 +7,7 @@ its reason and the measured fields. The order of the rules is the contract
 from __future__ import annotations
 
 import re
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 BOT_TOKENS = re.compile(r"cursor|coderabbit|bugbot", re.IGNORECASE)
 NON_REVIEW_BOT_JOBS = re.compile(r"autofix", re.IGNORECASE)
@@ -16,7 +16,7 @@ CI_OK_CONCLUSIONS = {"success", "neutral", "skipped"}
 
 
 def now_utc() -> datetime:
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
 
 
 def parse_iso(s: str | None) -> datetime | None:
@@ -33,7 +33,7 @@ def _run_order(cr: dict) -> tuple[int, datetime]:
     then started_at. started_at alone misorders a burst: a run cancelled by a concurrency
     group can sit queued and *start* after the sibling that superseded it."""
     suite_id = int(((cr.get("check_suite") or {}).get("id")) or 0)
-    started = parse_iso(cr.get("started_at")) or datetime.min.replace(tzinfo=timezone.utc)
+    started = parse_iso(cr.get("started_at")) or datetime.min.replace(tzinfo=UTC)
     return suite_id, started
 
 
@@ -108,7 +108,7 @@ def classify(facts: dict) -> dict:
     unresolved = sum(
         1 for t in threads["threads"]
         if not t.get("isResolved")
-        and BOT_TOKENS.search(login((((t.get("comments") or {}).get("nodes") or [None])[0])))
+        and BOT_TOKENS.search(login(((t.get("comments") or {}).get("nodes") or [None])[0]))
     )
 
     window_age = reviewable_age if reviewable_age is not None else head_age

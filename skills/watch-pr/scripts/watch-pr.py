@@ -1,6 +1,6 @@
 #!/usr/bin/env -S uv run --script
 # /// script
-# requires-python = ">=3.10"
+# requires-python = ">=3.11"
 # dependencies = []
 # ///
 """Watch one pull request; print one JSON line when its verdict is news, then exit 0.
@@ -135,9 +135,11 @@ def build_parser() -> argparse.ArgumentParser:
     ap.add_argument("--repo", help="OWNER/REPO (default: the cwd's repo)")
     ap.add_argument("--pr", help="PR number (default: the current branch's PR)")
     ap.add_argument("--seen", default="", help="VERDICT:KEY already acted on; print only a different one")
-    ap.add_argument("--once", action="store_true", help="one read, print the current line whatever the verdict, exit 0; no lock")
+    ap.add_argument("--once", action="store_true",
+                    help="one read, print the current line whatever the verdict, exit 0; no lock")
     ap.add_argument("--interval", type=int, default=60, help="seconds between reads (default 60)")
-    ap.add_argument("--blind-after", type=int, default=3600, help="seconds with no read landing before WATCHER_ERROR blind, exit 7 (default 3600; 0 disables)")
+    ap.add_argument("--blind-after", type=int, default=3600,
+                    help="seconds with no read landing before WATCHER_ERROR blind, exit 7 (default 3600; 0 disables)")
     ap.add_argument("--fresh-window", type=int, default=420)
     ap.add_argument("--bot-pending-timeout", type=int, default=1800)
     return ap
@@ -148,7 +150,7 @@ def main() -> None:
     owner, repo = resolve_repo(args.repo)
     pr = resolve_pr(args.pr)
     if not args.once:
-        lock_fd = take_lock(f"{owner}-{repo}-{pr}", pr)
+        take_lock(f"{owner}-{repo}-{pr}", pr)
     reader = Reader(owner, repo, pr, args.fresh_window, args.bot_pending_timeout)
     last_ok, wait, read_once = time.monotonic(), args.interval, False
     while True:

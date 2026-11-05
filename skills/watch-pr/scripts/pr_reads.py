@@ -67,9 +67,9 @@ def _gh(cmd: list[str], what: str) -> subprocess.CompletedProcess:
     try:
         return subprocess.run(cmd, capture_output=True, text=True, timeout=GH_TIMEOUT)
     except FileNotFoundError:
-        raise GhMissing("gh is not installed or not on PATH")
+        raise GhMissing("gh is not installed or not on PATH") from None
     except subprocess.TimeoutExpired:
-        raise GhError(f"{what} exceeded {GH_TIMEOUT:.0f}s")
+        raise GhError(f"{what} exceeded {GH_TIMEOUT:.0f}s") from None
 
 
 def gh_api(path: str):
@@ -109,8 +109,8 @@ def gh_api(path: str):
         raise NotFound(path)
     try:
         data = json.loads(body) if body.strip() else None
-    except ValueError:
-        raise GhError(f"HTTP {status} on {path} with a body that is not JSON: {body.strip()[:120]}")
+    except ValueError as err:
+        raise GhError(f"HTTP {status} on {path} with a body that is not JSON: {body.strip()[:120]}") from err
     if status >= 400:
         raise GhError(f"HTTP {status} on {path}: {json.dumps(data)[:200]}")
     return data
@@ -130,9 +130,9 @@ def gh_graphql(query: str, **vars) -> dict:
         raise GhError(err[:300])
     try:
         data = json.loads(proc.stdout)
-    except ValueError:
+    except ValueError as err:
         raise GhError(f"graphql answered a body that is not JSON: "
-                      f"{(proc.stdout.strip() or proc.stderr.strip())[:120]}")
+                      f"{(proc.stdout.strip() or proc.stderr.strip())[:120]}") from err
     if data.get("errors") and not data.get("data"):
         msg = json.dumps(data["errors"])[:300]
         if "NOT_FOUND" in msg:
