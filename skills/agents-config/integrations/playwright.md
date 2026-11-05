@@ -24,7 +24,7 @@ Read by `browser-login` and `yann:browser-pilot`.
 ## Three words the routes turn on
 
 - Identity — an account axis: one row in the config, and the browser profile behind it.
-- Live session — the browser the person is using; only Claude in Chrome reaches it, and it alone holds a session cookie.
+- Live session — the browser the person is using, reached through the `live-browser` role; it alone holds a session cookie.
 - Derived session — a file read out of that profile's cookie store on disk: a snapshot, always behind the live one, and blind to anything the browser never flushed.
 - Dispatched run — one with no person watching.
 
@@ -48,6 +48,6 @@ Read by `browser-login` and `yann:browser-pilot`.
 ## What a derived session cannot carry
 
 - A session cookie never reaches a derived session; the mint warns which hosts carry one.
-- A site authenticating on a session cookie mints clean and fails as if the credential were bad → drive the live browser through Claude in Chrome; re-minting never fixes it.
+- A site authenticating on a session cookie mints clean and fails as if the credential were bad → drive the live browser (`agents-config get --role live-browser`); re-minting never fixes it.
 - `localStorage` is never carried either: it lives in LevelDB, outside the cookie store.
 - A derived session failing to authenticate → read the cookies the page carries before naming which of the two is the cause.
