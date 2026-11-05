@@ -21,13 +21,15 @@ worktrunk (`git wt`) owns the worktree lifecycle. This machine's **layer**, `~/.
 
 ## The worktree marker
 
-A repo uses worktrees when its root `AGENTS.local.md` carries this line; a repo without it works in its checkout as it stands.
+A repo uses worktrees when its root `AGENTS.local.md` carries this section; a repo without it works in its checkout as it stands.
 
 ```markdown
+## Worktrees
+
 - Work that will commit runs in its own worktree: `~/.config/worktrunk/bin/wtk-new -C <repo> <branch> [--base origin/<base>]` cuts it under `~/worktrees/<repo>/`.
 ```
 
-- `CLAUDE.local.md` beside it reaches the line through an `@AGENTS.local.md` line, so Claude Code loads it; the `yann` plugin's `codex-local-instructions` hook injects `AGENTS.local.md` into every Codex session.
+- `CLAUDE.local.md` beside it reaches the line through an `@AGENTS.local.md` line, so Claude Code loads it; the `codex-local-instructions` plugin injects `AGENTS.local.md` into every Codex session.
 - Both files are ignored by `~/.gitignore_global`, and the repo's canon conf lists both in `CANON_FILES`, so every tree carries the marker too.
 - Read it with `grep -sF 'runs in its own worktree' "$(git -C <repo> rev-parse --show-toplevel)/AGENTS.local.md"`.
 
