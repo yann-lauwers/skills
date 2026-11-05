@@ -2,6 +2,7 @@
 name: simplify-comments
 description: "Carries a file's comments into its code and deletes them — each becomes a name or a type where the file can hold it, goes where the code already says it, or is handed back where only a cross-file rename or a test could carry it. Works one named file, or the working tree's changed files. Use on \"simplify the comments\", \"clean up the comments\", \"remove the comments\", \"comment diet\", or the /simplify-comments command. Behaviour-preserving. Also answers, without running a pass, which comment lines a build, lint or run reads and must stay. Not for reviewing changed code for reuse and quality — `/simplify`."
 argument-hint: [file-path]
+disable-model-invocation: true
 ---
 
 # Simplify Comments

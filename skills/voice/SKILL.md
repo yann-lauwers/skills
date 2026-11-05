@@ -163,7 +163,7 @@ Whatever channel carries it:
 - It goes out signed as the sender, in the first person and the sender's own voice; no third-person or tool-attribution framing.
 - Match the recipient's language, resolved from their own record; nothing answers → ask; never draft in a language nobody chose; verbatim quotes — pull-request titles, ticket ids, code, error messages, URLs — stay in their original language.
 - An external artifact — a pull request, a ticket, a document, a build — goes out as its canonical URL plus a short summary, never inlined.
-- This file governs how a message is written and which identity it goes out as; whether it leaves the machine, and what carries it → the channel's own skill.
+- This file governs how a message is written and which identity it goes out as; whether it leaves the machine, and what carries it → the channel's own skill; no channel skill carries it → hand the draft back and say so.
 
 ## Where each piece lives
 
