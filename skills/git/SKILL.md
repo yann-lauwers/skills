@@ -13,7 +13,7 @@ description: >-
 ## Project config
 
 - Before any git act → `~/.claude/skills/agents-config/scripts/agents-config get git <key> --root "$CLAUDE_PROJECT_DIR"`; the floor is `~/.claude/skills/agents-config/integrations/git.md`, overridden by `$CLAUDE_PROJECT_DIR/docs/agents/integrations/git.md`.
-- Keys read here → `base_branch` · `production_branch` · `commit_trailers` · `branch_pattern`; the pull-request keys are /pull-request 's.
+- Keys read here → `base_branch` · `production_branch` · `commit_trailers` · `branch_pattern`.
 - Every diff, review, comparison and rebase target → `base_branch`; a pull request's own → its `baseRefName`; never inferred from a branch name or the injected `gitStatus` "Main branch:" line.
 - `base_branch: auto` → `gh repo view --json defaultBranchRef -q .defaultBranchRef.name`, else `git symbolic-ref --short refs/remotes/origin/HEAD` minus `origin/`, else the checked-out branch; name the one assumed.
 - `branch_pattern: auto` → the shape the repo's twenty most recent branch names share; none → `<author>/<short-slug>`, kebab-case; `null` → the repo creates no branches.

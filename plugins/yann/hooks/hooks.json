@@ -68,10 +68,6 @@
           {
             "type": "command",
             "command": "\"$HOME/.pyenv/versions/3.13.3/bin/python3\" \"${CLAUDE_PLUGIN_ROOT}/hooks/tool-configs-stay-local.py\""
-          },
-          {
-            "type": "command",
-            "command": "\"$HOME/.pyenv/versions/3.13.3/bin/python3\" \"${CLAUDE_PLUGIN_ROOT}/hooks/pr-merge-approval.py\""
           }
         ]
       },

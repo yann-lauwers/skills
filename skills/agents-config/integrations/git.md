@@ -19,4 +19,4 @@ defaults:
 ---
 # git
 
-Read by the `git`, `pull-request` and `pr-cluster` skills, the `pull-request` evidence script and the `pr-merge-approval` hook, and by any consumer through `agents-config get git <key>`.
+Read by the `git` and `pr-cluster` skills, and by any consumer through `agents-config get git <key>`.

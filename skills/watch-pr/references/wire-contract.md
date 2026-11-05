@@ -33,7 +33,7 @@
 | `integration_base` | `true` `false` `"unknown"` | not on `WATCHER_ERROR` | a pull request has already merged INTO this head, so it is absorbed by merge and never rebased |
 | `base_tip_sha` | string or null | not on `WATCHER_ERROR` | the base tip this reading measured against; null when no local checkout answers |
 | `behind_by`, `base_changed_files`, `conflict_source` | int, int, `git` `forge` | `CONFLICT`, `BASE_ADVANCED` | commits the base carries that the head lacks, files that differ between their merge base and the tip, and whether a trial merge of the two shas or GitHub's `mergeable` decided |
-| `rewrite`, `rewrite_reason` | strings | `CONFLICT` | /pull-request 's `pr_policy.py may-rewrite` answer for the head — `allow` `refuse` `unknown` — and why; `unknown` when no checkout or no rule module answers |
+| `rewrite`, `rewrite_reason` | strings | `CONFLICT` | the `rewrite_policy.py may-rewrite` answer for the head — `allow` `refuse` `unknown` — and why; `unknown` when no checkout or no rule module answers |
 | `merged_by`, `merge_commit_sha`, `merged_at` | strings | `MERGED` | |
 | `error`, `detail` | strings | `WATCHER_ERROR` | `auth` `duplicate` `pr_not_found` `gh_missing` `blind` `unknown` |
 

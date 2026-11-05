@@ -35,12 +35,12 @@ allowed-tools: Bash(${CLAUDE_SKILL_DIR}/scripts/*), Bash(uv run *), Bash(gh pr *
 
 | Verdict | Action |
 | --- | --- |
-| `DRAFT` | Report the draft; who flips it → /pull-request rule 12. Re-arm. |
+| `DRAFT` | Report the draft; the user flips it. Re-arm. |
 | `CONFLICT` | The line's `rewrite` is `allow` → rebase onto `origin/<base>`, resolve, run the repo's checks, `git push --force-with-lease`. `refuse`, `unknown` or absent → `git merge origin/<base>`, resolve, check, push. Re-arm. |
 | `NEW_COMMENTS` | Every unresolved review-bot thread → fix it (commit, push) · refute it, the reply quoting the line or command output that disproves it · a real finding another ticket owns → the reply names that ticket. Then resolve it (`gh api graphql`, `resolveReviewThread`). Never resolve without a reply; nothing to quote → pause. Re-arm. |
 | `CI_RED` | `gh run list --branch <branch> --status failure`, then `gh run view <id> --log-failed`; fix at root cause, push. A failure with no code root — infra, a flake → pause. Re-arm. |
 | `BASE_ADVANCED` | In a checkout of `branch`, `git merge origin/<base>`, never a rebase; resolve as the union of both sides, run the repo's checks, push. Re-arm. |
-| `CLEAN` | Report once. The session that opened this PR runs /pull-request 's merge preflight; any other session → the merge is the user's to name. Re-arm, so the merge is observed. |
+| `CLEAN` | Report once. The merge is the user's to name. Re-arm, so the merge is observed. |
 | `MERGED` | Run `cookbook/closeout.md`. Then the ticket the branch names closes the way the tracker closes work: an automation owns the transition → report it; else the session that opened this PR closes it through the tracker's skill; any other session names it to the user. The watcher has exited. |
 | `CLOSED` | Report closed without merge. The watcher has exited. |
 | `WATCHER_ERROR` | `error=duplicate` → another watcher holds this PR; report its pid, arm nothing. `error=blind` → no read landed for the whole `--blind-after`; report `detail`, arm again once the network or `gh` answers. `error=auth` → report; the user signs `gh` in. Any other → report `detail`. |

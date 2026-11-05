@@ -4,6 +4,10 @@
 - Retirements up to 2026-10-07, and the retired verdicts and pattern names → `registry/retired-to-2026-10-07.md`.
 - A clause states what the check did, why it went, and its successor or that there is none; measurements and the argument behind it are in git history.
 
+## The pull-request skill's removal, 2026-11-05
+
+**Retired id — `pr-merge-approval`** (2026-11-05). Denied a pull-request merge through `gh pr merge`, `prkit`, `pr-merge` or the merge API whenever the actor `pr_policy.py` resolved for the target base was anything but `agent`. It went with the pull-request skill, whose rule module it loaded, on the owner's word: the owner is reworking the pull-request flow. `lib/merge_commands.py` and `lib/gh_calls.py` went with it. No successor.
+
 ## The bar reminder, 2026-11-03
 
 **Retired id — `bar-reminder`** (2026-11-03). A `UserPromptSubmit` warn that injected one fixed line restating the bar and the arm-a-watcher-before-ending-on-a-wait reflex, on a session's first prompt and every fifth after. Removed on the owner's direction. No successor.
