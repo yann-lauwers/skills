@@ -18,7 +18,7 @@ Naming both agents makes `npx skills` keep each skill in `~/.agents/skills`, whe
 npx skills add yann-lauwers/skills -g -a claude-code codex -y -s agents-config
 
 # skills used everywhere
-npx skills add yann-lauwers/skills -g -a claude-code codex -y -s analysing-recordings apple-calendar apple-mail browser claude-artifacts cmux cp dev-team disk-cleanup garden-domain-docs git hetzner hook-development house-style keyless managing-harness obsidian plain proton simplify-comments slack superwhisper tailscale things userjot validating voice watch-pr watching worktrunk x
+npx skills add yann-lauwers/skills -g -a claude-code codex -y -s analysing-recordings apple-calendar apple-mail claude-artifacts cmux cp dev-team disk-cleanup garden-domain-docs git hetzner hook-development house-style keyless managing-harness obsidian plain proton simplify-comments slack superwhisper tailscale things userjot validating voice watch-pr watching worktrunk x
 
 # other authors' packs, everywhere
 npx skills add mattpocock/skills -g -a claude-code codex -y -s ask-matt code-review codebase-design diagnosing-bugs domain-modeling grill-me grill-with-docs grilling handoff implement implement-spec improve-codebase-architecture pr prototype research retro setup-matt-pocock-skills tdd teach to-questionnaire to-spec to-tickets triage wait-what loop-me wayfinder writing-for-agents
