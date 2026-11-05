@@ -4,18 +4,20 @@ import fnmatch
 import json
 import os
 import pwd
+import re
 import shutil
 import subprocess
 import sys
 
 HOME = pwd.getpwuid(os.getuid()).pw_dir
-sys.path.insert(0, os.path.join(HOME, ".claude", "skills", "pull-request", "scripts"))
-import rewrite_policy  # noqa: E402
 
 ALLOW, REFUSE, UNKNOWN = "allow", "refuse", "unknown"
 ABSENT, FOUNDED, LIVE, SPENT = "absent", "founded", "live", "spent"
 TIMEOUT = 20
 FOUND_MESSAGE = "chore: found {branch}\n\nIntegration base for one wave of child pull requests; carries no implementation of its own."
+MERGED_INTO_QUERY = ("query($o:String!,$n:String!,$b:String!){repository(owner:$o,name:$n)"
+                     "{pullRequests(baseRefName:$b,states:MERGED,first:1){totalCount}}}")
+REMOTE_REPO = re.compile(r"[:/]([^/:]+)/([^/]+?)(?:\.git)?/?$")
 
 
 class Unread(Exception):
@@ -56,16 +58,33 @@ def git_config(root):
         raise Unread("git config is not JSON")
 
 
+def origin_repo(root):
+    code, out, _ = run(["git", "-C", root, "remote", "get-url", "origin"])
+    m = REMOTE_REPO.search(out.strip()) if code == 0 and "github.com" in out else None
+    if not m:
+        raise Unread("origin reaches no github.com repository")
+    return m.group(1), m.group(2)
+
+
+def merged_into(slug, branch):
+    owner, name = slug.split("/", 1)
+    try:
+        data = json.loads(gh("api", "graphql", "-f", "query=" + MERGED_INTO_QUERY,
+                             "-f", "o=" + owner, "-f", "n=" + name, "-f", "b=" + branch))
+        count = data["data"]["repository"]["pullRequests"]["totalCount"]
+    except (Unread, ValueError, KeyError, TypeError):
+        return None
+    if isinstance(count, bool) or not isinstance(count, int):
+        return None
+    return count > 0
+
+
 class Repo:
     def __init__(self, path):
         self.root = base_checkout(path)
         cfg = git_config(self.root)
-        self.globs = rewrite_policy.declared_bases(self.root)
-        forge = rewrite_policy.forge_repo(self.root, "origin")
-        if not isinstance(forge, tuple):
-            raise Unread("origin reaches no github.com repository")
-        self.forge = forge
-        self.slug = "%s/%s" % forge
+        self.globs = list(cfg.get("integration_bases") or [])
+        self.slug = "%s/%s" % origin_repo(self.root)
         base = cfg.get("base_branch")
         if not base or base == "auto":
             base = gh("repo", "view", self.slug, "--json", "defaultBranchRef",
@@ -140,8 +159,8 @@ def ship(repo, branch):
         return REFUSE, "not live (%s): %s" % (state, reason)
     if facts["children_open"] != "none":
         return REFUSE, "children still open: %s" % facts["children_open"]
-    merged = rewrite_policy.merged_into(repo.root, branch, forge=repo.forge)
-    if merged is None or merged is rewrite_policy.NO_FORGE:
+    merged = merged_into(repo.slug, branch)
+    if merged is None:
         return UNKNOWN, "merged children unread"
     if not merged:
         return REFUSE, "no child has merged into %s yet" % branch

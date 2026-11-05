@@ -73,8 +73,7 @@
 
 - Rule 12 rewrites a settled reading rather than sitting in the chain, so it fires only once nothing else is owed on this head.
 - Rule 12 triggers on changed files, never on the commit count.
-- Rule 12 fires only where `pr_policy.merged_into` counts pull requests merged into the head; an unreadable count emits no `BASE_ADVANCED`.
-- What a `CONFLICT` does is `pr_policy.may_rewrite`'s question, separate from rule 12: anything but `allow` is a merge.
+- Rule 12 fires only where the forge's count of pull requests merged into the head reads above zero; an unreadable count emits no `BASE_ADVANCED`.
 
 ## Tuning
 

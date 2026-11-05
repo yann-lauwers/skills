@@ -7,7 +7,7 @@
 
 ## Resolving the base
 
-- A stack base passed in outranks this ladder → /pull-request rule 2.
+- A stack base the caller passes in outranks this ladder.
 - `integration_bases` empty, or no `cluster_base_source` → the base the line above found, else `base_branch`; the ladder below never runs.
 - Otherwise:
   1. Read the ticket the branch is named for, and its parent.
@@ -17,4 +17,4 @@
 ## Resolve at creation time, not from the worktree's own base
 
 - Resolve the base when the pull request is created, never from the branch the worktree was cut from.
-- A pull request already open when its integration base is cut → /pull-request rule 10; whether the retarget needs a rebase → /git , § Rewrites.
+- A pull request already open when its integration base is cut → retarget it, `gh pr edit <n> --base <cluster>`; whether the retarget needs a rebase → /git , § Rewrites.

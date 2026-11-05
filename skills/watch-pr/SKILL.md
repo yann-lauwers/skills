@@ -1,6 +1,6 @@
 ---
 name: watch-pr
-description: "Watches one pull request until it merges, acting only on its watcher's lines. Use on \"watch the pr\", \"observe the pr until it's merged\", \"keep the pr green until merge\", \"watch pr and close the worktree\"; also when a pull request was just opened or pushed with intent to land it, a watcher line needs acting on, or a merged pull request this session watched still has its worktree on disk. Not for a watcher over anything else — /watching ; not for opening, readying or merging — /pull-request ; not for bulk worktree pruning — /worktrunk ."
+description: "Watches one pull request until it merges, acting only on its watcher's lines. Use on \"watch the pr\", \"observe the pr until it's merged\", \"keep the pr green until merge\", \"watch pr and close the worktree\"; also when a pull request was just opened or pushed with intent to land it, a watcher line needs acting on, or a merged pull request this session watched still has its worktree on disk. Not for a watcher over anything else — /watching ; not for bulk worktree pruning — /worktrunk ."
 argument-hint: "[pr-number] [--repo]"
 allowed-tools: Bash(${CLAUDE_SKILL_DIR}/scripts/*), Bash(uv run *), Bash(gh pr *), Bash(gh api *), Bash(gh run *), Bash(git worktree *), Bash(git rev-parse *), Bash(git wt *), Bash(git branch *), Read, Skill, TaskStop, PushNotification
 ---
@@ -36,7 +36,7 @@ allowed-tools: Bash(${CLAUDE_SKILL_DIR}/scripts/*), Bash(uv run *), Bash(gh pr *
 | Verdict | Action |
 | --- | --- |
 | `DRAFT` | Report the draft; the user flips it. Re-arm. |
-| `CONFLICT` | The line's `rewrite` is `allow` → rebase onto `origin/<base>`, resolve, run the repo's checks, `git push --force-with-lease`. `refuse`, `unknown` or absent → `git merge origin/<base>`, resolve, check, push. Re-arm. |
+| `CONFLICT` | The line's `integration_base` is `false` → rebase onto `origin/<base>`, resolve, run the repo's checks, `git push --force-with-lease`. `true` or `"unknown"` → `git merge origin/<base>`, resolve, check, push. Re-arm. |
 | `NEW_COMMENTS` | Every unresolved review-bot thread → fix it (commit, push) · refute it, the reply quoting the line or command output that disproves it · a real finding another ticket owns → the reply names that ticket. Then resolve it (`gh api graphql`, `resolveReviewThread`). Never resolve without a reply; nothing to quote → pause. Re-arm. |
 | `CI_RED` | `gh run list --branch <branch> --status failure`, then `gh run view <id> --log-failed`; fix at root cause, push. A failure with no code root — infra, a flake → pause. Re-arm. |
 | `BASE_ADVANCED` | In a checkout of `branch`, `git merge origin/<base>`, never a rebase; resolve as the union of both sides, run the repo's checks, push. Re-arm. |

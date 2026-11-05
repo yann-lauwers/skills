@@ -109,23 +109,6 @@ def dedupe_key(verdict: str, facts: dict) -> str:
     return f"{head}|{facts['unresolved_bot_threads']}"
 
 
-def rewrite_answer(owner: str, repo: str, head_ref: str) -> tuple[str, str]:
-    """(answer, reason) from the rewrite rule for the watched branch, in a local checkout of
-    this repository. No checkout, or no rule module, is `unknown`, which routes the
-    conflict to the merge."""
-    policy = pr_reads.pr_policy()
-    if policy is None:
-        return "unknown", "the rewrite rule could not be loaded"
-    checkout = pr_reads.find_repo_checkout(owner, repo)
-    if not checkout:
-        return "unknown", "no local checkout of this repository"
-    try:
-        verdict = policy.may_rewrite(checkout, head_ref, forge=(owner, repo))
-    except Exception as exc:
-        return "unknown", f"the rewrite rule raised {type(exc).__name__}"
-    return verdict.answer, verdict.reason
-
-
 def build_line(owner: str, repo: str, pr: int, pull: dict, facts: dict) -> dict:
     v = facts["verdict"]
     key = dedupe_key(v, facts)
@@ -139,8 +122,6 @@ def build_line(owner: str, repo: str, pr: int, pull: dict, facts: dict) -> dict:
     if v in ("CONFLICT", "BASE_ADVANCED"):
         line.update(behind_by=facts["behind_by"], base_changed_files=facts["base_changed_files"],
                     conflict_source=facts["conflict_source"])
-    if v == "CONFLICT":
-        line["rewrite"], line["rewrite_reason"] = rewrite_answer(owner, repo, pull["head"]["ref"])
     if v == "MERGED":
         line.update(merged_by=(pull.get("merged_by") or {}).get("login"),
                     merge_commit_sha=pull.get("merge_commit_sha"), merged_at=pull.get("merged_at"))

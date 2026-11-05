@@ -2,7 +2,7 @@
 
 - Run once per wave of pull requests aimed at one base, never once per pull request.
 - Inputs → the repo, the cluster's name, and the count of units this wave will commit.
-- A base cut once its children are already open is a retarget → /pull-request rule 10.
+- A base cut once its children are already open → retarget each open child onto it, `gh pr edit <n> --base <cluster>`.
 - `integration_bases` empty → § Fewer than two, whatever the count.
 
 ## Read the base first
@@ -18,7 +18,7 @@
 ## Two or more → found it
 
 1. `~/.claude/skills/pr-cluster/scripts/cluster.py` `found --repo <checkout> --branch <branch>` → `allow` names one of three states: created (one empty commit off `base_branch`, no checkout touched) · exists with no promotion pull request · live, which joins it and ends here. `refuse` naming a spent base → `cookbook/retire.md` § A spent base found standing, then step 1 again · `refuse` for a glob mismatch, or `unknown` → stop and name the reason.
-2. Open its promotion pull request against `base_branch` through /pull-request , as a draft; it stays open while the wave lands, and `status` reads the base's liveness off it.
+2. Open its promotion pull request against `base_branch` as a draft; it stays open while the wave lands, and `status` reads the base's liveness off it.
 
 ## Fewer than two → none
 

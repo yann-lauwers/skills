@@ -4,7 +4,6 @@ takes. `gh` owns auth: no token is read, printed or passed.
 """
 from __future__ import annotations
 
-import importlib.util
 import json
 import re
 import subprocess
@@ -16,12 +15,9 @@ from pr_classify import now_utc, parse_iso
 
 GH_TIMEOUT = 60.0
 
-_POLICY_PATHS = [
-    Path(__file__).resolve().parents[2] / "pull-request" / "scripts" / "rewrite_policy.py",
-    Path.home() / ".claude" / "skills" / "pull-request" / "scripts" / "rewrite_policy.py",
-]
-_policy_module = None
-_policy_loaded = False
+MERGED_INTO_QUERY = ("query($o:String!,$n:String!,$b:String!){repository(owner:$o,name:$n)"
+                     "{pullRequests(baseRefName:$b,states:MERGED,first:1){totalCount}}}")
+_REMOTE_REPO = re.compile(r"[:/]([^/:]+)/([^/]+?)(?:\.git)?/?$")
 
 
 class GhError(Exception):
@@ -46,26 +42,25 @@ class NotFound(Exception):
     pass
 
 
-def pr_policy():
-    """The rewrite rule's module, loaded once per process, or None. Absent or unloadable,
-    every conflict routes to the merge, which is wrong only in being more careful."""
-    global _policy_module, _policy_loaded
-    if _policy_loaded:
-        return _policy_module
-    _policy_loaded = True
-    for path in _POLICY_PATHS:
-        if not path.exists():
-            continue
-        try:
-            spec = importlib.util.spec_from_file_location("rewrite_policy", path)
-            module = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(module)
-        except BaseException:
-            continue
-        if all(hasattr(module, n) for n in ("may_rewrite", "merged_into", "forge_repo")):
-            _policy_module = module
-            break
-    return _policy_module
+def merged_into(owner: str, repo: str, branch: str) -> bool | None:
+    """Whether any pull request has merged INTO `branch`, from the forge's own count;
+    None when the count could not be read."""
+    try:
+        data = gh_graphql(MERGED_INTO_QUERY, o=owner, n=repo, b=branch)
+        count = data["repository"]["pullRequests"]["totalCount"]
+    except Exception:
+        return None
+    if isinstance(count, bool) or not isinstance(count, int):
+        return None
+    return count > 0
+
+
+def remote_repo(path: str) -> tuple[str, str] | None:
+    """(owner, name) the checkout's `origin` points at, lower-cased; None when unread."""
+    proc = subprocess.run(["git", "-C", path, "remote", "get-url", "origin"],
+                          capture_output=True, text=True)
+    m = _REMOTE_REPO.search(proc.stdout.strip()) if proc.returncode == 0 else None
+    return (m.group(1).lower(), m.group(2).lower()) if m else None
 
 
 def _gh(cmd: list[str], what: str) -> subprocess.CompletedProcess:
@@ -147,17 +142,16 @@ def gh_graphql(query: str, **vars) -> dict:
 
 
 def find_repo_checkout(owner: str, repo: str) -> str | None:
-    """Any checkout of this repo on disk: the cwd's repo, else ~/Code/<repo>, matched exactly
-    through `rewrite_policy.forge_repo`: a substring test on the remote URL accepts
+    """Any checkout of this repo on disk: the cwd's repo, else ~/Code/<repo>, matched on the
+    exact owner and name `origin` points at: a substring test on the remote URL accepts
     `acme/widgets-legacy` for `acme/widgets`."""
-    policy = pr_policy()
     for root in (Path.cwd(), Path.home() / "Code" / repo):
         top = subprocess.run(["git", "-C", str(root), "rev-parse", "--show-toplevel"],
                              capture_output=True, text=True)
         if top.returncode != 0:
             continue
         path = top.stdout.strip()
-        if policy is not None and policy.forge_repo(path, "origin") == (owner, repo):
+        if remote_repo(path) == (owner.lower(), repo.lower()):
             return path
     return None
 
@@ -320,10 +314,7 @@ class Reader:
         positive is kept, a negative never is."""
         if self.merged_into is True:
             return True
-        policy = pr_policy()
-        seen = None if policy is None else policy.merged_into(None, head_ref, forge=(self.owner, self.repo))
-        if policy is not None and seen is policy.NO_FORGE:
-            seen = None
+        seen = merged_into(self.owner, self.repo, head_ref)
         self.merged_into = "unknown" if seen is None else bool(seen)
         return self.merged_into
 

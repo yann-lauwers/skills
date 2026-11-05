@@ -1,9 +1,9 @@
 # Retire a cluster
 
-Merging the promotion pull request ends the wave. Under `agent` the run performs all three steps in the same turn · under a person-held merge the packet carries steps 1 and 3 written out, and the next founding's backstop retires whatever the person leaves undone.
+Merging the promotion pull request ends the wave. A session the person names to merge runs all three steps in one turn · a merge the person keeps → hand them steps 1 and 3 written out; the next founding's backstop retires whatever is left undone.
 
 1. Before merging: `gh pr list --base <cluster> --state open --json number,headRefName` is empty; non-empty → the merge waits on those children; name them.
-2. Merge, through /pull-request .
+2. Merge it.
 3. Delete the remote branch. `git wt -C <checkout> list` shows a tree on the branch → `git wt -C <checkout> -y remove <branch> --force -D --foreground`, never without `-D`, which keeps a squash-merged base the integration check misses. No tree, and a checkout still holds the ref → `git -C <checkout> update-ref -d refs/heads/<branch>`, never `branch -d`, which refuses a squash-merged base.
 
 ## A spent base found standing
