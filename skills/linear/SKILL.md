@@ -80,7 +80,7 @@ Provenance: executed 2026-10-22 against team `NEX` — bootstrap, issue by id, m
 { issue(id: "NEX-123") { inverseRelations { nodes { id type issue { identifier state { name type } } } } } }
 ```
 
-- Unblocked → per `~/.claude/skills/agents-config/SKILL.md` § `role: tracker` (`settled_categories`, `settled_states`), narrowed by the repo body's state notes; a relation's `id` is what `issueRelationDelete` takes.
+- Unblocked → per `~/.claude/skills/agents-config/references/roles.md` § `role: tracker` (`settled_categories`, `settled_states`), narrowed by the repo body's state notes; a relation's `id` is what `issueRelationDelete` takes.
 
 ```graphql
 mutation { issueCreate(input: { teamId: "<uuid>", title: "…", description: "…", labelIds: ["<uuid>"], projectId: "<uuid>" }) { issue { identifier url } } }

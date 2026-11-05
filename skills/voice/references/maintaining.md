@@ -7,7 +7,7 @@
 | The finding holds | Home |
 |---|---|
 | whoever reads it, whatever the medium | a **Voice invariant** |
-| for one register, whoever the reader | that **register's** own bullets |
+| for one register, whoever the reader | that **register's** file under `references/` |
 | for one person | their **relationship record** |
 | for one medium | that **channel's** shape file |
 
@@ -30,7 +30,7 @@
 
 ## What a claim carries, so staleness is readable
 
-- Every number here states the corpus it came from and its size.
+- Every number here states the corpus it came from and its size, and is observed in his own messages, never aspirational.
 - A new claim arrives with its corpus and size, or is marked as unmeasured.
 - A re-measure updates the corpus line in the same edit as the number.
 
@@ -42,4 +42,4 @@
 - Filter every corpus, email included, on the em dash: zero in his hand-typed messages, near-universal in the drafted set — a punctuation filter, so it leaves the length findings untouched.
 - `:pray:` — the second signature, which bleeds back: his own uses appear only from 2026-07, after the assistant had closed asks with it for weeks; date-filter it before counting, and read a low non-zero count as contamination, never as a tail.
 - Per-axis numbers, method and verbatim examples → the vault notes `professional-friendly-register-measured-against-slack-sent-history` (Slack) and `cordial-register-body-measured-against-sent-email-corpus` (email).
-- Still unmeasured: the very formal opening (one instance), the `agréer` family (zero, consistent with it not being his habit), a group addressee (none in the corpus), and cordial mail from the Nexus work address (zero sent messages — every email measured is the iCloud account).
+- Still unmeasured: the very formal opening (one instance), the `agréer` family (zero, consistent with it not being his habit), a group addressee (none in the corpus), cordial mail from the Nexus work address (zero sent messages — every email measured is the iCloud account), and in `professional-friendly` `Bonjour` (zero occurrences — reserving it for squarely professional messages is untested), `bah` and `dsl` (zero — absence from the register not separated from absence from work talk).
