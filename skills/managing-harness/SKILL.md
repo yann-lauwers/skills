@@ -20,7 +20,7 @@ Every canon body — rule, skill, agent, format, command, prompt, `CLAUDE.md`/`A
 - A bare line is the default, held unless the case gives a reason to depart; `never`, `always`, `only`, `no` and `every` mark a line with no exception.
 - A set of options takes one line: `nothing owed · their decision · something running`.
 - Every word earns its place; a dash, `only` or `where` that narrows is meaning: dropping one widens the line, adding one narrows it.
-- Only this setup's own conventions, setup and decisions; a line the model's default, Claude Code, the output style, another file that loads wherever this one loads, a check, a permission rule or a hook in `~/Code/skills/plugins/yann/hooks/REGISTRY.md` enforcing it already covers → cut; a skill whose subject is canon keeps the facts of its own subject, per `references/skills.md` § Citing a sibling.
+- Only this setup's own conventions, setup and decisions; a line the model's default, Claude Code, the output style, another file that loads wherever this one loads, a check, a permission rule or a hook in `~/Code/skills/hooks/REGISTRY.md` enforcing it already covers → cut; a skill whose subject is canon keeps the facts of its own subject, per `references/skills.md` § Citing a sibling.
 - A technique or tool the model knows → its name and the job it does here, never how it works.
 - A house choice the model's default would undo → the default in one line, the house choice beside it, under `## Rejected framings`.
 - A model default that is itself the failure → one line, `<the default> → <the fix>`; never a bare don't-list.
@@ -67,7 +67,7 @@ Every canon body — rule, skill, agent, format, command, prompt, `CLAUDE.md`/`A
 ## Where canon lives
 
 - `~/Code/skills` (`yann-lauwers/skills`) is the one home of every own skill, agent and hook; a host installs them from GitHub with the commands in its `README.md`, never by link.
-- Change one → edit it in `~/Code/skills`, commit, push, then refresh: a skill → `npx skills update -g -y`, and `npx skills update -p -y` in each repo using it · an agent or hook → `claude plugin marketplace update yannlauwers && claude plugin update yann@yannlauwers` (background auto-update takes it otherwise).
+- Change one → edit it in `~/Code/skills`, commit, push, then refresh: a skill → `npx skills update -g -y`, and `npx skills update -p -y` in each repo using it · an agent or hook → `claude plugin marketplace update yannlauwers && claude plugin update <plugin>@yannlauwers` for the plugin holding it under `plugins/` (background auto-update takes it otherwise).
 - An installed copy (`~/.claude/skills/<name>`, the plugin cache) is never edited: the next update overwrites it.
 - `~/.agents/AGENTS.md`, `~/.claude/settings.json` and `~/.config/` are this host's own files, backed up by the T7 only; edit them in place.
 

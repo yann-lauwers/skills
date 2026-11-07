@@ -1,0 +1,7 @@
+{
+  "name": "bash-permissions",
+  "description": "Answers Bash permission prompts: lets known-safe commands through, refuses destructive ones where they would run.",
+  "author": {
+    "name": "Yann Lauwers"
+  }
+}

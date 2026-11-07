@@ -1,0 +1,7 @@
+{
+  "name": "house-style",
+  "description": "Flags a standalone HTML page or stylesheet written while the house-style skill is not loaded.",
+  "author": {
+    "name": "Yann Lauwers"
+  }
+}

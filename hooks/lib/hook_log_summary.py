@@ -23,8 +23,8 @@ every call is indistinguishable from one running clean.
 
 Usage:
 
-    python3 ~/.claude/hooks/lib/hook_log_summary.py --write   # scan and write
-    python3 ~/.claude/hooks/lib/hook_log_summary.py --recent  # print last-day crashes
+    python3 ~/Code/skills/hooks/lib/hook_log_summary.py --write   # scan and write
+    python3 ~/Code/skills/hooks/lib/hook_log_summary.py --recent  # print last-day crashes
 """
 import json
 import os

@@ -158,11 +158,19 @@ def python_ids(text):
     return ids
 
 
+def hook_sources(hooks_dir=None):
+    if hooks_dir:
+        return hooks_dir, glob.glob(os.path.join(hooks_dir, "**", "*"), recursive=True)
+    root = os.path.dirname(HOOKS)
+    plugin_hooks = os.path.join(root, "plugins", "*", "hooks", "**", "*")
+    return root, glob.glob(plugin_hooks, recursive=True)
+
+
 def code_ids(hooks_dir=None):
     """check id -> the files that can emit it."""
-    directory = hooks_dir or HOOKS
+    directory, paths = hook_sources(hooks_dir)
     found = collections.defaultdict(set)
-    for path in glob.glob(os.path.join(directory, "**", "*"), recursive=True):
+    for path in paths:
         if not os.path.isfile(path) or not path.endswith((".py", ".sh")):
             continue
         try:

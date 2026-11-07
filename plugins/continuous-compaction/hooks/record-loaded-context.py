@@ -33,7 +33,7 @@ the always-loaded canon the session started under, so a session can be placed be
 or after a canon change. Two fields, each a line; a reader takes the LAST line of
 each key:
 
-  canon:<sha>                 the commit of the installed yann plugin this hook runs from,
+  canon:<sha>                 the commit of the installed plugin this hook runs from,
                               or `canon:unknown` when it cannot be read. Written once
                               per record.
   always-loaded-bytes:<n>     the summed size of every always-loaded instruction file,

@@ -1,0 +1,7 @@
+{
+  "name": "auto-resume",
+  "description": "Resumes a turn an API error ended, and posts a desktop notification when it cannot.",
+  "author": {
+    "name": "Yann Lauwers"
+  }
+}

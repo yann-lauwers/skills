@@ -31,7 +31,7 @@
 
 ## The `domain-canon` plugin — installed as `domain-canon@yannlauwers`, enforced from `plugins/domain-canon/`
 
-- A plugin of its own in this repo, so a repo or a teammate can install it without the `yann` bundle; each repo that wants the gate declares it in its `.claude/settings.json` (`extraKnownMarketplaces` + `enabledPlugins`). It logs to the shared `hook-decisions.jsonl` through its own copy of `lib/hook_decisions.py`, `lib/hook_mode.py`, `lib/hook_run.py` and `lib/hook_shell.py`.
+- A plugin of its own in this repo, so a repo or a teammate can install it alone; each repo that wants the gate declares it in its `.claude/settings.json` (`extraKnownMarketplaces` + `enabledPlugins`). It logs to the shared `hook-decisions.jsonl` through its copies of `lib/hook_decisions.py`, `lib/hook_mode.py`, `lib/hook_run.py` and `lib/hook_shell.py`.
 
 | id | component | event | fires when | class | rollout |
 | --- | --- | --- | --- | --- | --- |
@@ -41,7 +41,7 @@
 
 ## The `codex-local-instructions` plugin — installed in Codex alone as `codex-local-instructions@yannlauwers`, from `plugins/codex-local-instructions/`
 
-- A plugin of its own, so the Codex-only handler stays visible apart from the `yann` bundle; it logs to the shared `hook-decisions.jsonl` through its own copy of `lib/hook_decisions.py` and `lib/hook_run.py`, rows marked `provider: codex`.
+- A plugin of its own, so the Codex-only handler stays visible apart from the Claude Code ones; it logs to the shared `hook-decisions.jsonl` through its copies of `lib/hook_decisions.py` and `lib/hook_run.py`, rows marked `provider: codex`.
 
 | id | component | event | fires when | class | rollout |
 | --- | --- | --- | --- | --- | --- |

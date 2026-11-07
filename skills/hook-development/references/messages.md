@@ -31,7 +31,7 @@ Five parts, in order:
 | **In the process environment** — set in the settings file's `env` | **only a human, out of band** | the guard protects against *the agent itself*. A turn cannot set its own environment |
 
 - The test: if the reader does exactly what the message says, is the dangerous thing prevented or performed? Performed → the override is in the wrong place, since an agent reading an in-command override appends the token and re-issues.
-- Each recovery is stated where whoever can use it looks: an in-command override → the reason the agent reads · an environment override, or a prompt or agent hook's only recovery, removing its wiring entry → once, in the registry listing the check — `~/Code/skills/plugins/yann/hooks/REGISTRY.md` for this layer, the repo's own canon for a hook delivered into a repo — never in text the agent reads.
+- Each recovery is stated where whoever can use it looks: an in-command override → the reason the agent reads · an environment override, or a prompt or agent hook's only recovery, removing its wiring entry → once, in the registry listing the check — `~/Code/skills/hooks/REGISTRY.md` for this layer, the repo's own canon for a hook delivered into a repo — never in text the agent reads.
 
 ## The rules behind those verdicts
 

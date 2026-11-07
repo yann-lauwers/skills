@@ -1,6 +1,6 @@
 {
   "name": "yann",
-  "description": "Yann's agents and hooks.",
+  "description": "The validation-report layout guard, until it moves beside the validating skill.",
   "author": {
     "name": "Yann Lauwers"
   }
