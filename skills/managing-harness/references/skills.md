@@ -53,7 +53,7 @@
 - A repo's tracked line sending a reader into its project tool configs — the integrations folder under its `docs/agents/` — by path, file name or section → the pointer gives way to the service filling the role, in a few words (`<role> → <service>.`), and the rest of the line stays; a value it needs is named by role and key, left to resolution; a line that was only the path goes.
 - Place a fact by altitude: method, true whichever vendor fills the role → the `AGENTS.md` section or skill owning the act · a tool's own mechanics versus its account values → the lines above.
 - Inside a repo with no project layer for a tool → write it in the turn that found the gap, per the lines above.
-- Record a call shape only after running that exact text end to end, with a provenance line; a recorded call that fails is diagnosed before it is edited.
+- Record a call shape only after running that exact text end to end, with a one-line provenance: date, route, result; a recorded call that fails is diagnosed before it is edited.
 - Done when resolution finds the config by role and the call authenticates through the host's provider, both exercised.
 
 ## Where a skill lives

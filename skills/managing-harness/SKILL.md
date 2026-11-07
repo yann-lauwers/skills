@@ -28,7 +28,6 @@ Every canon body — rule, skill, agent, format, command, prompt, `CLAUDE.md`/`A
 - A directive a reader would otherwise judge by quality → names what checks it — the command, path, value or tool; a size → a number or a cap, never "brief" or "a few".
 - One common answer → the default and the one condition overriding it; never a tree of rare branches.
 - No reasons: measurements, dates, "why" and stories stay out; a reason that sets the line's scope or stops a reader refusing a legitimate step stays as one clause.
-- A recorded call keeps its one-line provenance: date, route, result.
 - No examples, unless the example is the rule — an output's template in a fence with `<placeholders>`, a voice's 3–4 sample lines, a near miss on a subtle line.
 - A set that grows on its own → name where it lives, never its members.
 - A pointer names a stable target — a file, a heading, a symbol; never a line number.
@@ -62,7 +61,7 @@ Every canon body — rule, skill, agent, format, command, prompt, `CLAUDE.md`/`A
 - The user flags a one-home breach → fix it at its source that turn; a tell no line here covers → add it here as one line.
 - Directive ignored → check in order, before adding a word: loaded — for a past session, its `~/.claude/state/read-log/<session>` `instructions:` lines and its transcript's `nested_memory` attachments; for the session in hand, the user's `/context` · contradicted by another loaded file or a Claude Code built-in · lost in a long file · owed every time → rung 4.
 
-## Config levels
+### Config levels
 
 - Three levels load together: user (`~/.claude/`) — true in any codebase · project shared (`<repo>/`, committed) — true of one codebase for every session that loads it · project local (`<repo>/`, never committed) — true only for the user in that repo.
 - Decide each fact's level as it is written, not once per file.
@@ -73,7 +72,7 @@ Every canon body — rule, skill, agent, format, command, prompt, `CLAUDE.md`/`A
 - Before writing into a repo's `.claude/` or `docs/agents/` → `git check-ignore -v <path>`: ignored → local; not ignored → shared on the next `git add`; exit 128 → neither, the path runs through a symlink or leaves the repo.
 - Collisions: settings merge key by key, local over shared over user; instructions and rules concatenate and none overrides another — two levels conflicting → make them agree or delete one; a same-named agent or MCP server is replaced whole; a user skill beats a same-named project skill, which then never runs.
 
-## Where canon lives
+### Where canon lives
 
 - `~/Code/skills` (`yann-lauwers/skills`) is the one home of every own skill, agent and hook; a host installs them from GitHub with the commands in its `README.md`, never by link.
 - Change one → edit it in `~/Code/skills`, commit, push, then refresh: a skill → `npx skills update -g -y`, and `npx skills update -p -y` in each repo using it · an agent or hook → `claude plugin marketplace update yannlauwers && claude plugin update <plugin>@yannlauwers` for the plugin holding it under `plugins/` (background auto-update takes it otherwise).
@@ -93,14 +92,14 @@ Every canon body — rule, skill, agent, format, command, prompt, `CLAUDE.md`/`A
 
 - A new file of any kind → read the nearest sibling of its kind and shape first, and match its sections and depth; § How we write and the kind's reference win where the sibling departs from them.
 
-## The claim search
-
-- Finds every file still naming what a change removed, renamed or reworded, or already stating what it adds: grep each name, and each changed claim's distinctive words with their inflections and the synonyms the canon uses for them, over `~/Code/skills`, `~/.agents/AGENTS.md`, `~/.claude/{settings.json,*.md,agent-memory}`, `~/.claude/projects/*/memory`, the scripts under `~/.local/bin` and `~/.local/share/*` (never their data or state files, a staged original or a sandbox copy), and each `~/Code` base checkout's `CLAUDE.md`, `AGENTS.md`, their `.local` twins, `.claude/` and `docs/agents/`.
-- Never all of `~/.claude` or `~/.agents`: state, history, transcripts and installed copies flood the search and are never edited.
-- An installed copy or a worktree's copy → reported, never edited.
-
 ## Changing what's written
 
 - A directive changed, reversed or removed → change it at its home; a reversed one's new line takes the old line's place.
 - A file removed → delete it: its history stays in its repo's git; a file in no repo → copy it to `~/.agents/archive/` first.
 - Then § The claim search on every name and claim the change touched, in the same change.
+
+### The claim search
+
+- Finds every file still naming what a change removed, renamed or reworded, or already stating what it adds: grep each name, and each changed claim's distinctive words with their inflections and the synonyms the canon uses for them, over `~/Code/skills`, `~/.agents/AGENTS.md`, `~/.claude/{settings.json,*.md,agent-memory}`, `~/.claude/projects/*/memory`, the scripts under `~/.local/bin` and `~/.local/share/*` (never their data or state files, a staged original or a sandbox copy), and each `~/Code` base checkout's `CLAUDE.md`, `AGENTS.md`, their `.local` twins, `.claude/` and `docs/agents/`.
+- Never all of `~/.claude` or `~/.agents`: state, history, transcripts and installed copies flood the search and are never edited.
+- An installed copy or a worktree's copy → reported, never edited.
