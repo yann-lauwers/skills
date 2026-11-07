@@ -4,7 +4,13 @@ Yann Lauwers' Claude Code skills and plugins. Every machine installs from this r
 
 ```
 skills/<name>/                   # one skill per folder, installed with npx skills
-plugins/yann/                    # agents and hooks, installed as a plugin
+hooks/                           # the hook registry, and lib/: the one source of every module plugins share
+plugins/agents/                  # browser-pilot and code-reviewer, dispatched as agents:<name>
+plugins/bash-permissions/        # answers Bash permission prompts, refuses destructive commands
+plugins/git-guards/              # refuses a commit carrying a tool's local config
+plugins/house-style/             # flags an HTML page or stylesheet written without the house-style skill
+plugins/auto-resume/             # resumes a turn an API error ended
+plugins/yann/                    # the validation-report layout guard
 plugins/continuous-compaction/   # Claude Code only: the compaction plugin; Codex loads no hooks from its `modules` hooks.json
 plugins/domain-canon/            # refuses work in a directory until its GLOSSARY.md and ADRs are read; enabled per repo
 plugins/codex-local-instructions/ # Codex only: injects a repo's AGENTS.local.md into each session
@@ -32,11 +38,21 @@ npx skills add yann-lauwers/skills -a claude-code codex -y -s validating watch-p
 
 # plugins
 claude plugin marketplace add yann-lauwers/skills   # then set "autoUpdate": true on it in ~/.claude/settings.json
+claude plugin install agents@yannlauwers --scope user
+claude plugin install bash-permissions@yannlauwers --scope user
+claude plugin install git-guards@yannlauwers --scope user
+claude plugin install house-style@yannlauwers --scope user
+claude plugin install auto-resume@yannlauwers --scope user
 claude plugin install yann@yannlauwers --scope user
 claude plugin install continuous-compaction@yannlauwers --scope user
 
 # Codex: one plugin list for every repo, so domain-canon gates each repo with canon
 codex plugin marketplace add yann-lauwers/skills
+codex plugin add agents@yannlauwers
+codex plugin add bash-permissions@yannlauwers
+codex plugin add git-guards@yannlauwers
+codex plugin add house-style@yannlauwers
+codex plugin add auto-resume@yannlauwers
 codex plugin add yann@yannlauwers
 codex plugin add domain-canon@yannlauwers
 # Codex only: Claude Code reads AGENTS.local.md through CLAUDE.local.md
@@ -95,6 +111,7 @@ Run in the repo: `npx skills add yann-lauwers/skills -a claude-code -y -s <names
 
 1. Edit it here, commit, push.
 2. User level: `npx skills update -g -y`. Each repo using it: `npx skills update -p -y` in that repo, then commit in your own repos.
-3. Plugins: background auto-update picks up the push (`"autoUpdate": true` on the `yannlauwers` marketplace in `~/.claude/settings.json`); to take it at once, `claude plugin marketplace update yannlauwers && claude plugin update yann@yannlauwers`, then `/reload-plugins` in open sessions. The `yann` plugin carries no `version`, so every pushed commit is a new version.
+3. Plugins: background auto-update picks up the push (`"autoUpdate": true` on the `yannlauwers` marketplace in `~/.claude/settings.json`); to take it at once, `claude plugin marketplace update yannlauwers && claude plugin update <plugin>@yannlauwers`, then `/reload-plugins` in open sessions. Every plugin but `continuous-compaction` carries no `version`, so every pushed commit is a new version.
+4. A module in `hooks/lib/` reaches a plugin as a real copy in that plugin's `hooks/lib/`, since both installers drop a symlink leaving the plugin: `hooks/sync-lib` refreshes every copy, `hooks/sync-lib --check` lists the stale ones.
 
 A new skill is a folder `skills/<name>/` with its `SKILL.md`, plus its row above.

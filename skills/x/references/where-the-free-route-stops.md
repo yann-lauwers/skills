@@ -2,7 +2,7 @@
 
 ## A long-form article
 
-- The body past `article.preview_text` needs a logged-in session → a persisted session from a `yann:browser-pilot` `MODE: DISCOVERY` dispatch.
+- The body past `article.preview_text` needs a logged-in session → a persisted session from a `agents:browser-pilot` `MODE: DISCOVERY` dispatch.
 
 ## A protected or deleted account
 

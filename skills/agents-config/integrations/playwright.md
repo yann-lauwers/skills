@@ -14,7 +14,7 @@ defaults:
 ---
 # playwright — user floor (browser)
 
-Read by `browser-login` and `yann:browser-pilot`.
+Read by `browser-login` and `agents:browser-pilot`.
 
 ## Which identity
 
@@ -32,7 +32,7 @@ Read by `browser-login` and `yann:browser-pilot`.
 
 - `browser-login` writes session files into `~/.local/share/browser-sessions/`, one per identity or `<identity>-<environment>`; `browser-login --list` says which identities are minted.
 - A session file is a login: never committed, printed or synced; a leaked one → rotate that login.
-- A session file loads only into a browser of its own: `storageState` in a `yann:browser-pilot` script — never the session's default browser, which every subagent shares.
+- A session file loads only into a browser of its own: `storageState` in a `agents:browser-pilot` script — never the session's default browser, which every subagent shares.
 - "Reuse my session" → the first form.
 
 | Form | What it does |

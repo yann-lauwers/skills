@@ -16,7 +16,7 @@
 
 ## The agents layer
 
-- An agent file lives at `~/Code/skills/plugins/yann/agents/<name>.md` and answers to `yann:<name>` → edit, add or delete it there, commit, push, then `claude plugin marketplace update yannlauwers && claude plugin update yann@yannlauwers` (background auto-update takes it otherwise).
+- An agent file lives at `~/Code/skills/plugins/agents/agents/<name>.md` and answers to `agents:<name>` → edit, add or delete it there, commit, push, then `claude plugin marketplace update yannlauwers && claude plugin update agents@yannlauwers` (background auto-update takes it otherwise).
 - `description:` holds one plain line — never a folded `>` or a quoted string.
-- A pack that ships its own agents → its own installer writes them into each project's `.claude/agents/` beside its skill; never copy them into `plugins/yann/agents/`.
+- A pack that ships its own agents → its own installer writes them into each project's `.claude/agents/` beside its skill; never copy them into `plugins/agents/agents/`.
 - An edited agent → dispatch it from a fresh session; a running one sees the change only after a delay.
