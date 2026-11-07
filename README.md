@@ -59,12 +59,16 @@ codex plugin add domain-canon@yannlauwers
 codex plugin add codex-local-instructions@yannlauwers
 ```
 
-Then this host's two jobs:
+Then this host's three jobs:
 
 ```sh
 # the commit size check, on every repo
 git config --global hook.token-limit.event pre-commit
 git config --global hook.token-limit.command "$HOME/.claude/skills/git/scripts/pre-commit-token-limit"
+
+# the shared hook modules' copies stay in step, in this repo
+git -C ~/Code/skills config hook.hooks-lib-sync.event pre-commit
+git -C ~/Code/skills config hook.hooks-lib-sync.command 'hooks/sync-lib --check'
 
 # the vault sync tick, every 5 minutes (macOS; Linux: the vault's scripts/README.md § Adding a machine)
 mkdir -p ~/.local/state/vault && cp ~/Obsidian/yl/scripts/jobs/com.yann.vault-tick.plist ~/Library/LaunchAgents/ && launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.yann.vault-tick.plist

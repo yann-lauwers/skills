@@ -16,7 +16,9 @@
 
 ## The wiring
 
-- `hooks/hooks.json` in this plugin is what runs; it is hand-written, and the `event` column records where a check was wired when its row was written.
+- Each plugin's `hooks/hooks.json` is what runs, `continuous-compaction`'s `hooks` key in its `.claude-plugin/plugin.json`; each is hand-written, and the `event` column records where a check was wired when its row was written.
+- A component's plugin: `auto-allow-bash.sh`, `permission-request.py` → `bash-permissions` · `tool-configs-stay-local.py` → `git-guards` · `house-style-unloaded.py` → `house-style` · `stopfailure-resume.py` → `auto-resume` · `precompact-capture.py`, `precompact-rearm.py`, `record-loaded-context.py` → `continuous-compaction` · `guard-validation-report-layout.py` → `yann`; each under `plugins/<plugin>/hooks/`.
+- `lib/` here is the one source of every module two plugins share; each plugin holds real copies of the ones it imports, refreshed by `hooks/sync-lib`, since both installers drop a symlink leaving the plugin.
 - Every matching handler runs in parallel, and none sees another's output or `updatedInput`; array position confers no precedence, and which of two conflicting verdicts wins is unverified.
 
 ## Reading a decision row
