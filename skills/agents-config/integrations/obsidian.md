@@ -8,4 +8,4 @@ defaults:
 ---
 # obsidian — user floor (vault)
 
-Read by the `obsidian` skill and the vault hooks, which take `vault_root` as the vault's root.
+Read by the vault hooks, which take `vault_root` as the vault's root.

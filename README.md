@@ -19,7 +19,7 @@ Naming both agents makes `npx skills` keep each skill in `~/.agents/skills`, whe
 npx skills add yann-lauwers/skills -g -a claude-code codex -y -s agents-config
 
 # skills used everywhere
-npx skills add yann-lauwers/skills -g -a claude-code codex -y -s analysing-recordings apple-calendar apple-mail cmux cp dev-team disk-cleanup garden-domain-docs git hook-development house-style keyless managing-harness obsidian plain proton simplify-comments slack superwhisper tailscale things voice watching worktrunk x
+npx skills add yann-lauwers/skills -g -a claude-code codex -y -s analysing-recordings apple-calendar apple-mail cmux cp dev-team disk-cleanup garden-domain-docs git hook-development house-style keyless managing-harness plain proton simplify-comments slack superwhisper tailscale things voice watching worktrunk x
 
 # other authors' packs, everywhere
 npx skills add mattpocock/skills -g -a claude-code codex -y -s ask-matt grill-me grilling handoff retro teach to-questionnaire wait-what loop-me writing-for-agents
@@ -50,8 +50,8 @@ Then this host's two jobs:
 git config --global hook.token-limit.event pre-commit
 git config --global hook.token-limit.command "$HOME/.claude/skills/git/scripts/pre-commit-token-limit"
 
-# the vault sync tick, every 5 minutes (macOS; Linux: obsidian's references/operate.md step 5)
-mkdir -p ~/.local/state/vault && cp ~/.claude/skills/obsidian/jobs/com.yann.vault-tick.plist ~/Library/LaunchAgents/ && launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.yann.vault-tick.plist
+# the vault sync tick, every 5 minutes (macOS; Linux: the vault's scripts/README.md § Adding a machine)
+mkdir -p ~/.local/state/vault && cp ~/Obsidian/yl/scripts/jobs/com.yann.vault-tick.plist ~/Library/LaunchAgents/ && launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.yann.vault-tick.plist
 ```
 
 ## Skills one repo uses
@@ -60,13 +60,12 @@ Run in the repo: `npx skills add yann-lauwers/skills -a claude-code -y -s <names
 
 | Repo | Skills | Copies |
 | --- | --- | --- |
-| `~/Code/nexus-project/nexus` | linear pr-cluster sentry supabase daytona infisical prisma redis react-patterns react-performance react-testing frontend-accessibility typescript-patterns vite-patterns nestjs-patterns prisma-patterns postgres-patterns redis-patterns docker-patterns | excluded |
-| `~/Code/nexus-project/nexus-ui` | linear react-patterns react-performance react-testing frontend-accessibility typescript-patterns vite-patterns | excluded |
+| `~/Code/nexus-project/nexus` | pr-cluster sentry supabase daytona infisical prisma redis react-patterns react-performance react-testing frontend-accessibility typescript-patterns vite-patterns nestjs-patterns prisma-patterns postgres-patterns redis-patterns docker-patterns | excluded |
+| `~/Code/nexus-project/nexus-ui` | react-patterns react-performance react-testing frontend-accessibility typescript-patterns vite-patterns | excluded |
 | `~/Code/nexus-project/nexus-landing` | linear react-patterns react-performance react-testing frontend-accessibility typescript-patterns nextjs-patterns | excluded |
-| `~/Code/nexus-project/nutshell` | linear typescript-patterns swift-patterns sqlite-patterns | committed |
-| `~/Code/nexus-project/nexus-desktop` | linear docker-patterns swift-patterns sqlite-patterns ffi-boundaries | excluded |
+| `~/Code/nexus-project/nutshell` | typescript-patterns swift-patterns sqlite-patterns | committed |
+| `~/Code/nexus-project/nexus-desktop` | docker-patterns swift-patterns sqlite-patterns ffi-boundaries | excluded |
 | `~/Code/keyless` | docker-patterns | excluded |
-| `~/Code/codeine` | linear | excluded |
 | `~/Code/les-gites-du-haras` | sentry webflow react-patterns react-performance react-testing frontend-accessibility typescript-patterns vite-patterns | committed |
 | `~/Code/effigest-site` | react-patterns react-performance react-testing frontend-accessibility typescript-patterns vite-patterns nextjs-patterns | committed |
 | `~/Code/personal-coach` | react-patterns react-performance react-testing frontend-accessibility typescript-patterns | committed |

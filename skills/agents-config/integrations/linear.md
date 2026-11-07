@@ -16,4 +16,4 @@ defaults:
 ---
 # linear — user floor
 
-Read by the `linear` skill, and by every tracker consumer through `agents-config get --role tracker`.
+Read by every tracker consumer through `agents-config get --role tracker`.
