@@ -1,7 +1,6 @@
 ---
 name: hook-development
-description: "Builds, proves, rolls out and retires Claude Code hooks and keeps their registry true. Started only by /hook-development ."
-disable-model-invocation: true
+description: "Builds, proves, rolls out and retires Claude Code hooks and keeps their registry true. Use on 'create a hook', 'add a PreToolUse hook', 'block this command', 'from now on whenever X', 'the hook never fires', 'retire this hook'; also on a `hooks` key in a settings.json, a script under `hooks/`, a `permissionDecision` emission or a registry row. Not for whether a hook is the right home — /managing-harness ."
 ---
 
 # Hook Development
