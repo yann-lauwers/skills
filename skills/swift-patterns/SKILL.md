@@ -13,7 +13,7 @@ macOS first, SwiftUI and AppKit.
 
 ## Before acting
 
-1. Read each target's `SWIFT_VERSION`, `SWIFT_STRICT_CONCURRENCY`, `SWIFT_DEFAULT_ACTOR_ISOLATION`, `SWIFT_APPROACHABLE_CONCURRENCY`, `SWIFT_UPCOMING_FEATURE_*` and deployment target from `project.pbxproj` or `Package.swift`; targets differ. State them before concurrency advice.
+1. Read each target's `SWIFT_VERSION`, `SWIFT_STRICT_CONCURRENCY`, `SWIFT_DEFAULT_ACTOR_ISOLATION`, `SWIFT_APPROACHABLE_CONCURRENCY`, `SWIFT_UPCOMING_FEATURE_*` and deployment target from `project.pbxproj` or `Package.swift`, and state them before concurrency advice.
 2. Prove a concurrency claim with SIL, never `-typecheck`: `sh ${CLAUDE_SKILL_DIR}/scripts/sil-check.sh <file.swift> [--target <floor>] [swiftc flags]`.
 3. Gate every API at that deployment target: one API per file through `sh ${CLAUDE_SKILL_DIR}/scripts/sil-check.sh <file> --target <floor> -swift-version 6 -parse-as-library`; a protocol's file uses the conformance, never only declares it.
 4. An API's promise, Apple's recommended pattern, this year's changes → `sh ${CLAUDE_SKILL_DIR}/scripts/apple-doc.sh <page>`, per `references/sources-of-truth.md`.
@@ -45,4 +45,3 @@ macOS first, SwiftUI and AppKit.
 
 1. `@MainActor` is justified by the code being UI-bound, never added to silence a diagnostic.
 2. `@unchecked Sendable`, `nonisolated(unsafe)` and `@preconcurrency` each have the lock or invariant that makes them true carried in code: a lock-typed field naming what it guards, or a tracker ticket for an import awaiting annotation.
-3. Every API newer than the deployment target sits behind `if #available` or `@available`.
