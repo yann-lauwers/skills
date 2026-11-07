@@ -19,13 +19,13 @@ Rewrites one existing canon file of any kind to SKILL.md § How we write and its
 
 ## A wired tool
 
-- One unit: its floor config, each `~/Code` base checkout's `docs/agents/integrations/<tool>.md`, any other `docs/agents/` file outside the files /setup-matt-pocock-skills and /worktrunk write carrying its facts, and its skill, drafted and traced together, per `references/skills.md` § A tool's skill and its config.
+- One unit: its floor config, each `~/Code` base checkout's `docs/agents/integrations/<tool>.md`, any other `docs/agents/` file canon wrote carrying its facts, and its skill, drafted and traced together, per `references/skills.md` § A tool's skill and its config.
 - Before a config key moves or goes → SKILL.md § The claim search on the key, before drafting; a script reading it changes in the same change.
-- A repo's `docs/agents/<file>.md` outside `integrations/` and the files /setup-matt-pocock-skills and /worktrunk write, carrying a tool's facts → each fact to its home per `references/skills.md` § A tool's skill and its config and SKILL.md § Where a fact goes; the file goes once nothing stays in it.
+- A repo's `docs/agents/<file>.md` outside `integrations/` that canon wrote, carrying a tool's facts → each fact to its home per `references/skills.md` § A tool's skill and its config and SKILL.md § Where a fact goes; the file goes once nothing stays in it.
 
 ## Steps
 
-1. Measure: `wc -c`, and whether it loads always, by `paths:`, or on invocation; a file in a pack `references/vendored.md` names as vendored → stop, rewrite nothing; a block its § Blocks registers → its lines take `line:` verdicts, byte for byte.
+1. Measure: `wc -c`, and whether it loads always, by `paths:`, or on invocation.
 2. Draft outside the live file, with its trace. Done when every old line has a verdict.
 3. Check the draft against § Traps.
 4. Show the user the trace in the reply, old, new and verdict side by side; any change after their approval shown again. Done when the user approves.

@@ -30,7 +30,6 @@ Every canon body — rule, skill, agent, format, command, prompt, `CLAUDE.md`/`A
 - No reasons: measurements, dates, "why" and stories stay out; a reason that sets the line's scope or stops a reader refusing a legitimate step stays as one clause.
 - A recorded call keeps its one-line provenance: date, route, result.
 - No examples, unless the example is the rule — an output's template in a fence with `<placeholders>`, a voice's 3–4 sample lines, a near miss on a subtle line.
-- Draw the boundary between an agent, a skill, an instruction file and a config where their concepts differ.
 - A set that grows on its own → name where it lives, never its members.
 - A pointer names a stable target — a file, a heading, a symbol; never a line number.
 - A target whose absence makes the output wrong → read it before the step; one that only sharpens it → "read X if it exists".
@@ -45,12 +44,22 @@ Every canon body — rule, skill, agent, format, command, prompt, `CLAUDE.md`/`A
   1. Reading the code yields it — a layout, a dependency list, an architecture tour → the code; canon states none of it.
   2. A command can decide it — lint, format, types, imports → a check, run in CI and fed back at edit time by a hook; no CI at that level → the hook alone.
   3. A hard allow or deny of a tool, command or path, session-wide, whose refusal needs no way out → a permission rule.
-  4. Must hold or happen on every matching event, whatever the model decides → a command hook · judgment at a fixed event → a prompt or agent hook, its firing guaranteed and its verdict not · needed only once a skill runs → that skill's `hooks:` frontmatter, armed until the session ends; each through /hook-development .
+  4. Must hold or happen on every matching event, whatever the model decides → a command hook · judgment at a fixed event → a prompt or agent hook, its firing guaranteed and its verdict not · needed only once a skill runs → that skill's `hooks:` frontmatter, armed until the session ends.
   5. Every turn needs it → `AGENTS.md`, split from `CLAUDE.md` per `references/instruction-files.md` · only work under one directory needs it → that directory's `AGENTS.md`, with a `CLAUDE.md` beside it holding `@AGENTS.md`; never a rule file — `references/rules.md`.
   6. One act needs it → the skill owning that act; what one repo adds to a tool's act → `references/skills.md` § A tool's skill and its config.
   7. Durable reference no single act owns, reached by a pointer → how a tool works → that tool's skill · how one codebase works, beyond what it adds to a tool → that repo's `docs/agents/`.
 - Beside the ladder: a value → config · what no dispatch parameter reaches → an agent file, per `references/agents.md` · text every session needs → `AGENTS.md`, never a SessionStart hook printing it · text that changes per run → a SessionStart hook.
-- Its owner already states it → nowhere; name the owner.
+- One home per fact — the artifact whose subject it is; every other place names the role it plays · its owner already states it → nowhere; name the owner.
+- About to write a fact into a file opened for another reason → find its owner first.
+- A fact is individuated by who may change it: N owners who can each change their answer alone hold N facts with one answer today → each states its own value in full.
+- One home is where a fact lives, not how many places read it: a copy nobody typed is not a second home; a copy somebody edits is.
+- Delivering a fact to another repo → the first that fits: derive it from position · leave it per repo, where it only looks shared · a pointer the reader reaches at read time · the thing itself shared (one executable on `PATH`, one symlinked file) · injected into the reader's context each run · a rendered copy, only where the reader cannot reach the home and the fact must survive a clone.
+- A rendered copy names no source, header or hash; its drift is computed by rendering in memory and comparing with disk; its first render reproduces the repo's existing text byte for byte.
+- A second home → the owner states the fact first, then each copy becomes the owner's name or goes.
+- One slot — a reply's first line, its closing line — is one fact: two files each claiming it both read as current and one never fires.
+- Writing into a file that holds a project's facts (a `CLAUDE.md`, an index) → a sentence that could go stale without anything failing belongs to its owning artifact.
+- A misplaced neighbour already in the file is a second breach, never a precedent.
+- The user flags a one-home breach → fix it at its source that turn; a tell no line here covers → add it here as one line.
 - Directive ignored → check in order, before adding a word: loaded — for a past session, its `~/.claude/state/read-log/<session>` `instructions:` lines and its transcript's `nested_memory` attachments; for the session in hand, the user's `/context` · contradicted by another loaded file or a Claude Code built-in · lost in a long file · owed every time → rung 4.
 
 ## Config levels
@@ -81,17 +90,14 @@ Every canon body — rule, skill, agent, format, command, prompt, `CLAUDE.md`/`A
 | a prompt another model runs — an Agent brief, a stored prompt, a dispatch template | `references/prompts.md` |
 | a `CLAUDE.md`, an `AGENTS.md`, their `.local` twins | `references/instruction-files.md` |
 | rewriting a whole existing file — "optimize this", "improve X everywhere" | `cookbook/optimize.md` |
-| placing a fact, delivering it to another repo, a second home, a one-home breach the user flags | `references/composability.md` |
-| a hook, its wiring, its registry row | /hook-development |
-| installing or updating a pack authored elsewhere, or which packs an optimize sweep leaves alone | `references/vendored.md` |
 
 - A new file of any kind → read the nearest sibling of its kind and shape first, and match its sections and depth; § How we write and the kind's reference win where the sibling departs from them.
 
 ## The claim search
 
-- Finds every file still naming what a change removed, renamed or reworded, or already stating what it adds: grep each name, and each changed claim's distinctive words with their inflections and the synonyms the canon uses for them, over `~/.claude/{agents,hooks,agent-memory}`, every real directory under `~/.claude/skills` but `synced`, `~/.claude/settings.json`, `~/.claude/*.md`, `~/.claude/projects/*/memory`, `~/.agents/{skills,docs,AGENTS.md,bin}`, the scripts under `~/.local/bin` and `~/.local/share/*` (never their data or state files, a staged original or a sandbox copy), and each `~/Code` base checkout's `CLAUDE.md`, `AGENTS.md`, their `.local` twins, `.claude/` and `docs/agents/`.
-- Never all of `~/.claude` or `~/.agents`: state, history and transcripts flood the search and are never edited.
-- A worktree's copy → reported, never edited.
+- Finds every file still naming what a change removed, renamed or reworded, or already stating what it adds: grep each name, and each changed claim's distinctive words with their inflections and the synonyms the canon uses for them, over `~/Code/skills`, `~/.agents/AGENTS.md`, `~/.claude/{settings.json,*.md,agent-memory}`, `~/.claude/projects/*/memory`, the scripts under `~/.local/bin` and `~/.local/share/*` (never their data or state files, a staged original or a sandbox copy), and each `~/Code` base checkout's `CLAUDE.md`, `AGENTS.md`, their `.local` twins, `.claude/` and `docs/agents/`.
+- Never all of `~/.claude` or `~/.agents`: state, history, transcripts and installed copies flood the search and are never edited.
+- An installed copy or a worktree's copy → reported, never edited.
 
 ## Changing what's written
 
