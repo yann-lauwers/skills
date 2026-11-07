@@ -1,1 +1,0 @@
-KINDS = frozenset({"validation"})

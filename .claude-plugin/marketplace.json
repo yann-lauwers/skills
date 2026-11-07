@@ -7,11 +7,6 @@
   },
   "plugins": [
     {
-      "name": "yann",
-      "source": "./plugins/yann",
-      "description": "The validation-report layout guard, until it moves beside the validating skill."
-    },
-    {
       "name": "continuous-compaction",
       "source": "./plugins/continuous-compaction",
       "description": "Summarizes a conversation when a turn ends above a fill floor, then continues it. /compaction shows and changes the floor for one conversation or all of them."
