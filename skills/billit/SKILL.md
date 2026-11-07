@@ -5,42 +5,26 @@ description: "Operates Billit, the invoicing tool, through the `billit` command.
 
 # billit
 
-Everything in Billit goes through the `billit` command. The command knows how to log in, page, check its own writes and talk to the web portal; this skill says which command to run when.
+Every Billit act goes through the `billit` command; `billit <noun> <verb> --help` documents each one's flags, output and exit codes.
 
-## Before the first command
+## Project config
 
-- Run it from inside the repo whose config names the entities: `billit` reads that repo's `docs/agents/integrations/billit.md` and its entity register.
+- Run `billit` from inside the repo whose `docs/agents/integrations/billit.md` names the entity register; its keys → `references/config.md`.
 - The entity is the one the request names (`--entity <key>`), else the register's default. Never mix two entities in one answer.
-- The entity's books read Billit's codes (its register says `reads_codes` is anything but `false`) → stop and ask the user how its books are kept.
-- No `docs/agents/integrations/billit.md` in the repo → ask the user; on their yes, write it per /managing-harness , `references/skills.md` § A tool's skill and its config, holding `register`: `index`, the entity index's path in the repo; `block`, the path inside an entity file to its Billit details, which hold `party_id`, `secret` when the vault item isn't `<entity>-billit`, and optionally `reinvoiced_expenses` and `time_registration_descriptions`; then `reads_codes`, and for invoicing `numbering`, `prefix`, `payment_terms_days`, each a path inside the entity file. Then continue.
+- The entity's books read Billit's codes (the register's `reads_codes` is anything but `false`) → stop and ask the user how its books are kept.
+- No `docs/agents/integrations/billit.md` in the repo → ask the user; on their yes, write it per /managing-harness , `references/skills.md` § A tool's skill and its config, with the keys in `references/config.md`; then continue.
 
 ## Ask the user first
 
 - Creating a supplier or a customer, or changing anything already in Billit → run the command with `--dry-run`, show the user what it would send, and wait for their OK. Linking a new order to its own payment and clearing an encoded document from the queue go ahead.
-- A document not addressed to the entity with its VAT number, a category the supplier's history doesn't settle, a VAT treatment you can't place → propose the options to the user and wait.
+- A document not addressed to the entity with its VAT number, a category the supplier's history doesn't settle, a VAT treatment not yet placed → propose the options to the user and wait.
 - Sending an invoice → only when the user says so.
 - Everything else → go ahead.
 
 ## Every figure comes from the page
 
-- Read every document yourself. Billit pre-reads uploads; that pre-read is a guess, never a value.
+- Read every document; Billit's pre-read of an upload is a guess, never a value.
 - The category and the VAT code are two separate choices; settling one settles nothing about the other.
-
-## Commands
-
-`billit <noun> <verb> --help` documents each one: its flags, output and exit codes.
-
-| Command | Does |
-| --- | --- |
-| `whoami` | proves the key and shows the company |
-| `queue list` · `queue clear` | the quick-entry queue; `clear` removes documents already encoded, after proving the order holds the same file |
-| `files get` | downloads uploaded files, and the PDF inside a Peppol XML |
-| `parties list` · `get` · `create` · `amend` | suppliers and customers |
-| `orders list` · `get` · `create` · `amend` | purchase and sales documents; `get` includes the category and project |
-| `bank list` · `reconcile` · `assign` | bank rows; `reconcile` pairs rows with orders no row points to |
-| `time list` · `add` · `delete` | hours on a project |
-| `projects list` · `categories list` | the account's projects and cost categories |
-| `api` · `portal` | any other Billit call, when no command covers it — `references/api.md` |
 
 ## Routing
 
@@ -54,3 +38,4 @@ Everything in Billit goes through the `billit` command. The command knows how to
 | choosing a cost category or a VAT code | `references/codes.md` |
 | writing the file `billit orders create` takes | `references/order-spec.md` |
 | a Billit call no command covers | `references/api.md` |
+| the register's keys, or writing the missing config | `references/config.md` |
