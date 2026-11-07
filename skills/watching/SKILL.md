@@ -10,7 +10,7 @@ allowed-tools: Read, Write(${CLAUDE_SKILL_DIR}/**), Edit(${CLAUDE_SKILL_DIR}/**)
 
 | The wait | The instrument |
 | --- | --- |
-| a pull request · a Slack reply · a Linear ticket | its skill's arm step: /watch-pr · /slack `cookbook/watch-reply.md` · /linear `scripts/watch-ticket.py` |
+| a pull request · a Slack reply | its skill's arm step: /watch-pr · /slack `cookbook/watch-reply.md` |
 | this session's own subagent or background command | nothing more: the harness reports its end |
 | nothing but time | `ScheduleWakeup` at the estimate |
 | a runner's wait verb exits with the job's verdict | that verb, `run_in_background` |

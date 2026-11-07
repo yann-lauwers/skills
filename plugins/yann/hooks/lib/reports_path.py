@@ -52,9 +52,7 @@ other check here follows: an empty parse is no opinion.
 import json
 import os
 
-# The user-level tree's pointer. It is a symlink into the vault and stays one: it is
-# named in the closed set of surfaces allowed to carry a vault location
-# (the obsidian skill's `SKILL.md` § Root).
+# The user-level tree's pointer, a symlink into the vault.
 USER_POINTER = "~/.agents/reports"
 
 
