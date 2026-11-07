@@ -8,7 +8,6 @@ allowed-tools: Bash(${CLAUDE_SKILL_DIR}/scripts/*), Bash(uv run *), Bash(gh pr *
 # Watch PR
 
 - `scripts/watch-pr.py` decides each verdict per `references/green-detection.md`; this skill decides who acts on it.
-- The watcher is a probe armed in the background; it prints one line when a verdict is news, then exits → /watching , § Arm a probe.
 - Ask the user nothing: every decision is the watcher's verdict or a pause per `references/escalation.md`.
 
 ## Arm
@@ -23,25 +22,23 @@ allowed-tools: Bash(${CLAUDE_SKILL_DIR}/scripts/*), Bash(uv run *), Bash(gh pr *
 
 4. Print PR, URL and task id; end the turn — the task's exit wakes the session.
 
-- The verdict is the last line of the task's output file that starts with `{`.
+- The verdict is the last line of the task's output file that starts with `{`, one JSON object.
 - After acting → arm again with the same command plus the line's `rearm` flags, which replace their namesakes.
 - Tuning flags (`--interval`, `--blind-after`, `--fresh-window`, `--bot-pending-timeout`) only when the user set them → `references/wire-contract.md`.
-- Stop → `TaskStop <task id>`.
 
 ## Verdict table
 
-- Each line is one JSON object.
 - A fix ends on a push; the re-armed watcher reads the moved head on its first read — never re-poll.
 
 | Verdict | Action |
 | --- | --- |
 | `DRAFT` | Report the draft; the user flips it. Re-arm. |
 | `CONFLICT` | The line's `integration_base` is `false` → rebase onto `origin/<base>`, resolve, run the repo's checks, `git push --force-with-lease`. `true` or `"unknown"` → `git merge origin/<base>`, resolve, check, push. Re-arm. |
-| `NEW_COMMENTS` | Every unresolved review-bot thread → fix it (commit, push) · refute it, the reply quoting the line or command output that disproves it · a real finding another ticket owns → the reply names that ticket. Then resolve it (`gh api graphql`, `resolveReviewThread`). Never resolve without a reply; nothing to quote → pause. Re-arm. |
-| `CI_RED` | `gh run list --branch <branch> --status failure`, then `gh run view <id> --log-failed`; fix at root cause, push. A failure with no code root — infra, a flake → pause. Re-arm. |
+| `NEW_COMMENTS` | Every unresolved review-bot thread → fix it (commit, push) · refute it, the reply quoting the line or command output that disproves it · a real finding another ticket owns → the reply names that ticket. Then resolve it. Never resolve without a reply; nothing to quote → pause. Re-arm. |
+| `CI_RED` | Fix at root cause, push. A failure with no code root — infra, a flake → pause. Re-arm. |
 | `BASE_ADVANCED` | In a checkout of `branch`, `git merge origin/<base>`, never a rebase; resolve as the union of both sides, run the repo's checks, push. Re-arm. |
 | `CLEAN` | Report once. The merge is the user's to name. Re-arm, so the merge is observed. |
-| `MERGED` | Run `cookbook/closeout.md`. Then the ticket the branch names closes the way the tracker closes work: an automation owns the transition → report it; else the session that opened this PR closes it through the tracker's skill; any other session names it to the user. The watcher has exited. |
+| `MERGED` | Run `cookbook/closeout.md`. Then the branch's ticket: an automation owns its transition → report it · this session opened the PR → close it through the tracker's skill · else → name it to the user. The watcher has exited. |
 | `CLOSED` | Report closed without merge. The watcher has exited. |
 | `WATCHER_ERROR` | `error=duplicate` → another watcher holds this PR; report its pid, arm nothing. `error=blind` → no read landed for the whole `--blind-after`; report `detail`, arm again once the network or `gh` answers. `error=auth` → report; the user signs `gh` in. Any other → report `detail`. |
 | no `{` line | The task exited with none → arm again once with the same command; a second time → report the output file's tail. |
