@@ -1,11 +1,9 @@
 # Migrate
 
-Creates, proves, applies and amends migrations, pushes without one, baselines a pushed database, recovers a wrong baseline, and carries the SQL Prisma's generator cannot write.
-
 - Run a workflow's steps in order: each write in it passes SKILL.md § Before a write.
 - `generate --sql` runs once the database holds the change: it type-checks every TypedSQL file against the live database · plain `generate` reads no database.
 - `workflow_doc` says when to push and when to migrate; this file says how.
-- Flags below are major 6's; major 7's replacements are SKILL.md § Version.
+- Flags below are major 6's; major 7's replacements → `references/versions.md`.
 
 ## Create a migration
 

@@ -1,7 +1,5 @@
 # Debug
 
-Narrows a failed Prisma command or a database that disagrees with the schema to its cause, then routes to the step that fixes it.
-
 - A failed migrate, push or generate → find why the database state is wrong before reaching for `db push` or `migrate resolve`, which mask it.
 - `migrate diff` against the live database is the ground truth for what the schema can express — `references/commands.md`.
 - A `P1012` → match on its message, never its code: the code covers several causes.
@@ -10,7 +8,6 @@ Narrows a failed Prisma command or a database that disagrees with the schema to 
 
 | Symptom | Cause | Fix |
 | --- | --- | --- |
-| `Unknown field` or `Property … does not exist` on the client in TypeScript | the client was not regenerated after the schema change | `generate` |
 | `generate --sql` fails | the database lags the schema and its migrations, a TypedSQL file is wrong, or generate never reached the database | generate's output carries `Error: P1xxx` → that code's row; a code with no row → its message names the database, role or credential to fix in the env file the schema reads · `Errors while reading sql files` → fix the file and line it prints · otherwise the database lags: `migrate status` and `migrate diff` against it (`references/commands.md`) · another owner's database → leave it and report the lag · the schema still being edited → expected, continue the edit · the edit done → bring that database to its migrations and this schema (`cookbook/migrate.md`, through SKILL.md § Before a write), then `generate --sql` |
 | `P1001` Can't reach database server | the database is down, or the URL names another host | `pg_isready -h <host> -p <port>`; the host comes from SKILL.md § Before a write |
 | `P1003` Database … does not exist | the env file names a wrong database, or it was never created | a wrong name → fix the env file · never created → `cookbook/migrate.md` § Apply pending migrations, through SKILL.md § Before a write |
@@ -30,14 +27,5 @@ Narrows a failed Prisma command or a database that disagrees with the schema to 
 | `db execute` succeeds and prints nothing | it reports success or failure only | read rows through the generated client — `references/commands.md` |
 | `db push` fails on a foreign key over an empty table | orphaned rows in an implicit many-to-many join table (`_<A>To<B>`) a table rename left | delete the orphans through the client's `$executeRaw`, then push |
 | a push or migrate succeeds and the app still misses the change | the CLI reads the URL `references/commands.md` names; the app reads its own `DATABASE_URL` | compare the host each resolves, never by printing either URL |
-
-## Error code ranges
-
-| Range | Raised by |
-| --- | --- |
-| `P1xxx` | any command: connection, schema validation |
-| `P2xxx` | Prisma Client's query engine |
-| `P3xxx` | Prisma Migrate's schema engine |
-| `P4xxx` | `db pull` |
 
 - Codes and message texts: prisma.io v6 error reference; the two backticked refusals above: the Prisma 6.19.0 schema engine.
