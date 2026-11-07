@@ -7,6 +7,5 @@
 5. A discount the user grants → one negative line in hours; the hours themselves stay as worked.
 6. Number and dates: the highest sales invoice number + 1 in the register's `numbering` and `prefix` (`billit orders list --direction income`); due date = issue date + the register's `payment_terms_days`. Tell the user Billit's own counter was not checked.
 7. Write the file per `../references/order-spec.md`, then show the user `billit orders create --spec <file> --dry-run`; on their OK, run it without `--dry-run`. Done when it prints the id and `verified`.
-8. Never send it.
 
 Report: the entity, the number, the id, the dates, hours, discount, expenses and total, the link `https://my.billit.be/Order/Income/Invoice/<id>/EditOrder`, and that it is unsent.
