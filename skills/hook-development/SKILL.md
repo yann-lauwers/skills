@@ -5,37 +5,31 @@ description: "Builds, proves, rolls out and retires Claude Code hooks and keeps 
 
 # Hook Development
 
-Hook — a program the host runs at a lifecycle point: JSON on stdin, JSON on stdout, and an exit code that decides whether the action proceeds.
-
-- Read `references/events-and-contracts.md` before the first hook file is written or wired; the decision field differs per event, and a hook built on a remembered contract never fires.
-- A hook's level — user or project, shared or local → /managing-harness § Config levels.
-
 ## Premises
 
-Three premises hold across every reference:
-
-- **Exit 2 blocks; exit 1 does not.** A crashing hook allows the action it exists to prevent, so a crashed hook is an absent hook.
-- **A hook fires on an act, never on wording.** Deterministic by default; a request for a regex judging prose → `references/deciding.md` § The request that will arrive, and how to answer it, in three moves, the third building it. Judgement → a `type: "prompt"` hook, which writes no decision row.
-- **Every check has a registry row, every handler — deciding or not — is listed, and the row lands in the same change as the check.** A check missing from the registry is a defect; a retired check is retired in the same change, row and all.
+- Exit 2 blocks; exit 1 does not: a crashed hook lets through the action it exists to prevent.
+- A hook fires on an act, never on wording; judgement → a `type: "prompt"` hook; a request for a regex judging prose → `references/deciding.md` § The request that will arrive, and how to answer it.
+- Every check and every handler, deciding or not, has a row in `~/Code/skills/hooks/REGISTRY.md` or the repo's own registry, landing in the same change as the check; a retirement clears the row in the same change.
 
 ## Routing table
 
 | Intent | Read |
 | --- | --- |
-| IF deciding whether a request deserves a hook, deterministic or model-judged, block or nudge — including a request to fire on wording | THEN `references/deciding.md` |
-| IF writing or wiring any hook — event, matcher, handler type, payload, decision field, exit code | THEN `references/events-and-contracts.md`, first |
-| IF changing, adding or retiring a handler of the user-level layer | THEN `references/shared-layer.md` |
-| IF building one check from a signal to shipped | THEN `references/build-procedure.md` |
-| IF writing or fixing a trigger | THEN `references/trigger-design.md` |
-| IF writing a block or nudge text | THEN `references/messages.md` |
-| IF handling a payload field, a hang, or concurrent writers | THEN `references/robustness.md` |
-| IF a wired hook never fires, or fires on the wrong call | THEN `references/events-and-contracts.md` § Facts that fail silently and § Lifecycle facts that bite, then `references/trigger-design.md`; a deny that a prior read masks is `references/testing.md` § The masking trap |
-| IF minting, retiring or reconciling a check id, or landing a second script on an event already hooked | THEN `references/registry.md` |
-| IF logging a decision, shipping a check that can block, or flipping observe to enforce | THEN `references/rollout.md` |
-| IF claiming a hook works, or breaking one on purpose to show the claim | THEN `references/testing.md` |
-| IF dispatching a subagent to attack, census or run genuine work against a hook layer | THEN `references/test-agents.md` |
-| IF improving a layer that already exists | THEN `references/auditing-a-layer.md`, then `references/hardening-cycle.md` |
-| IF making an existing hook smaller | THEN `references/simplifying.md` |
-| IF running the inventory, or starting from the example engine | THEN `references/toolkit.md` |
-| IF declaring a check built, retired or audited — what done is for each | THEN `references/done-when.md` |
-| IF the request matches none of the above | THEN `references/deciding.md`, say which row was closest |
+| Whether a request deserves a hook, deterministic or model-judged, block or nudge | `references/deciding.md` |
+| Writing or wiring any hook — event, matcher, handler type, payload, decision field, exit code | `references/events-and-contracts.md`, before the first file is written |
+| A hook's level — user or project, shared or local | /managing-harness § Config levels |
+| Changing, adding or retiring a handler of the user-level layer | `references/shared-layer.md` |
+| Building one check from a signal to shipped | `references/build-procedure.md` |
+| Writing or fixing a trigger | `references/trigger-design.md` |
+| Writing a block or nudge text | `references/messages.md` |
+| A payload field, a hang, or concurrent writers | `references/robustness.md` |
+| A wired hook never fires, or fires on the wrong call | `references/events-and-contracts.md` § Facts that fail silently and § Lifecycle facts that bite, then `references/trigger-design.md`; a deny a prior read masks → `references/testing.md` § The masking trap |
+| Minting, retiring or reconciling a check id, or a second script on an event already hooked | `references/registry.md` |
+| Logging a decision, shipping a check that can block, or flipping observe to enforce | `references/rollout.md` |
+| Claiming a hook works, or breaking one on purpose to show the claim | `references/testing.md` |
+| Dispatching a subagent to attack, census or run genuine work against a hook layer | `references/test-agents.md` |
+| Improving a layer that already exists | `references/auditing-a-layer.md`, then `references/hardening-cycle.md` |
+| Making an existing hook smaller | `references/simplifying.md` |
+| Running the inventory, or starting from the example engine | `references/toolkit.md` |
+| Declaring a check built, retired or audited | `references/done-when.md` |
+| None of the above | `references/deciding.md`; say which row was closest |
