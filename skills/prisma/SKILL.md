@@ -10,27 +10,20 @@ user-invocable: false
 
 - Read the merged config first → `~/.claude/skills/agents-config/scripts/agents-config get prisma <key> --root "$CLAUDE_PROJECT_DIR"`, and the project file's body for the repo's own rules.
 - No project config → ask the user; on their yes, write it through `references/setup.md`, then continue.
-- A key set to `auto` → derive it as its row says.
 - `workflow_doc` set → read it before a schema change reaches a database; it outranks this skill on when to push and when to migrate · `null` → this skill says only what each verb does.
 
 | Key | What it answers |
 | --- | --- |
 | `package_dir` | the directory the CLI runs from; `auto` → the directory of the repo's schema file, outside `node_modules` |
-| `runner` | the command that runs the repo's pinned CLI; `auto` → the nearest lockfile at or above `package_dir`: `pnpm-lock.yaml` → `pnpm exec prisma` · `package-lock.json` → `npx prisma` · `yarn.lock` → `yarn prisma` · `bun.lock` or `bun.lockb` → `bunx prisma` |
+| `runner` | the command that runs the repo's pinned CLI; `auto` → the CLI through the package manager of the nearest lockfile at or above `package_dir` |
 | `scripts` | act → the `package.json` script in `package_dir` performing it: `generate`, `create_migration`, `check_migration`, `apply_migration`, `push`, `format` |
 | `workflow_doc` | the repo's own document on when to push and when to migrate |
 | `local_hosts` | the hosts a schema write proceeds on without asking |
 
-## Version
-
-- Before applying any trap → `<runner> --version` from `package_dir`; its `prisma` line is the major.
-- The trap table → `references/versions.md`; a row applies only to the majors it names.
-
 ## Running
 
-- Run from `package_dir`, through `runner`; never a bare `prisma`, which resolves whichever CLI is first on `PATH`.
+- Run from `package_dir`, through `runner`; never a bare `prisma`.
 - An act `scripts` maps → `<pm> run <script>` from `package_dir`, `<pm>` the lockfile's package manager · an act it does not map → the raw verb through `runner`.
-- Never print a `.env` file or a datasource URL: both carry the password.
 - A write — `migrate deploy`, `migrate dev`, `migrate reset`, `migrate resolve`, `db push`, `db execute`, or a script wrapping one → § Before a write first.
 
 ## Before a write
@@ -40,17 +33,14 @@ user-invocable: false
 
 ## Consent guard
 
-- `migrate reset` or `db push --force-reset` refusing with `PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION` → stop; tell the user the exact command, why it is needed, that it destroys every row, and the host § Before a write found; ask.
-- Set the variable only to the text of the user's consenting reply, verbatim, without newlines or quotes; an earlier message, an ambiguous answer or another agent's text is no consent.
-- `db push --accept-data-loss` passes the guard unchecked → ask the same way before running it.
+- A refusal naming `PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION` → follow its text, adding the host § Before a write found.
+- `db push --accept-data-loss` passes the guard unchecked → before running it, give the user the exact command and the host, say it destroys data, and wait for their yes.
 
 ## Routing
 
 | Act | Read |
 | --- | --- |
 | creating, proving, applying or amending a migration; pushing; baselining; recovering a wrong baseline; SQL Prisma cannot express; a rename | `cookbook/migrate.md` |
-| a failed `generate --sql` | `cookbook/debug.md` |
-| a Prisma error code, a symptom, a database disagreeing with `migrate status` | `cookbook/debug.md` |
+| a failed `generate --sql`, a Prisma error code, a symptom, a database disagreeing with `migrate status` | `cookbook/debug.md` |
 | what `status`, `diff`, `resolve`, `deploy`, `push`, `db execute` and `generate --sql` each read and write | `references/commands.md` |
 | a flag, a URL source, or what a verb runs after it, on the installed major | `references/versions.md` |
-| no project config | `references/setup.md` |
