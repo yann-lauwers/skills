@@ -6,34 +6,33 @@ disable-model-invocation: true
 
 # Garden Domain Docs
 
-Decision records and glossaries drift: the code moves on and the docs keep describing the app as it was. This command walks them against today's code and **proposes** one change per record and per term. Nothing changes until the user picks.
-
-Call the Skill tool with "domain-modeling" first. It owns what a record and a term are, where they live and how they're written; every proposal here meets its bar.
-
-Where this repo keeps its records and glossaries should have been provided to you (its domain docs). If not, tell the user to run `/setup-matt-pocock-skills`.
+- Run /domain-modeling first; every proposal meets its bar.
+- The repo's domain docs name where its records and glossaries live; none provided → the user runs `/setup-matt-pocock-skills`.
 
 ## Process
 
 ### 1. Read
 
-Take the scope the user passed, a folder or a record; otherwise every records folder and every glossary. Read each record whole, open the code it names, and judge it against today's code: the record's own claims are what is under test.
+- Scope — the folder or record passed, else every records folder and every glossary.
+- Read each record whole and test its claims against the code it names, as it stands today.
 
 ### 2. Classify
 
-Give each record one verdict:
+Each record takes one verdict:
 
-- **Keep**: it still meets domain-modeling's bar for an ADR, and every clause holds.
-- **Update**: the decision holds but a clause doesn't. _Use when_ a path is gone, the code changed the behaviour, or a sentence only tells how an implementation that no longer exists worked. Give each stale clause its replacement, checked at `path:line`.
-- **Supersede**: a later decision replaced it, and the road from one to the other is worth knowing. Mark it superseded as domain-modeling's ADR format says, and leave its text as written: it tells the next reader why the old way was left, so nobody walks back to it.
-- **Fold into code**: it no longer meets the bar, because a reader of the code would not wonder why. Name what will carry it: a type, a name, a test titled by the failure. A rule a check could enforce becomes the check.
-- **Merge**: two records hold one decision. The survivor carries both, and the other's lessons go into its _Considered options_.
-- **Move**: it sits somewhere other than where domain-modeling's file structure and the repo's domain docs put it. Name the right folder.
+- Keep — it meets domain-modeling's ADR bar and every clause holds.
+- Update — the decision holds, a clause doesn't; each stale clause gets its replacement, checked at `path:line`.
+- Supersede — a later decision replaced it and the road between them is worth knowing; mark it per domain-modeling's ADR format, its text left as written.
+- Fold into code — it fails the bar because a reader of the code would not wonder why; name what will carry it; a rule a check could enforce becomes the check.
+- Merge — two records hold one decision; the survivor carries both, the other's lessons in its _Considered options_.
+- Move — it sits outside the folder domain-modeling's file structure and the repo's domain docs give it; name that folder.
 
-Give each glossary term one: **keep**, **update**, **cut** (it fails domain-modeling's glossary rules, or nothing in the code or the records uses it), or **move** (to the glossary where the file structure puts it).
+Each glossary term takes one: keep · update · cut — it fails domain-modeling's glossary rules, or nothing in the code or the records uses it · move — to the glossary the file structure names.
 
 ### 3. Present
 
-One table per folder: record or term, verdict, a one-line reason, the change. Under it, each folder's numbering after the changes. Put the calls only the user can make (a record that fails the bar but may matter to them, a lesson that might go) as one round of questions, worded the way `/grilling` words them, each with your recommended answer. Then wait.
+- One table per folder — record or term · verdict · one-line reason · change — with the folder's numbering after the changes beneath it.
+- Calls only the user can make → one round of questions per /grilling ; then wait.
 
 ### 4. Apply what the user picked
 
