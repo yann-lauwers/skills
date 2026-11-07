@@ -1,0 +1,25 @@
+{
+  "hooks": {
+    "PermissionRequest": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$HOME/.pyenv/versions/3.13.3/bin/python3\" \"${CLAUDE_PLUGIN_ROOT}/hooks/permission-request.py\""
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "b=/opt/homebrew/bin/bash; [ -x \"$b\" ] || b=bash; exec \"$b\" \"${CLAUDE_PLUGIN_ROOT}/hooks/auto-allow-bash.sh\""
+          }
+        ]
+      }
+    ]
+  }
+}

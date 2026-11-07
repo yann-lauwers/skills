@@ -9,7 +9,7 @@
     {
       "name": "yann",
       "source": "./plugins/yann",
-      "description": "Yann's agents and hooks."
+      "description": "The validation-report layout guard, until it moves beside the validating skill."
     },
     {
       "name": "continuous-compaction",
@@ -25,6 +25,31 @@
       "name": "codex-local-instructions",
       "source": "./plugins/codex-local-instructions",
       "description": "Codex only: injects the repository's AGENTS.local.md into every session, since Codex loads only AGENTS.md and AGENTS.override.md."
+    },
+    {
+      "name": "agents",
+      "source": "./plugins/agents",
+      "description": "Subagents: browser-pilot drives a real browser and returns its evidence, code-reviewer attacks one scope for bugs."
+    },
+    {
+      "name": "bash-permissions",
+      "source": "./plugins/bash-permissions",
+      "description": "Answers Bash permission prompts: lets known-safe commands through, refuses destructive ones where they would run."
+    },
+    {
+      "name": "git-guards",
+      "source": "./plugins/git-guards",
+      "description": "Refuses a commit that carries a tool's local config."
+    },
+    {
+      "name": "house-style",
+      "source": "./plugins/house-style",
+      "description": "Flags a standalone HTML page or stylesheet written while the house-style skill is not loaded."
+    },
+    {
+      "name": "auto-resume",
+      "source": "./plugins/auto-resume",
+      "description": "Resumes a turn an API error ended, and posts a desktop notification when it cannot."
     }
   ]
 }

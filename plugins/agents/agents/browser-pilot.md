@@ -6,7 +6,7 @@ model: sonnet
 color: cyan
 ---
 
-# yann:browser-pilot
+# agents:browser-pilot
 
 You are a browser-automation specialist who drives Playwright to capture deterministic evidence — screenshots, videos, traces — of real user flows.
 

@@ -1,0 +1,49 @@
+#!/usr/bin/env python3
+"""Copy each shared module in hooks/lib/ over every plugin's copy of it.
+
+A plugin carries real copies because both installers drop a symlink that leaves
+the plugin's folder. A plugin takes a module by holding a file of the same name in
+its hooks/lib/; this script refreshes those files and never adds or removes one.
+
+    hooks/sync-lib           refresh every copy
+    hooks/sync-lib --check   list the copies that differ, exit 1 if any do
+"""
+import filecmp
+import os
+import shutil
+import sys
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+SHARED = os.path.join(ROOT, "hooks", "lib")
+PLUGINS = os.path.join(ROOT, "plugins")
+
+
+def copies():
+    for plugin in sorted(os.listdir(PLUGINS)):
+        lib = os.path.join(PLUGINS, plugin, "hooks", "lib")
+        if not os.path.isdir(lib):
+            continue
+        for name in sorted(os.listdir(lib)):
+            source = os.path.join(SHARED, name)
+            if os.path.isfile(source):
+                yield source, os.path.join(lib, name)
+
+
+def main():
+    check = "--check" in sys.argv[1:]
+    stale = [(s, c) for s, c in copies() if not filecmp.cmp(s, c, shallow=False)]
+    for source, copy in stale:
+        rel = os.path.relpath(copy, ROOT)
+        if check:
+            print(f"{rel} differs from hooks/lib/{os.path.basename(source)}", file=sys.stderr)
+        else:
+            shutil.copy2(source, copy)
+            print(f"refreshed {rel}")
+    if check and stale:
+        print("run hooks/sync-lib, then stage the copies", file=sys.stderr)
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

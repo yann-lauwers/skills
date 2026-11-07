@@ -1,7 +1,7 @@
 {
   "name": "continuous-compaction",
   "displayName": "Continuous Compaction",
-  "version": "2.1.4",
+  "version": "2.2.0",
   "description": "Summarizes a conversation natively when a turn ends above the fill floor, then continues it; /compaction asks what to change, for this conversation or all of them, or summarizes now.",
   "author": {
     "name": "Yann Lauwers",
@@ -14,7 +14,51 @@
     "compaction",
     "continuous-sessions"
   ],
-  "hooks": {},
+  "hooks": {
+    "InstructionsLoaded": [
+      {
+        "matcher": "session_start|include|compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$HOME/.pyenv/versions/3.13.3/bin/python3\" \"${CLAUDE_PLUGIN_ROOT}/hooks/record-loaded-context.py\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Skill",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$HOME/.pyenv/versions/3.13.3/bin/python3\" \"${CLAUDE_PLUGIN_ROOT}/hooks/record-loaded-context.py\""
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$HOME/.pyenv/versions/3.13.3/bin/python3\" \"${CLAUDE_PLUGIN_ROOT}/hooks/precompact-capture.py\""
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$HOME/.pyenv/versions/3.13.3/bin/python3\" \"${CLAUDE_PLUGIN_ROOT}/hooks/precompact-rearm.py\""
+          }
+        ]
+      }
+    ]
+  },
   "userConfig": {
     "pct_floor": {
       "type": "number",

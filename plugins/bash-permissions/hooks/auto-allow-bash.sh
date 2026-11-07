@@ -37,9 +37,10 @@ FIRST_LINE=$(echo "$COMMAND" | grep -v '^[[:space:]]*#' | grep -v '^[[:space:]]*
 
 # Sourced, never required. A telemetry file that has moved must not take the guard
 # with it — a crashed hook is an absent hook, and this one decides permissions.
-if [ -r "$HOME/.claude/hooks/lib/log-decision.sh" ]; then
+LOG_DECISION="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/lib/log-decision.sh"
+if [ -r "$LOG_DECISION" ]; then
   # shellcheck source=lib/log-decision.sh
-  . "$HOME/.claude/hooks/lib/log-decision.sh"
+  . "$LOG_DECISION"
 fi
 command -v log_decision >/dev/null 2>&1 || log_decision() { :; }
 
