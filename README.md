@@ -10,7 +10,6 @@ plugins/bash-permissions/        # answers Bash permission prompts, refuses dest
 plugins/git-guards/              # refuses a commit carrying a tool's local config
 plugins/house-style/             # flags an HTML page or stylesheet written without the house-style skill
 plugins/auto-resume/             # resumes a turn an API error ended
-plugins/yann/                    # the validation-report layout guard
 plugins/continuous-compaction/   # Claude Code only: the compaction plugin; Codex loads no hooks from its `modules` hooks.json
 plugins/domain-canon/            # refuses work in a directory until its GLOSSARY.md and ADRs are read; enabled per repo
 plugins/codex-local-instructions/ # Codex only: injects a repo's AGENTS.local.md into each session
@@ -43,7 +42,6 @@ claude plugin install bash-permissions@yannlauwers --scope user
 claude plugin install git-guards@yannlauwers --scope user
 claude plugin install house-style@yannlauwers --scope user
 claude plugin install auto-resume@yannlauwers --scope user
-claude plugin install yann@yannlauwers --scope user
 claude plugin install continuous-compaction@yannlauwers --scope user
 
 # Codex: one plugin list for every repo, so domain-canon gates each repo with canon
@@ -53,7 +51,6 @@ codex plugin add bash-permissions@yannlauwers
 codex plugin add git-guards@yannlauwers
 codex plugin add house-style@yannlauwers
 codex plugin add auto-resume@yannlauwers
-codex plugin add yann@yannlauwers
 codex plugin add domain-canon@yannlauwers
 # Codex only: Claude Code reads AGENTS.local.md through CLAUDE.local.md
 codex plugin add codex-local-instructions@yannlauwers
