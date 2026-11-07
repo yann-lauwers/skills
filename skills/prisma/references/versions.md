@@ -1,5 +1,7 @@
 # Versions
 
+- The major → `<runner> --version` from `package_dir`, its `prisma` line; a row applies only to the majors it names.
+
 | Major | Trap | Source |
 | --- | --- | --- |
 | 6 | `migrate diff` reads the live database through `--from-url` or `--from-schema-datasource`, a schema file through `--from-schema-datamodel`; a `--from-migrations` or `--to-migrations` side refuses without `--shadow-database-url` | Prisma 6.19.0 `migrate diff -h`; its schema engine's refusal text |
