@@ -7,7 +7,7 @@ Rewrites one existing canon file of any kind to SKILL.md § How we write and its
 1. Known? § How we write's cut line covers it, it paraphrases what a script it runs does inside — never when to run it or what its output means — or it repeats a step's done state as a checklist → `dropped: <what covers it>`.
 2. Pattern? Delete its domain noun: a mechanism survives → keep · nothing survives → an incident: `dropped`, judged afresh if it recurs.
 3. Where? SKILL.md § Where a fact goes names another home → `moved: <home>` · this file → keep · its owner already states it → `dropped: <owner>` · a reason → § How we write's No-reasons line.
-4. Workflow? § How we write's numbered-steps line → numbered steps in the owning skill's `cookbook/`, each with its done state.
+4. Workflow? A sequence where a wrong step breaks something — a migration, a guard, an irreversible act → numbered steps in the owning skill's `cookbook/`, each with its done state.
 5. Shorter? The shortest of the four forms that keeps it, the file's own subject, the reader as actor and lead-in dropped; a line already in one of the four forms, with nothing § How we write drops, stays byte for byte.
 
 - Every line moves out → the file goes, per SKILL.md § Changing what's written.

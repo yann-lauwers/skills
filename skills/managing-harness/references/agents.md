@@ -3,7 +3,6 @@
 - Create an agent file only for what no dispatch parameter reaches: an enforced tool restriction · a `skills:` preload · `memory:` · `omitClaudeMd: true`, where its body, preloaded skills and brief carry everything it acts on. Only pinning a model → no file; pass `model` on the call.
 - `tools:` grants names, never path scopes; a scope that must hold is a hook.
 - The agents directory holds agent files at its top level only, beside `bin/` and dot-files: every `.md` under it parses as an agent.
-- Every agent description loaded together stays under the 15,000 tokens past which the harness warns at startup.
 - The built-in Explore and Plan load no CLAUDE.md and no rule; every other subagent loads both unless its file sets `omitClaudeMd: true`.
 - No output style and no auto memory reach a subagent; only a fork inherits them.
 - What its load leaves out and it acts on → its body or a `skills:` preload; a built-in agent preloads no skill.

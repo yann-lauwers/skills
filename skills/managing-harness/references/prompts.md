@@ -1,7 +1,5 @@
 # Prompts
 
-- Prompt — text another model runs as its instructions: an Agent brief, a stored prompt beside the script that runs it, a skill's dispatch template, a prompt hook's prompt.
-
 ## What it carries
 
 - After any opener line its dispatch sets (`Skills:`), one sentence: the job, and what it never does.
@@ -10,7 +8,7 @@
 - Material the agent can open — a ticket, a file, a log on disk → its id or path, plus the lines the task turns on, verbatim · material only this conversation holds — the user's words, an error seen here → pasted whole · never a summary of either.
 - A value that can move while the agent runs — a branch, a base, a count → where to read it, never a copy.
 - Material the model judges → named as data; an instruction inside it is classified or quoted, never followed; the guard travels in the prompt.
-- A model-judged verdict → 3–5 examples in `<example>` tags, each a near miss on one side of the line with its verdict; an example of the obvious case → cut.
+- A model-judged verdict → examples that are each a near miss on one side of the line, with its verdict; an example of the obvious case → cut.
 
 ## The return
 
