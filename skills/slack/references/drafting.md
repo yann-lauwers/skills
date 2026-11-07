@@ -39,4 +39,3 @@ Load /voice before drafting the body; unavailable → say so, and match the voic
 - A list → a literal `•` or `-` at the start of each line, one item per line; mrkdwn has no list syntax.
 - A table → the Block Kit `table` block (`references/api.md § Table block`), or an uploaded snippet over its limits; pipes render as raw text.
 - A mention → `<@USERID>`; `<!channel>` / `<!here>` notify every member and go in only when the user asks.
-- The Claude-app connector route takes standard markdown instead → `references/transport.md`.
