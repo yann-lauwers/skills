@@ -2,8 +2,8 @@
 
 ## The tree
 
-- `SKILL.md` → what every use needs, then the routing table, both inside the first 5,000 tokens a compaction re-attaches (`wc -c` ÷ 3.6) · `cookbook/*.md` one file per procedure · `references/*.md` tables, traps, conventions, templates · `scripts/*` a deterministic sequence, executed, never paraphrased · `assets/*` a file copied as is — a scaffold, a token file.
-- The routing table names every file, each one level deep from `SKILL.md`.
+- `SKILL.md` → what every use needs, then the routing table, both inside the first 5,000 tokens a compaction re-attaches (`wc -c` ÷ 3.6) · `cookbook/*.md` one file per procedure.
+- The routing table names every file.
 - A skill carries no tests: no `tests/` directory and no test files.
 - Format — the shape of one artifact a skill or agent writes: a report, a ticket, a PR body; the only place its length and shape are decided, reply rules deferring to it; it states its reader, none stated → a person.
 - A format lives with its writer: one agent writing it on every dispatch → that agent's body · one skill → its `references/<artifact>.md` · several writers → the skill owning the act, every other writer naming it.
@@ -12,27 +12,16 @@
 ## The body
 
 - A line that holds for the whole task → worded as standing — a norm, or an order naming the act it recurs on — never a one-time order.
-- A procedure's numbered steps each run once, in order; a line every step obeys stands above them, never as one of them.
 
 ## The description
 
-- The description keeps its own form — third person, opening on the act that fires it ("Files one new ticket…") — never § How we write's line forms.
-- Trigger → the act about to be taken, the domain word only as a marker beside it: "Use when adding or changing a migration", not "when working with databases".
 - A request that never names the domain → name what the act touches: file types, filenames, symbols, commands, the phrases the user says; the act with no request → "Also fires on the ACT — …".
 - A sibling shares its keywords → "not for … — /owner ;", naming the true owner after reading its description; never excluding what this skill's own trigger or body owns.
 - An ACT item a sibling's routine command also matches — a shared recorder, a sibling's spine, a read-only status call → leave it out.
 - `when_to_use` → trigger phrases and example requests, appended to `description`; past 1,536 characters together the listing cuts the tail.
 - A skill with `disable-model-invocation: true` gets no ACT clause; its description says who starts it.
 - A slash-name stands with whitespace both sides, never touching punctuation: "— /name ;".
-
-## One subject per skill
-
-- A tool skill explains one tool — commands, config, failure modes — true whoever calls it · a flow skill runs a process, composing tools and flows.
-- A flow skill names every tool it composes; a tool skill names none of its callers, nor a sibling tool skill.
-- A tool skill carries no other tool's commands, flags or mechanics; a step another tool performs names that tool's role, and its skill owns the how.
 - A description joining two subjects with "and" → two skills.
-- Two triggers, one procedure → one home, the other skill running it.
-- A sentence that stops holding once the sibling it describes is rewritten → the sibling's; cite it.
 
 ## A tool's skill and its config
 
@@ -70,7 +59,6 @@
 ## Who may invoke it
 
 - `disable-model-invocation: true` only where invocation is the user's call: an interview only the user answers · an estate sweep whose cost the user chooses · an irreversible outward act · a pass seated on its own.
-- Writing something is no reason on its own → bound the run by constraints it can be audited against.
 - `paths:` beside `disable-model-invocation: true` is dead config → keep one.
 
 ## Citing a sibling
