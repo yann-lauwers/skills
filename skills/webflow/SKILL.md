@@ -1,6 +1,7 @@
 ---
 name: webflow
-description: "Operates a live Webflow site through the Webflow MCP server. Use to edit a CMS item, a page's text, SEO settings or structured data; to audit links, accessibility or SEO; to check traffic; on \"webflow\", \"the CMS\", \"the Designer\", \"publish the site\"; and before any `mcp__webflow__*` call or site publish."
+description: "Operates a live Webflow site through the Webflow MCP server. Started only by /webflow ."
+disable-model-invocation: true
 ---
 
 # Webflow

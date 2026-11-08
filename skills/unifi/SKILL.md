@@ -1,6 +1,7 @@
 ---
 name: unifi
-description: "Reads the UniFi Site Manager cloud API for a home console. Use to inventory consoles, sites, devices or ISP metrics, on a UniFi call answering 401 or 404, on \"unifi\", \"cloud key\", \"protect\", \"site manager\", \"the cameras\", \"what is online at home\", and before promising to arm a camera, change its recording, pull a snapshot or stream, or write an alarm rule."
+description: "Reads the UniFi Site Manager cloud API for a home console. Started only by /unifi ."
+disable-model-invocation: true
 ---
 
 # unifi
