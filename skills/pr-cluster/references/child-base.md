@@ -8,11 +8,10 @@
 ## Resolving the base
 
 - A stack base the caller passes in outranks this ladder.
-- `integration_bases` empty, or no `cluster_base_source` → the base the line above found, else `base_branch`; the ladder below never runs.
 - Otherwise:
   1. Read the ticket the branch is named for, and its parent.
-  2. That source names a branch — the parent ticket under `parent-ticket` — and it is live → that branch is the base.
-  3. It names none, a `founded`, `spent` or `absent` one, or `production_branch` → `base_branch` · `unknown` → re-run once, then stop and name the read; never `base_branch`.
+  2. The parent names a branch and it is live → that branch is the base.
+  3. It names none, a `founded`, `spent` or `absent` one, or the branch that deploys → the trunk · `unknown` → re-run once, then stop and name the read; never the trunk.
 
 ## Resolve at creation time, not from the worktree's own base
 

@@ -3,13 +3,9 @@ import argparse
 import fnmatch
 import json
 import os
-import pwd
 import re
-import shutil
 import subprocess
 import sys
-
-HOME = pwd.getpwuid(os.getuid()).pw_dir
 
 ALLOW, REFUSE, UNKNOWN = "allow", "refuse", "unknown"
 ABSENT, FOUNDED, LIVE, SPENT = "absent", "founded", "live", "spent"
@@ -17,6 +13,7 @@ TIMEOUT = 20
 FOUND_MESSAGE = "chore: found {branch}\n\nIntegration base for one wave of child pull requests; carries no implementation of its own."
 MERGED_INTO_QUERY = ("query($o:String!,$n:String!,$b:String!){repository(owner:$o,name:$n)"
                      "{pullRequests(baseRefName:$b,states:MERGED,first:1){totalCount}}}")
+CLUSTER_GLOBS = ("cluster/*",)
 REMOTE_REPO = re.compile(r"[:/]([^/:]+)/([^/]+?)(?:\.git)?/?$")
 
 
@@ -47,15 +44,9 @@ def base_checkout(path):
     return os.path.dirname(os.path.realpath(out.strip()))
 
 
-def git_config(root):
-    tool = shutil.which("agents-config") or os.path.join(HOME, ".claude", "skills", "agents-config", "scripts", "agents-config")
-    code, out, err = run([tool, "get", "git", "--root", root])
-    if code:
-        raise Unread("git config unread: %s" % err[:200])
-    try:
-        return json.loads(out).get("defaults") or {}
-    except ValueError:
-        raise Unread("git config is not JSON")
+def origin_head(root):
+    code, out, _ = run(["git", "-C", root, "symbolic-ref", "--short", "refs/remotes/origin/HEAD"])
+    return out.strip()[len("origin/"):] if code == 0 and out.strip().startswith("origin/") else ""
 
 
 def origin_repo(root):
@@ -82,15 +73,14 @@ def merged_into(slug, branch):
 class Repo:
     def __init__(self, path):
         self.root = base_checkout(path)
-        cfg = git_config(self.root)
-        self.globs = list(cfg.get("integration_bases") or [])
+        self.globs = list(CLUSTER_GLOBS)
         self.slug = "%s/%s" % origin_repo(self.root)
-        base = cfg.get("base_branch")
-        if not base or base == "auto":
+        base = origin_head(self.root)
+        if not base:
             base = gh("repo", "view", self.slug, "--json", "defaultBranchRef",
                       "-q", ".defaultBranchRef.name").strip()
             if not base:
-                raise Unread("base_branch unresolved")
+                raise Unread("base branch unresolved")
         self.base = base
 
     def declared(self, branch):
@@ -129,10 +119,8 @@ def status(repo, branch):
 
 
 def found(repo, branch):
-    if not repo.globs:
-        return REFUSE, "the repo declares no integration_bases, so it takes no cluster"
     if not repo.declared(branch):
-        return REFUSE, "%s matches no declared glob (%s)" % (branch, ", ".join(repo.globs))
+        return REFUSE, "%s is no cluster/* branch" % branch
     state, reason, _ = status(repo, branch)
     if state == LIVE:
         return ALLOW, "live, join it: %s" % reason
@@ -187,9 +175,9 @@ def main(argv=None):
     sub = parser.add_subparsers(dest="verb", required=True)
     for name, text in (
             ("status", "absent|founded|live|spent, then key=value facts"),
-            ("found", "create the branch with one empty commit off base_branch; allow|refuse|unknown"),
+            ("found", "create the branch with one empty commit off the base branch; allow|refuse|unknown"),
             ("ship", "ready the draft promotion pull request once no child is open and one merged"),
-            ("list", "every branch matching a declared glob, with its state")):
+            ("list", "every cluster/* branch, with its state")):
         p = sub.add_parser(name, help=text)
         p.add_argument("--repo", required=True)
         if name != "list":
@@ -206,9 +194,8 @@ def main(argv=None):
             return 0
         if args.verb == "list":
             names = clusters(repo)
-            print(ALLOW if repo.globs else REFUSE)
-            print("%d cluster(s) on %s" % (len(names), repo.slug) if repo.globs
-                  else "the repo declares no integration_bases")
+            print(ALLOW)
+            print("%d cluster(s) on %s" % (len(names), repo.slug))
             for name in names:
                 print("%s %s" % (name, status(repo, name)[0]))
             return 0
