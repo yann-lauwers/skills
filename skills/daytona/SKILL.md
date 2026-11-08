@@ -6,25 +6,23 @@ user-invocable: false
 
 # Daytona
 
-## Project config
+Needs: `DAYTONA_API_KEY` — one Daytona organization's key; unset → say so, stop and ask the user.
 
-- `~/.claude/skills/agents-config/scripts/agents-config get daytona <key> [--root "$CLAUDE_PROJECT_DIR"]` — keys `secret`, `target`.
-- A repo with no `docs/agents/integrations/daytona.md` → ask the user; on their yes, write one per /managing-harness , `references/skills.md` § A tool's skill and its config.
-- Nothing resolves → the tool is unwired: say so and stop.
+- `target` — the organization's region, as the project's instructions state it; none stated → ask the user.
 
 ## Calls
 
-- REST base `https://app.daytona.io/api`. Auth — Bearer, the `secret` item; `<SECRET>` is `secret` uppercased, every non-alphanumeric as `_`:
+- REST base `https://app.daytona.io/api`. Auth — Bearer `DAYTONA_API_KEY`:
 
 ```sh
-keyless run -s K=<SECRET> -- curl -s --variable %K \
-  --expand-header 'Authorization: Bearer {{K}}' \
+curl -s --variable %DAYTONA_API_KEY \
+  --expand-header 'Authorization: Bearer {{DAYTONA_API_KEY}}' \
   https://app.daytona.io/api/<path>
 ```
 
-Provenance: 2026-10-02, curl 8.7.1, `<SECRET>` as `NEXUS_DAYTONA`, `<path>` = `snapshots` — `200`, 43 snapshots.
+Provenance: 2026-11-08, curl 8.7.1, through the command the project's instructions name, `<path>` = `snapshots` — `200`, 50 snapshots.
 
-- SDK and CLI → `keyless run -s DAYTONA_API_KEY=<SECRET> -- <cmd>`, the driver passing it as `new Daytona({ apiKey, target })`.
+- SDK and CLI read `DAYTONA_API_KEY`; the driver passes it as `new Daytona({ apiKey, target })`.
 - `target` goes on the `Daytona` constructor (or `DAYTONA_TARGET`), never on the SDK's create params · REST → `target` in the create body.
 - `target` omitted → the account default, where a create from a snapshot baked in another region answers `400 "Snapshot … is not available in region us"`: a region mismatch, not a missing snapshot.
 - A create from a snapshot never passes `cpu` / `memory`: the snapshot bakes its own and the SDK rejects them; resource fields go only on a bare-image create.
