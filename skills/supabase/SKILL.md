@@ -6,21 +6,16 @@ user-invocable: false
 
 # Supabase
 
-## Project config
+Needs: `SUPABASE_ACCESS_TOKEN` — one Supabase account's access token; the CLI reads it on every command and, with neither it nor a cached login, stops on "Access token not provided".
 
-- Read the merged config first → `~/.claude/skills/agents-config/scripts/agents-config get supabase <key> --root "$CLAUDE_PROJECT_DIR"`, and the project file's body for the repo's own rules.
-- No `docs/agents/integrations/supabase.md` in the repo → ask the user; on their yes, write it through `references/setup.md`, then continue; the floor holds no project.
+## The project's own choices
 
-| Key | What it answers |
-| --- | --- |
-| `secret` | the vault item `keyless run` injects — the account access token unless the body says otherwise; `null` → the CLI's own `supabase login` cache |
-| `project-ref` | the hosted project a checkout links to |
-| `pooler_host` | the project's own shard of the shared pooler, where the direct endpoint is unreachable |
+- The hosted project a checkout links to, and its pooler shard where the direct endpoint is unreachable → as the project's instructions state them, else read off its connection string per `references/connecting.md`; none stated → ask the user.
 
 ## Management API
 
-- Base `https://api.supabase.com/v1/`, Bearer auth with the account access token; `<SECRET>` is `secret` uppercased, every non-alphanumeric as `_`:
-  `keyless run -s T=<SECRET> -- curl https://api.supabase.com/v1/<path> --variable %T --expand-header 'Authorization: Bearer {{T}}'`
+- Base `https://api.supabase.com/v1/`, Bearer auth with the account access token:
+  `curl https://api.supabase.com/v1/<path> --variable %SUPABASE_ACCESS_TOKEN --expand-header 'Authorization: Bearer {{SUPABASE_ACCESS_TOKEN}}'`
 
 ## Routing
 
@@ -28,4 +23,3 @@ user-invocable: false
 | --- | --- |
 | Authenticating, or running a `supabase` CLI command (`login`, `link`, `db`) | `references/cli.md` |
 | Storing a connection string, or a database connection that fails, hangs, or reports no route | `references/connecting.md` |
-| No project config yet | `references/setup.md` |
