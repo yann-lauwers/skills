@@ -19,7 +19,7 @@ curl --variable %TAILSCALE_API_KEY \
   https://api.tailscale.com/api/v2/tailnet/-/devices
 ```
 
-Provenance: 2026-11-08, curl 8.7.1, `TAILSCALE_API_KEY` set from the `yann-tailscale` token — `200`, a device list; unset → `Variable 'TAILSCALE_API_KEY' import fail, not set`, exit 2.
+Provenance: 2026-11-08, curl 8.7.1, `TAILSCALE_API_KEY` set — `200`, a device list; unset → `Variable 'TAILSCALE_API_KEY' import fail, not set`, exit 2.
 
 ## Traps
 
