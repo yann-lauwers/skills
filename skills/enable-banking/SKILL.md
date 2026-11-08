@@ -6,26 +6,22 @@ disable-model-invocation: true
 
 # enable-banking
 
-## Project config
+Needs: `EB_KEY` — the environment's application private key (PEM); the project's command exits naming it when unset.
 
-- Config: the repo's `docs/agents/integrations/enable-banking.md` over the floor, read merged: `~/.claude/skills/agents-config/scripts/agents-config get enable-banking <key> --root "$CLAUDE_PROJECT_DIR"`, and its body: which accounts are targets.
-- No `docs/agents/integrations/enable-banking.md` in the repo → ask the user; on their yes, write it per /managing-harness , `references/skills.md` § A tool's skill and its config, asking for the register block and the target accounts, never guessing them; then continue.
+## The entity's own choices
 
-| Key | What it answers |
-| --- | --- |
-| `register` | `block` — where the resolved entity's register file keeps this tool's block |
-| `production` | `restricted` → the production application reaches only the accounts whitelisted in the Control Panel |
-| `payment_initiation` | whether the production application registers payment initiation |
+- Its application per environment, each account's ASPSP, which accounts to link, whether production is restricted, whether payment initiation is registered → as the project's instructions state them; none stated → ask the user.
+- Restricted production → the application reaches only the accounts whitelisted in the Control Panel.
 
 ## Resolve the entity before the first call
 
-- Read the resolved entity's register file at `register.block`: application id per environment, the ASPSP each account is linked at, the account keys those links feed.
+- Read the resolved entity's block where the project's instructions place it: application id per environment, the ASPSP each account is linked at, the account keys those links feed.
 - The secrets-store item is read, never derived: `applications.<env>.secret` in that block.
 - No such block → ask which holder; never fall back to another entity's application.
 
 ## Payment initiation
 
-- `payment_initiation` not `true` → no call moves money, and a payment request is refused.
+- Payment initiation not registered for the entity's application → no call moves money, and a payment request is refused.
 
 ## Calls that change state
 
