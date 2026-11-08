@@ -8,20 +8,12 @@ description: >-
 
 # Garmin
 
-## Project config
+Needs: `GARMIN_EMAIL` and `GARMIN_PASSWORD` — one person's Garmin Connect login, read only by the repo's login command; unset → the command prompts in the user's own shell.
 
-- Config: the repo's `docs/agents/integrations/garmin.md` over the floor, read merged: `~/.claude/skills/agents-config/scripts/agents-config get garmin <key> --root "$CLAUDE_PROJECT_DIR"`; its body names whose login each item holds.
-- Only a mint reads it.
-- No `docs/agents/integrations/garmin.md` in the repo → ask the user; on their yes, write it per /managing-harness , `references/skills.md` § A tool's skill and its config, with the keys below, never guessing a value; then continue.
-- `keyless ls` lacks the item, or `command -v keyless` finds nothing → the user types the login in their own shell.
+## Whose login
 
-| Key | What it answers |
-| --- | --- |
-| `secret` | the item holding one person's Garmin Connect login, fields `email` and `password` |
-| `login_command` | the repo's command that logs in and stores the new tokens, `<slug>` the person the mint is for |
-| `login_env` | the two env vars `login_command` reads, the email's first and the password's second |
-
-- A person with no login item → hand the user its spec per the secrets store's skill, named as the config's body gives.
+- Which item holds whose login, and the command that logs one in → as the project's instructions state them; none stated → ask the user.
+- A person with no login item → hand the user its spec per /proton , named as the project's instructions give.
 
 ## Tokens
 
@@ -36,8 +28,4 @@ description: >-
 - Repeat logins are 429'd account-wide.
 - Two logins at once invalidate each other.
 - Check the person and the item against each other before it runs: a mint carrying another person's login writes that account's data under the person it names and exits 0.
-- Where the injector holds the item, the login runs as below, `<ITEM>` the item's name uppercased with every non-alphanumeric as `_`:
-
-```sh
-keyless run -s <login_env[0]>=<ITEM>__EMAIL -s <login_env[1]>=<ITEM> -- <login_command>
-```
+- The login runs as the project's instructions give it.
