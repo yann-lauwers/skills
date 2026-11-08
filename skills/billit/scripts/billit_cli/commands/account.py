@@ -22,7 +22,7 @@ def whoami(ns, app, out):
 def register(commands):
     sub = new_command(
         commands, "whoami", "Prove the API key and show the account.",
-        "Reads the account information Billit holds for the resolved entity's key and prints, for each company, its "
+        "Reads the account information Billit holds for the key in BILLIT_API_KEY and prints, for each company, its "
         "name, its party id and the API features it has enabled and disabled. A refused key exits 4.",
         example="  billit whoami")
     sub.set_defaults(handler=whoami)

@@ -8,9 +8,9 @@ EXIT_CODES = """\
 Exit codes:
   0  done
   1  Billit or the portal failed
-  2  usage or config: no repo, no agents-config, unknown entity
+  2  usage
   3  not found
-  4  auth: item unresolved, key refused, no portal session
+  4  auth: BILLIT_API_KEY unset, key refused, no portal session
   5  written, but the read-back disagrees (the id is printed)
   6  Billit refused the payload
   7  precondition not met, nothing written
@@ -56,10 +56,6 @@ def group(commands, name, summary, description):
 
 
 def global_flags(sub, default):
-    sub.add_argument("--entity", metavar="KEY", default=default or None,
-                     help="Entity whose Billit account is used (default: the index's default entity).")
-    sub.add_argument("--root", metavar="DIR", default=default or None,
-                     help="Repo root holding the entity register (default: git top level of the current directory).")
     sub.add_argument("--json", action="store_true", default=default or False,
                      help="Print Billit's records as JSON (default: off, print a table).")
 

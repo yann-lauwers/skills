@@ -8,4 +8,4 @@ Billit's own order JSON, one object:
 - `Currency`, `VentilationCode`, `CostCategoryCode` (a purchase), `ProjectID` (when the order belongs to a project).
 - `OrderLines`: one entry per line — `Quantity`, `UnitPriceExcl`, `Description`, `VATPercentage`, `VentilationCode`, `TotalExcl`, `TotalVAT`, `TotalIncl`.
 - `VatGroups`: one entry per VAT rate and code — `VentilationCode`, `VATPercentage`, `TotalExcl`, `TotalVAT`, `TotalIncl` — matching the lines.
-- `OrderPDF`: `{"path": "<file>"}`, a PDF. A Peppol XML from the queue: its PDF in `OrderPDF`, the XML itself in `Attachments` as `[{"path": "<the .xml>"}]` — `billit queue clear` looks for the queued file's exact bytes on the order.
+- `OrderPDF`: `{"path": "<file>"}`, a PDF. A Peppol XML from the queue → its PDF in `OrderPDF`, the XML itself in `Attachments` as `[{"path": "<the .xml>"}]`.
