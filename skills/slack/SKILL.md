@@ -6,14 +6,15 @@ disable-model-invocation: true
 
 # Slack
 
-- Author → the configured user's token (`secret`) by default, channels included · the bot's (`bot_secret`) where the config body's bot line allows it.
+Needs: `SLACK_TOKEN` — a Slack user or bot token; every call and `scripts/watch-reply.py` read it alone, the watcher exiting `error=auth` when it is unset.
 
-## Project config
+- Author → the configured user's token by default, channels included · the bot's where the project's instructions allow it.
 
-- Read a key → `~/.claude/skills/agents-config/scripts/agents-config get slack <key> [--root "$CLAUDE_PROJECT_DIR"]`, `--root` only inside a repo.
-- `agents-config get slack` exits 1, `secret` resolves to nothing or `null`, or `keyless ls` lacks the item's name (uppercased, every non-alphanumeric as `_`) → report Slack unwired, naming the file or item missing, and stop; nothing else stands in.
-- The floor resolves and `<repo>/docs/agents/integrations/slack.md` is absent → write it before the first call, per /agents-config , and name the floor's workspace in the reply.
-- A repo whose code or docs point at a workspace other than the config's `workspace` → stop and ask.
+## The workspace's own choices
+
+- Which item fills `SLACK_TOKEN` for the user and for the bot, the roster with each person's standing rules, language and register, the channels' audience and greeting, when the bot posts → as the project's instructions state them; none stated → ask the user.
+- The project's instructions name no item for `SLACK_TOKEN` → report Slack unwired and stop; nothing else stands in.
+- A repo whose code or docs point at a workspace other than the one `auth.test` returns → stop and ask.
 
 ## Rules
 
@@ -41,4 +42,4 @@ Read the matched row's file before any tool call.
 | drafting any outbound body | `references/drafting.md` |
 | searching messages across channels | read the token's granted scopes (`references/api.md § Reading the granted scopes`), say what is searchable, offer `cookbook/read-channel.md` or the missing scope |
 | auth, an error, a rate limit or a token's scopes | `references/api.md` |
-| a config key or the config body's roster | `references/config.md` |
+| the configured user, the bot, its app, a DM or a channel id, or the roster | `references/config.md` |

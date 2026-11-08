@@ -5,7 +5,7 @@
 ## Endpoint + auth
 
 - `POST https://slack.com/api/<method>` for writes and reads alike, `Content-Type: application/json; charset=utf-8`; the charset carries non-ASCII content.
-- `<NAME>` → the item the config's `secret` (the user, default) or `bot_secret` (the bot) names, in its `keyless` form (`SKILL.md § Project config`).
+- `<NAME>` → the item the project's instructions name for the user (default) or the bot, in its `keyless` form.
 - Build every JSON body with `jq -nc`, never with shell-escaped `-d` text.
 - Every call takes this form; the token reaches curl through `--variable`, never argv:
 
@@ -37,9 +37,9 @@ printf '%s' "$RESP" | jq -c '{ok, error}'
 
 - `ok: false` → surface `error` verbatim; never retry blind, each code takes its own action.
 - A response that could not be read → the write may have landed: read `conversations.history` on the target first. Absent → retry, an upload reusing its `file_id` · present once → report its `ts`, no second send · present twice → tell the user and offer `chat.delete` on the duplicate's `ts`.
-- `invalid_auth` / `not_authed` / `token_revoked` → ask the user to reinstall the app (`app_id`) and refresh the matching item.
-- `missing_scope`, often with a `needed` field → ask the user to add the scope on the app (`app_id`) and reinstall.
-- `not_in_channel` / `channel_not_found` → the token's user or bot is not in the channel: the bot → ask the user to `/invite @<handle>` there, the handle from the config body · the configured user → ask them to join · the other token is in it → offer posting under it, never switch.
+- `invalid_auth` / `not_authed` / `token_revoked` → ask the user to reinstall the bot's app (`references/config.md`) and refresh the matching item.
+- `missing_scope`, often with a `needed` field → ask the user to add the scope on the bot's app (`references/config.md`) and reinstall.
+- `not_in_channel` / `channel_not_found` → the token's user or bot is not in the channel: the bot → ask the user to `/invite @<handle>` there, the handle from the project's instructions · the configured user → ask them to join · the other token is in it → offer posting under it, never switch.
 - `msg_too_long` (40k chars) · `no_text` · `invalid_blocks` → fix the payload.
 - HTTP 429 → wait `Retry-After` seconds, retry once; a second 429 → surface it, never loop.
 

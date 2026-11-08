@@ -4,7 +4,7 @@
 
 - An email → `users.lookupByEmail`, one exact call.
 - A name (display, real or handle) → `users.list`.
-- A roster phrase or role ("the founder") → the person the config body's roster maps it to: their user id, else by name; several entries match → ask.
+- A roster phrase or role ("the founder") → the person the roster in the project's instructions maps it to: their user id, else by name; several entries match → ask.
 - A user id (`U…`) → skip Step 2; Step 3 only if a DM channel is needed.
 - A DM channel id (`D…`) → both sides through `conversations.members` when needed.
 
@@ -17,7 +17,7 @@
 
 ## Step 3 — Open the DM channel (optional)
 
-1. The caller needs a DM channel id → under the user token, the DM id the person's roster entry holds · else, and always under the bot token, `conversations.open` with `users: <user_id>`.
+1. The caller needs a DM channel id → `conversations.open` with `users: <user_id>`, under the token in use.
 2. Cache the `D…` id as `user_id → dm_channel_id` for the session.
 
 ## Step 4 — Report back

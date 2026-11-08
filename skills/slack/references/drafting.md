@@ -1,20 +1,20 @@
 # Drafting an outbound message
 
 - Every sending cookbook — `cookbook/dm-user.md`, `cookbook/send-message.md`, `cookbook/upload-file.md` — reads this file before the body is written.
-- This file owns layout, language and what a message may cite; register and standing rules come from the recipient's roster entry in the config body · posting as the bot → the bot's register there.
+- This file owns layout, language and what a message may cite; register and standing rules come from the recipient's roster entry in the project's instructions · posting as the bot → the bot's register there.
 
 Load /voice before drafting the body; unavailable → say so, and match the voice of the thread's recent messages.
 
 ## Which language
 
-- Language → the target's roster entry in the config body.
-- Recipient missing from the roster, or its entry missing a language → `default_language`; none named → ask; never draft in a language nobody chose.
+- Language → the target's roster entry in the project's instructions.
+- Recipient missing from the roster, or its entry missing a language → the default language the project's instructions name; none named → ask; never draft in a language nobody chose.
 - Channel post → every roster member in the audience shares one language: use it · mixed audience: ask.
 
 ## Greet once per conversation, not per message
 
 - A DM reads the recent exchange first (`cookbook/dm-user.md § Step 3`) and continues in it; only a fresh conversation opens with a greeting.
-- A channel post opens on the greeting the config body names for its channels.
+- A channel post opens on the greeting the project's instructions name for its channels.
 
 ## What a message may cite
 
