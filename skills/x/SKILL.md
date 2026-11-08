@@ -6,10 +6,9 @@ disable-model-invocation: true
 
 # X
 
-## Project config
+## Reading on an account
 
-- `~/.claude/skills/agents-config/integrations/x.md` holds no value the read needs; a missing config changes no answer.
-- A repo reading X on its own account → a persisted session from a `agents:browser-pilot` `MODE: DISCOVERY` dispatch, never a key on this route, and the repo's own `secret` in `<git-root>/docs/agents/integrations/x.md`.
+- A repo reading X on its own account → a persisted session from a `agents:browser-pilot` `MODE: DISCOVERY` dispatch, never a key on this route; where that session lives → as the project's instructions state it.
 
 ## Routing
 
