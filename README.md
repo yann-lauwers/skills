@@ -81,7 +81,7 @@ Run in the repo: `npx skills add yann-lauwers/skills -a claude-code -y -s <names
 | `~/Code/les-gites-du-haras` | sentry webflow | committed |
 | `~/Code/personal-ops` | billit enable-banking unifi local-markdown | committed |
 | `~/Code/athlete-os` | garmin | committed |
-| `~/Code/immo` | sentry supabase trigger-dev | committed |
+| `~/Code/immo` | sentry supabase | committed |
 | `~/Code/mission-manager` | supabase | committed |
 
 ## Plugins one repo uses
