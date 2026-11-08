@@ -6,19 +6,18 @@ user-invocable: false
 
 # Prisma
 
-## Project config
+## The repo's Prisma choices
 
-- Read the merged config first → `~/.claude/skills/agents-config/scripts/agents-config get prisma <key> --root "$CLAUDE_PROJECT_DIR"`, and the project file's body for the repo's own rules.
-- No project config → ask the user; on their yes, write it through `references/setup.md`, then continue.
-- `workflow_doc` set → read it before a schema change reaches a database; it outranks this skill on when to push and when to migrate · `null` → this skill says only what each verb does.
+- Each value below → as the project's instructions state it, and their own rules for the repo; unstated → the default the table gives.
+- `workflow_doc` stated → read it before a schema change reaches a database; it outranks this skill on when to push and when to migrate · unstated → this skill says only what each verb does.
 
-| Key | What it answers |
+| Value | What it answers; unstated → |
 | --- | --- |
-| `package_dir` | the directory the CLI runs from; `auto` → the directory of the repo's schema file, outside `node_modules` |
-| `runner` | the command that runs the repo's pinned CLI; `auto` → the CLI through the package manager of the nearest lockfile at or above `package_dir` |
-| `scripts` | act → the `package.json` script in `package_dir` performing it: `generate`, `create_migration`, `check_migration`, `apply_migration`, `push`, `format` |
+| `package_dir` | the directory the CLI runs from; unstated → the directory of the repo's schema file, outside `node_modules` |
+| `runner` | the command that runs the repo's pinned CLI; unstated → the CLI through the package manager of the nearest lockfile at or above `package_dir` |
+| `scripts` | act → the `package.json` script in `package_dir` performing it: `generate`, `create_migration`, `check_migration`, `apply_migration`, `push`, `format`; unstated → none |
 | `workflow_doc` | the repo's own document on when to push and when to migrate |
-| `local_hosts` | the hosts a schema write proceeds on without asking |
+| `local_hosts` | the hosts a schema write proceeds on without asking; unstated → `localhost`, `127.0.0.1` |
 
 ## Running
 

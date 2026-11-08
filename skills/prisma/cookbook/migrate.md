@@ -7,9 +7,9 @@
 
 ## Create a migration
 
-1. Edit the schema, then `scripts.create_migration` → run it as the project config's body says · none → `<runner> migrate dev --create-only --name <snake_case_name>`, whose empty `migration.sql` means the schema adds nothing over the migrations folder. Done when `migrations/<timestamp>_<name>/migration.sql` holds SQL. · the script reports nothing to do → the folder already reproduces the schema; stop.
+1. Edit the schema, then `scripts.create_migration` → run it as the project's instructions say · none → `<runner> migrate dev --create-only --name <snake_case_name>`, whose empty `migration.sql` means the schema adds nothing over the migrations folder. Done when `migrations/<timestamp>_<name>/migration.sql` holds SQL. · the script reports nothing to do → the folder already reproduces the schema; stop.
 2. Read the generated SQL; a drop, or a `NOT NULL` column without a default on a table holding rows → stop and sequence the change before applying it. Done when neither remains or the user accepted it.
-3. Prove it complete — the migrations folder reproduces the schema: `scripts.check_migration` → run it · none → `<runner> migrate diff --from-migrations <dir> --to-schema-datamodel <schema> --shadow-database-url "$SHADOW_DATABASE_URL" --exit-code`, the shadow URL reaching the environment through the `role: app-secrets` injector, never typed. Done when it exits 0; any other exit with SQL printed — 2 from the raw verb — is what would ship missing.
+3. Prove it complete — the migrations folder reproduces the schema: `scripts.check_migration` → run it · none → `<runner> migrate diff --from-migrations <dir> --to-schema-datamodel <schema> --shadow-database-url "$SHADOW_DATABASE_URL" --exit-code`, the shadow URL reaching the environment through the app-runtime secrets injector the project's instructions name, never typed. Done when it exits 0; any other exit with SQL printed — 2 from the raw verb — is what would ship missing.
 
 ## Apply pending migrations
 
