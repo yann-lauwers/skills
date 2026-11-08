@@ -2,7 +2,7 @@
 
 ## Authenticate
 
-- `keyless run -s T=<SECRET> -- sh -c 'supabase login --token="$T"'` — later commands inherit the cached login until it is cleared or the token rotates.
+- Every command reads `SUPABASE_ACCESS_TOKEN` itself; no `supabase login` is needed.
 
 ## Traps
 
