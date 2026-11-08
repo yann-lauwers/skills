@@ -23,7 +23,6 @@ git -C <tree> log --oneline HEAD --not --remotes    # commits on no remote branc
 - `git wt -C <repo> -y remove <branch> --foreground` — one tree. The default.
 - Every integrated tree of one repo → `git wt -C <repo> step prune --dry-run`, then `git wt -C <repo> -y step prune --foreground`.
 - `--force` removes a tree whose rows Step 1 chose to lose; `-D` deletes a branch the integration check missed though its work landed — a squash merge with hundreds of commits landed since. Either one on a row the user owns → ask them first.
-- A canon link showing `??` fails the dirty guard → the repo ignores that path only as a directory: `cookbook/canon.md` § Sharing a new top-level path, never `rm` the link.
 - The fence refuses a tree with no `wtk-owner` token → this setup did not make it: leave it to whatever did, and report it.
 
 **Done when:** the tree is gone from `git -C <repo> worktree list`, or a refusal is reported with the tree intact.
