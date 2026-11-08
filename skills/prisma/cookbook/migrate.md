@@ -23,7 +23,7 @@
 
 ## Amend a migration that has not shipped
 
-1. Prove it has not shipped: `git branch -r --contains <commit that added it>`; the `production_branch` or `base_branch` the `role: vcs` config names appears → stop and write a forward migration instead. Done when only feature branches carry it; keep that list.
+1. Prove it has not shipped: `git branch -r --contains <commit that added it>`; the trunk (`refs/remotes/origin/HEAD`) or the branch the project names as deploying appears → stop and write a forward migration instead. Done when only feature branches carry it; keep that list.
 2. Edit its `migration.sql`; rename its directory when the name no longer fits — the directory name is the ledger's `migration_name`. Done when the file says what the schema needs.
 3. Update the schema to match, and every TypedSQL file naming a changed column. Done when both agree with the migration.
 4. Replay it on a local database rebuilt from a state before it, then § Apply pending migrations. Done when `migrate status` reports up to date. A database still holding the pre-edit row → `migrate dev` reports ``The migration `<name>` was modified after it was applied.`` (Prisma 6.19.0 schema engine).

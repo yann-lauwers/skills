@@ -46,9 +46,9 @@ git -C <repo> remote get-url origin
 ## Step 3: Determine the branch convention
 
 - worktrunk names the branch exactly as typed: it fetches nothing from a tracker, and holds no branch convention of its own.
-- Ask or detect the repo's convention: a ticket tracker (`<PREFIX>-<number>`) · GitHub issues · free-form (`feat/<name>`, `fix/<name>`); it is recorded as `branch_pattern` in the `vcs` role's project config, or its recorded `auto` stands; never in `config.toml`.
+- Ask or detect the repo's convention: a ticket tracker (`<PREFIX>-<number>`) · GitHub issues · free-form (`feat/<name>`, `fix/<name>`); it is recorded as one line in the project's instructions, never in `config.toml`.
 
-**Done when:** one convention is chosen and the `vcs` config's `branch_pattern` carries it, or its `auto` stands.
+**Done when:** the project's instructions state one convention.
 
 ## Step 4: Write the entry
 
