@@ -12,10 +12,10 @@
 
 ## Issue state
 
-- Who filed it, native `no` → nothing records it; a pass needing the reporter's handle takes the tracker config's `maintainer`.
-- No `maintainer` declared → an attended pass asks · an unattended pass stops and reports the tracker config as unwired.
-- A pass taking the `maintainer` as the reporter → says so in its own report, the only record of the stand-in.
-- Open / closed, native `convention` → the `Status:` line: closed when its value is in `settled_categories` or `settled_states`, open otherwise.
+- Who filed it, native `no` → nothing records it; a pass needing the reporter's handle takes the maintainer the project's instructions name.
+- No maintainer named → an attended pass asks · an unattended pass stops and reports that none is named.
+- A pass taking the maintainer as the reporter → says so in its own report, the only record of the stand-in.
+- Open / closed, native `convention` → the `Status:` line: closed when its value is settled per `SKILL.md § Project instructions`, open otherwise.
 - Close as done, native `convention` → set `Status: resolved`, and record the answer under `## Answer` in the same file.
 - Close as abandoned, native `convention` → set `Status: out-of-scope`.
 - Close as duplicate, native `convention` → set `Status: duplicate`, with a `Duplicate of: NN` line beside it.
