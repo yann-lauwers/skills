@@ -27,15 +27,15 @@
 
 - Every wired tool → a skill saying how to operate it. The token lives in the secrets vault as item `<entity>-<tool>`.
 - The call kernel — one authenticated call → the skill, once, reading its credential from the variable a `Needs: <NAME>` line names, with the header, prefix and hosts it travels to; the command sends no credential, and exits naming the variable, when it is unset · a tool with no kernel → its auth mechanism and header in the skill.
-- What one repo adds to a tool → a `## <Tool>` section in that repo's `AGENTS.md`: the provider command filling the `Needs:` variable, whose account it opens, and where that account's own choices are kept · a flow only that repo runs → a project skill · never a file under `docs/agents/`.
+- What one repo adds to a tool → a `## <Tool>` section in that repo's `AGENTS.md`: the provider command filling the `Needs:` variable, whose account it opens, and where that account's own choices are kept · a flow only that repo runs → a project skill · never a file under `docs/agents/` · a tool no repo uses → that section in the host's `~/.agents/AGENTS.md`.
 - An account's own choices — its numbering, its terms, what it re-invoices → the record the repo already keeps for that account; the skill names each choice it reads and asks the user for one the repo states nowhere.
 - Only the tool's own skill and the repo's section for it name its vendor or CLI; a skill never names the provider filling its `Needs:` variable.
 - A value the tool itself defines — its CLI's install path, an env var it exports, a fixed API base → the skill.
 - The skill → the tool's traps and how we work with it · never an API reference the vendor documents, or a checklist repeating its steps' done states.
 - A call or two, no procedure → a single-file skill · a rich recurring flow → a cookbook per intent · unsure → the lean shape, said aloud.
-- Never write to the secrets vault: hand the user the item spec the `role: secrets` skill describes, and continue once it exists.
+- Never write to the secrets vault: hand the user the item spec /proton describes, and continue once it exists.
 - A new tool's nearest sibling → `billit`: its skill, and the `## Billit` section of `~/Code/personal-ops/AGENTS.md`.
-- Place a fact by altitude: method, true whichever vendor fills the role → the `AGENTS.md` section or skill owning the act · a tool's own mechanics versus its account values → the lines above.
+- Place a fact by altitude: method, true whichever vendor serves it → the `AGENTS.md` section or skill owning the act · a tool's own mechanics versus its account values → the lines above.
 - Inside a repo with no section for a tool it uses → write it in the turn that found the gap.
 - Record a call shape only after running that exact text end to end, with a one-line provenance: date, route, result; a recorded call that fails is diagnosed before it is edited.
 - Done when the call authenticates through the command the repo's section names, exercised.
@@ -58,9 +58,9 @@
 - A skill that is no tool's → one consuming repo → project level; a second → user level.
 - A new user skill takes no name any `.claude/skills/` under `~/Code` holds; a new project skill takes none the user level holds. The listing shows only the current repo's project skills → check on disk; an existing collision goes to the user.
 - A tool's or a stack's skill → user level when every repo uses it, per repo when only some do; it names no repo's paths, scripts or skills.
-- Per repo → a service a repo's own stack or tracker uses, or a stack only some repos hold · everywhere → a tool of this machine or of every repo, or one a caller reaches where no config exists.
+- Per repo → a service a repo's own stack or tracker uses, or a stack only some repos hold · everywhere → a tool of this machine or of every repo, or one a caller reaches outside the repos using it.
 - Installed in a repo → that repo's row in `~/Code/skills/README.md` in the same change.
-- `Unknown skill: <name>` for a per-repo skill, in a repo whose stack or tracker uses it → read `~/Code/skills/skills/<name>/SKILL.md` by path, write its project config per § A tool's skill and its config where none exists, and install it there; the skill loads in the next session.
+- `Unknown skill: <name>` for a per-repo skill, in a repo whose stack or tracker uses it → read `~/Code/skills/skills/<name>/SKILL.md` by path, write what the repo adds to it per § A tool's skill and its config where nothing is written yet, and install it there; the skill loads in the next session.
 - Done → a fresh session's `system/init` event (`claude -p hi --output-format stream-json --verbose`) lists the skill in each repo holding it and nowhere else.
 
 ## Who may invoke it
