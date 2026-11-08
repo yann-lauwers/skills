@@ -1,6 +1,6 @@
 ---
 name: prisma
-description: "Runs the Prisma CLI against the right database. Use on 'create the migration', 'apply the migrations', 'db push', 'prisma generate', 'migration drift', 'baseline the database', TypedSQL, or a `P1xxx` / `P3xxx` code or `PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION`. Not for Client code or schema modelling — /prisma-patterns ; not for sequencing a live change — /postgres-patterns ."
+description: "Runs the Prisma CLI against the right database. Use on 'create the migration', 'apply the migrations', 'db push', 'prisma generate', 'migration drift', 'baseline the database', TypedSQL, or a `P1xxx` / `P3xxx` code or `PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION`."
 user-invocable: false
 ---
 
