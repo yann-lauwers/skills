@@ -6,4 +6,4 @@
 - The self-DM, where "ping me" lands → `conversations.open` with `users: <the configured user's id>` under the user token · the bot's DM with the configured user → the same under the bot token.
 - A channel → `conversations.list`, only once the user names it.
 - A standing rule in a person's roster entry — how they are addressed, what may be sent to them — holds in every channel and medium, and outranks every cookbook default.
-- Provenance: 2026-11-08, `auth.test` under both tokens and `bots.info` under the bot token, curl per `references/api.md § Endpoint + auth` → workspace NexusGPT, both user ids and the bot's app id returned.
+- Provenance: 2026-11-08, `auth.test` under both tokens and `bots.info` under the bot token, curl per `references/api.md § Endpoint + auth` → `ok: true`, the workspace, both user ids and the bot's app id returned.
