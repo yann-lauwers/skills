@@ -23,10 +23,8 @@ disable-model-invocation: true
 
 ## Project config
 
-- `~/.claude/skills/agents-config/integrations/superwhisper.md` declares `role: dictation` and carries no value: the app's own files answer every one.
 - A mode → its file key, `modes/<key>.json`, never its display name; the modes carrying the generated roster → `SW_MODES` in `$G`.
 - The config folder → read it at the act, never as a literal: `<appFolderDirectory>/superwhisper`, the parent answered by `defaults read com.superduper.superwhisper appFolderDirectory`; a fresh install → `~/superwhisper`.
-- Config absent → bootstrap it through /managing-harness , `references/skills.md` § A tool's skill and its config.
 
 ## Completion
 
