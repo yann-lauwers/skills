@@ -6,18 +6,16 @@ disable-model-invocation: true
 
 # Webflow
 
-## Project config
+## The site
 
-- Config: the repo's `docs/agents/integrations/webflow.md` over the floor, read merged: `~/.claude/skills/agents-config/scripts/agents-config get webflow <key> --root "$CLAUDE_PROJECT_DIR"`.
-- No `docs/agents/integrations/webflow.md` in the repo → ask the user; on their yes, write it per /managing-harness , `references/skills.md` § A tool's skill and its config, asking which Webflow site by name, never picking one; then continue.
+- The site → the one the project's instructions name; none named → ask the user which Webflow site by name, never picking one, and write it per /managing-harness , `references/skills.md` § A tool's skill and its config; then continue.
 
-| Key | What it answers |
+| Value | Where it comes from |
 | --- | --- |
-| `site` | the site's name |
-| `site_id` | the site's id |
-| `staging_url` | the Webflow subdomain a publish lands on first |
-| `custom_domain_ids` | the custom domains' ids, which a production publish names |
-| `site_check` | the repo's own check of the served site, `<origin>` the origin it reads; absent → no such check |
+| `site_id` | the project's instructions |
+| `staging_url` | `https://<shortName>.webflow.io`, `shortName` from `get_site` |
+| `custom_domain_ids` | every `customDomains[].id` `get_site` returns |
+| `site_check` | the project's instructions, `<origin>` the origin it reads; none stated → no such check |
 
 ## Routing
 
