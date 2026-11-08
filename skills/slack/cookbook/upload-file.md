@@ -13,8 +13,8 @@ Attaches a doc, snippet, log or export to a Slack conversation: reserve a slot, 
 ## Step 2 — Resolve the destination + gate
 
 0. The request pointed at a conversation per `references/reply-in-place.md`, with no other destination named → its channel and `thread_ts` per its § Read before drafting; no gate runs.
-1. Author → the user token by default · the bot token (`bot_secret`) where the config body's bot line allows it; Steps 4, 6 and 7 run under the token chosen here.
-2. A DM target → the bot writing to the configured user: the config's `bot_dm` · else the user and DM channel per `cookbook/resolve-identity.md`; cache `user_id → D…`.
+1. Author → the user token by default · the bot token where the project's instructions allow it; Steps 4, 6 and 7 run under the token chosen here.
+2. A DM target → the bot writing to the configured user: the bot's DM with the configured user (`references/config.md`) · else the user and DM channel per `cookbook/resolve-identity.md`; cache `user_id → D…`.
 3. A channel target → its id per `cookbook/read-channel.md` Step 1.
 4. A file shared into a channel the request did not point at is a channel post → `AskUserQuestion` first, with the channel, the filename and the `initial_comment` preview (`SKILL.md § Rules`); a DM posts at once.
 5. Done when a `D…` / `C…` / `G…` id and the author are in hand, and a channel destination the request did not point at carries an explicit confirmation.

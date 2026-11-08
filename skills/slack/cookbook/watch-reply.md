@@ -7,7 +7,7 @@
 
 1. Channel id → the DM channel from `cookbook/dm-user.md` Step 2 (`D…`), or a channel id (`C…` / `G…`) resolved per `cookbook/read-channel.md` Step 1; a thread → also its parent `ts` for `--thread`.
 2. `--after` → the `ts` `chat.postMessage` returned for the message that asked; sent in an earlier session → read it back with `conversations.history` and take its `ts`; nothing sent yet → omit it, and the watcher starts from now.
-3. `--from` → the watched person's user id from the roster in the config body; omitted → anyone but the configured user counts; the configured user's own id is the one way their messages count, which is how a self-DM test runs.
+3. `--from` → the watched person's user id from the roster in the project's instructions; omitted → anyone but the configured user counts; the configured user's own id is the one way their messages count, which is how a self-DM test runs.
 4. `--question` → the ask's text, written to a scratchpad file and passed as `@<path>`; several messages made the ask → concatenate them; omitted → no classifier, and every watched message wakes the session.
 5. Done when channel, after-ts, from-id and question path are printed in the start banner.
 
@@ -15,7 +15,7 @@
 
 1. Run `keyless run -s SLACK_TOKEN=<NAME> -- ${CLAUDE_SKILL_DIR}/scripts/watch-reply.py --channel <D…> --after <ts> --from <U…> --question @<path> --once`; `<NAME>` → the token that sent the question.
 2. `ANSWERED` / `QUESTION_BACK` / `NEW_MESSAGE` → the reply is already there: act on it per the verdict table and stop.
-3. `WATCHER_ERROR` with `error=auth` → the token did not reach the script, the vault-scoped session is locked or dead: route to the skill holding `role: secrets` and stop; never arm a watcher with no token.
+3. `WATCHER_ERROR` with `error=auth` → the token did not reach the script, the vault-scoped session is locked or dead: route to /keyless and stop; never arm a watcher with no token.
 4. A `--once` read takes no lock and starts nothing, so it is safe against a conversation another watcher already holds.
 5. Done when the once-line is `WAITING`.
 
@@ -47,8 +47,8 @@ keyless run -s SLACK_TOKEN=<NAME> -- \
 | `ANSWERED` | The watcher has exited. Read `text`; carry the answer into the work that was blocked on it. Post a follow-up DM only when the work needs one. |
 | `QUESTION_BACK` | The watcher has exited. Answer it: draft per `cookbook/dm-user.md` (continuing conversation, no greeting), send, then arm a new watch from Step 1 with the new message's `ts` as `--after`. |
 | `NEW_MESSAGE` | The watcher has exited without a classifier verdict (`classifier_error` says why, or none was requested). Read `text` and judge it yourself; arm a new watch if it was an ack. |
-| `STALE` | No reply for `--nudge-after`; the watcher has exited. Read the watched person's roster entry in the config body first: a standing rule there barring nudges → report the staleness to the user, send nothing, and re-arm with the line's `rearm` (`--after <last_ts> --nudge-after 0`) replacing their namesakes. No such rule → post `up` followed by `question_permalink` on its own line, per the register's nudge shape, then re-arm with `--after <the nudge's ts>`. |
-| `WATCHER_ERROR` | `error=auth` or `channel_not_found` → the watcher has exited; report `detail`. Auth routes to the skill holding `role: secrets`; a retry from here reads the same locked store. `error=blind` → no read landed for the whole blind window: report it and arm a fresh watch from Step 1. `error=duplicate` → another watcher holds this conversation; report it and leave that one in place. Any other → report `detail`; the watcher has exited. |
+| `STALE` | No reply for `--nudge-after`; the watcher has exited. Read the watched person's roster entry in the project's instructions first: a standing rule there barring nudges → report the staleness to the user, send nothing, and re-arm with the line's `rearm` (`--after <last_ts> --nudge-after 0`) replacing their namesakes. No such rule → post `up` followed by `question_permalink` on its own line, per the register's nudge shape, then re-arm with `--after <the nudge's ts>`. |
+| `WATCHER_ERROR` | `error=auth` or `channel_not_found` → the watcher has exited; report `detail`. Auth routes to /keyless , an item missing from the vault to /proton ; a retry from here reads the same locked store. `error=blind` → no read landed for the whole blind window: report it and arm a fresh watch from Step 1. `error=duplicate` → another watcher holds this conversation; report it and leave that one in place. Any other → report `detail`; the watcher has exited. |
 | anything else | Report the raw line and stop. Never infer an action from an unknown verdict. |
 
 1. Parse the last `{` line, look up `verdict`, carry out the row.

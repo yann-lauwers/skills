@@ -13,7 +13,7 @@
 1. Read `references/drafting.md` first; plain text by default, in mrkdwn per its § Markup.
 2. Sections, dividers, buttons → Block Kit JSON in `blocks` (https://api.slack.com/block-kit), `text` set beside it (`references/api.md § Method traps`).
 3. Language → `references/drafting.md § Which language`.
-4. Register → a channel whose audience the config body names takes the register given there · any other → the register its own recent messages are written in.
+4. Register → a channel whose audience the project's instructions name takes the register given there · any other → the register its own recent messages are written in.
 5. Layout → `references/drafting.md § Layout`.
 6. Tabular data → the Block Kit `table` block (`references/api.md § Table block`), never a wide code block; a fenced code block only for a narrow table whose every row stays on one line unwrapped.
 7. Done when the body is drafted in the audience's language and register.
