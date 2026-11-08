@@ -6,13 +6,12 @@ disable-model-invocation: true
 
 # Local markdown
 
-## Project config
+## Project instructions
 
-- Before any mutation → `~/.claude/skills/agents-config/scripts/agents-config get local-markdown <key> --root "$CLAUDE_PROJECT_DIR"`; the config is `~/.claude/skills/agents-config/integrations/local-markdown.md`, overridden by `$CLAUDE_PROJECT_DIR/docs/agents/integrations/local-markdown.md`.
-- Keys → `label_creation` · `settled_categories` the `Status:` values that end a ticket · `settled_states` any further `Status:` value the repo treats as final · `automated_states`.
+- Settled → a `Status:` of `resolved`, `out-of-scope`, `duplicate` or `wontfix`, or any further value the project's instructions treat as final.
 - Roles to `Status:` values → the "Label in our tracker" column of `$CLAUDE_PROJECT_DIR/docs/agents/triage-labels.md`.
-- The declaration absent → /setup-matt-pocock-skills writes it · the project config absent → /managing-harness writes it; until then the floor's values govern, and the reply says they were assumed rather than read.
-- `agents-config role tracker` names another tool → stop and use that tracker's skill.
+- The declaration absent → /setup-matt-pocock-skills writes it.
+- The project's instructions name another issue tracker → stop and use that tracker's skill.
 
 ## Routing
 
