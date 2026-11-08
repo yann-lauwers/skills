@@ -1,6 +1,6 @@
 ---
 name: infisical
-description: "Runs a script, test, server or browser run that needs app-runtime secrets through the project's injector, and finds why a secret read came back empty or refused. Use when a value is missing from `.env`, a run needs an API key or database URL, or on 'infisical', 'secret not found', 'no valid login session', `401 Invalid credentials`, 'Project ID is required'. Not for an agent's own tooling credential or a refused `.env` read — the tool holding `role: secrets` and the credential injector."
+description: "Runs a script, test, server or browser run with the app's runtime secrets injected, and finds why a secret read came back empty or refused. Use when a value is missing from `.env`, or on 'secret not found', 'no valid login session', `401 Invalid credentials` or 'Project ID is required'. Also fires on the ACT — starting the app, its tests or a script that reads runtime secrets from its environment. Not for an agent's own tooling credential or a refused `.env` read — the tool holding `role: secrets` and the credential injector."
 user-invocable: false
 ---
 
