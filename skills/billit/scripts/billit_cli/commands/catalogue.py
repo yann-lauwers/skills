@@ -1,4 +1,5 @@
 from .. import pages
+from ..errors import PRECONDITION, Fail
 from ..render import trim
 from ..surface import group, new_command
 
@@ -16,8 +17,15 @@ def list_projects(ns, app, out):
     return 0
 
 
+def own_party_id(app):
+    companies = app.get("/v1/account/accountInformation").get("Companies") or []
+    if len(companies) != 1:
+        raise Fail(PRECONDITION, "the key opens %d companies; the category page needs exactly one" % len(companies))
+    return companies[0]["PartyID"]
+
+
 def list_categories(ns, app, out):
-    html = app.portal_get("/Company/Supplier/%s/CompanyEdit" % app.ctx.party_id)
+    html = app.portal_get("/Company/Supplier/%s/CompanyEdit" % own_party_id(app))
     found = pages.categories(html)
     if ns.json:
         out.dump(found)
@@ -40,7 +48,7 @@ def register(commands):
     _, cats = group(commands, "categories", "List the portal's cost categories.",
                     "Reads the cost category catalogue Billit shows only in its portal. Pick a command below.")
     lst = new_command(cats, "list", "List cost categories.",
-                      "Reads the entity's company page in the portal and prints each distinct cost category code with "
+                      "Reads the account's company page in the portal and prints each distinct cost category code with "
                       "its name and specification.",
                       example="  billit categories list --json")
     lst.set_defaults(handler=list_categories)

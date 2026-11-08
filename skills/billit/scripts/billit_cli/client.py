@@ -72,9 +72,8 @@ def mask_files(value):
 
 
 class Billit:
-    def __init__(self, rt, ctx, key, out, dry_run=False):
+    def __init__(self, rt, key, out, dry_run=False):
         self.rt = rt
-        self.ctx = ctx
         self.key = key
         self.out = out
         self.dry_run = dry_run
