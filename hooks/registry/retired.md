@@ -4,6 +4,10 @@
 - Retirements up to 2026-10-07, and the retired verdicts and pattern names → `registry/retired-to-2026-10-07.md`.
 - A clause states what the check did, why it went, and its successor or that there is none; measurements and the argument behind it are in git history.
 
+## The tool-config guards' removal, 2026-11-08
+
+**Retired ids — `tool-config-commit`, `tool-config-pointer`** (2026-11-08). Refused a commit adding a tool's project config under `docs/agents/integrations/`, or a tracked line pointing into that folder; the `git-guards` plugin went with them. They went with agents-config: no tool keeps a config there any more, each repo stating its tools in its own instructions. No successor.
+
 ## The validation-report layout guard, 2026-11-07
 
 **Retired id — `validation-report-layout`** (2026-11-07). Denied a write or shell command placing an artifact under a reports tree anywhere but `validation/<slice>/runs/<YYYY-MM-DD>_<n>/…`, the last check of the `yann` plugin, which went with it. It went for the simpler instruction: its successor is the run layout `skills/validating/SKILL.md` states before the run directory is created.

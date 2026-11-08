@@ -40,18 +40,6 @@
 - Record a call shape only after running that exact text end to end, with a one-line provenance: date, route, result; a recorded call that fails is diagnosed before it is edited.
 - Done when the call authenticates through the command the repo's section names, exercised.
 
-### A tool still on an agents-config config
-
-- It keeps its config until its migration moves it to the lines above, deleting its floor file and every project file; nothing new is written into one.
-- A project file → ignored before it is written, per `SKILL.md` § Config levels, probed from the base checkout where the path runs through a link (exit 128); written on the tool's first use in the repo, whether or not anything differs, with a per-repo plugin's `true` in the same act; its `defaults` name only the keys where the repo differs from the floor — for a key the floor derives, from what the derivation returns — or one its owner pins against a floor change under `## Pinned`, one bullet per key · `defaults: {}` where nothing differs.
-- The config body → one line naming who reads it — the tool's skill and any consumer reaching it by role; a project file over a floor → `Read as the floor names.`, plus any reader only that repo has · then only what a key cannot carry about this account, entity, repo or environment · never a reason, a date or the evidence that settled a value.
-- The skill carries a `## Project config` section naming its config path and what it does with none.
-- A config holding a command surface, an operations table or a list of traps → the tool has no skill yet: write one, however thin.
-- A new `role` value → reuse an existing capability word; a new word is the user's to confirm.
-- Name the role, never the tool; only a tool's own config and skill name its vendor or CLI, a repo's line naming the service that fills a role and a path example the user wrote aside. A skill never names the provider filling its `Needs:` variable; each host declares that once, in its own user instructions.
-- A repo's tracked line sending a reader into its project tool configs — the integrations folder under its `docs/agents/` — by path, file name or section → the pointer gives way to the service filling the role, in a few words (`<role> → <service>.`), and the rest of the line stays; a value it needs is named by role and key, left to resolution; a line that was only the path goes.
-- Done when resolution finds the config by role and the call authenticates through the host's provider, both exercised.
-
 ## Where a skill lives
 
 - User level (`-g`) → every session here · project level → that repo · a skill only one repo will ever run → written straight into `<repo>/.claude/skills/<name>/`, tracked or git-excluded, never in `~/Code/skills`.
@@ -76,4 +64,4 @@
 - `AGENTS.md` may name a skill; a skill never names `AGENTS.md`: a user or git-excluded project skill keeps no fact `~/.agents/AGENTS.md` states, in any wording — except a skill whose subject is canon itself, which states in full the facts of its own subject; `AGENTS.md` names those by the trigger that loads it, plus at most one principle line every session needs.
 - Dropping the path does not make it legal: "the worktrees section", a bare "§ Judgment Calls", a scope written as `AGENTS.md`'s complement each defer the same way.
 - A tracked project skill names no user-level skill and states a user-level fact in its own words; a user skill may name a project one; a git-excluded project skill may name a user skill.
-- A skill names no rule, no `AGENTS.md` section and no doc, stating in its own words a fact the lines above don't drop — except its tool's config path in a user or git-excluded skill, and a skill whose subject is canon itself.
+- A skill names no rule, no `AGENTS.md` section and no doc, stating in its own words a fact the lines above don't drop — except a skill whose subject is canon itself.
