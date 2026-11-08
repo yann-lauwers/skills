@@ -25,24 +25,31 @@
 
 ## A tool's skill and its config
 
-- Every wired tool → a skill saying how to operate it, and a config at the floor and in each repo using it. The token lives in the secrets vault as item `<entity>-<tool>`.
-- A project file → ignored before it is written, per `SKILL.md` § Config levels, probed from the base checkout where the path runs through a link (exit 128); written on the tool's first use in the repo, whether or not anything differs, with a per-repo plugin's `true` in the same act; its `defaults` name only the keys where the repo differs from the floor — for a key the floor derives, from what the derivation returns — or one its owner pins against a floor change under `## Pinned`, one bullet per key · `defaults: {}` where nothing differs.
-- The config body → one line naming who reads it — the tool's skill and any consumer reaching it by role; a project file over a floor → `Read as the floor names.`, plus any reader only that repo has · then only what a key cannot carry about this account, entity, repo or environment · never a reason, a date or the evidence that settled a value.
-- What one repo adds to a tool → its values and the body line above, in the project config, reached by role · any other directive in the repo's `AGENTS.md` · a flow only that repo runs in a project skill · never a new `docs/agents/` file outside `integrations/`.
+- Every wired tool → a skill saying how to operate it. The token lives in the secrets vault as item `<entity>-<tool>`.
+- The call kernel — one authenticated call → the skill, once, reading its credential from the variable a `Needs: <NAME>` line names, with the header, prefix and hosts it travels to; the command sends no credential, and exits naming the variable, when it is unset · a tool with no kernel → its auth mechanism and header in the skill.
+- What one repo adds to a tool → a `## <Tool>` section in that repo's `AGENTS.md`: the provider command filling the `Needs:` variable, whose account it opens, and where that account's own choices are kept · a flow only that repo runs → a project skill · never a file under `docs/agents/`.
+- An account's own choices — its numbering, its terms, what it re-invoices → the record the repo already keeps for that account; the skill names each choice it reads and asks the user for one the repo states nowhere.
+- Only the tool's own skill and the repo's section for it name its vendor or CLI; a skill never names the provider filling its `Needs:` variable.
 - A value the tool itself defines — its CLI's install path, an env var it exports, a fixed API base → the skill.
 - The skill → the tool's traps and how we work with it · never an API reference the vendor documents, or a checklist repeating its steps' done states.
-- The call kernel — one authenticated call → the skill, once, reading its credential from the variable a `Needs: <NAME>` line names, with the header, prefix and hosts it travels to; the command sends no credential when the variable is unset; the host's provider fills it from the config's `secret`, or from the resolved entity or location where the config declares `resolves:` · a tool with no kernel → its auth mechanism and header in the skill.
+- A call or two, no procedure → a single-file skill · a rich recurring flow → a cookbook per intent · unsure → the lean shape, said aloud.
+- Never write to the secrets vault: hand the user the item spec the `role: secrets` skill describes, and continue once it exists.
+- A new tool's nearest sibling → `billit`: its skill, and the `## Billit` section of `~/Code/personal-ops/AGENTS.md`.
+- Place a fact by altitude: method, true whichever vendor fills the role → the `AGENTS.md` section or skill owning the act · a tool's own mechanics versus its account values → the lines above.
+- Inside a repo with no section for a tool it uses → write it in the turn that found the gap.
+- Record a call shape only after running that exact text end to end, with a one-line provenance: date, route, result; a recorded call that fails is diagnosed before it is edited.
+- Done when the call authenticates through the command the repo's section names, exercised.
+
+### A tool still on an agents-config config
+
+- It keeps its config until its migration moves it to the lines above, deleting its floor file and every project file; nothing new is written into one.
+- A project file → ignored before it is written, per `SKILL.md` § Config levels, probed from the base checkout where the path runs through a link (exit 128); written on the tool's first use in the repo, whether or not anything differs, with a per-repo plugin's `true` in the same act; its `defaults` name only the keys where the repo differs from the floor — for a key the floor derives, from what the derivation returns — or one its owner pins against a floor change under `## Pinned`, one bullet per key · `defaults: {}` where nothing differs.
+- The config body → one line naming who reads it — the tool's skill and any consumer reaching it by role; a project file over a floor → `Read as the floor names.`, plus any reader only that repo has · then only what a key cannot carry about this account, entity, repo or environment · never a reason, a date or the evidence that settled a value.
 - The skill carries a `## Project config` section naming its config path and what it does with none.
 - A config holding a command surface, an operations table or a list of traps → the tool has no skill yet: write one, however thin.
-- A call or two, no procedure → a single-file skill · a rich recurring flow → a cookbook per intent · unsure → the lean shape, said aloud.
 - A new `role` value → reuse an existing capability word; a new word is the user's to confirm.
-- Never write to the secrets vault: hand the user the item spec the `role: secrets` skill describes, and continue once it exists.
-- A new tool's nearest sibling → the wired tool of its shape — rich flow · thin · project-less personal — its skill and its config both.
 - Name the role, never the tool; only a tool's own config and skill name its vendor or CLI, a repo's line naming the service that fills a role and a path example the user wrote aside. A skill never names the provider filling its `Needs:` variable; each host declares that once, in its own user instructions.
 - A repo's tracked line sending a reader into its project tool configs — the integrations folder under its `docs/agents/` — by path, file name or section → the pointer gives way to the service filling the role, in a few words (`<role> → <service>.`), and the rest of the line stays; a value it needs is named by role and key, left to resolution; a line that was only the path goes.
-- Place a fact by altitude: method, true whichever vendor fills the role → the `AGENTS.md` section or skill owning the act · a tool's own mechanics versus its account values → the lines above.
-- Inside a repo with no project layer for a tool → write it in the turn that found the gap, per the lines above.
-- Record a call shape only after running that exact text end to end, with a one-line provenance: date, route, result; a recorded call that fails is diagnosed before it is edited.
 - Done when resolution finds the config by role and the call authenticates through the host's provider, both exercised.
 
 ## Where a skill lives
