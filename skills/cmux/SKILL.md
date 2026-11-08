@@ -8,16 +8,15 @@ disable-model-invocation: true
 # cmux
 
 - What runs inside a seat belongs to whoever started it.
-- Seat — a cmux workspace, one sidebar row; cmux fills `role: terminal`.
+- Seat — a cmux workspace, one sidebar row.
 - The CLI → `/Applications/cmux.app/Contents/Resources/bin/cmux`, on PATH in every zsh through `~/.zshenv` and in every cmux workspace; written `$C` in every file here, and the scripts' `CMUX_BIN` default.
 - The seat a session sits in → `$CMUX_WORKSPACE_ID`, which cmux exports into every workspace; unset → the session is in no seat.
 - A row's title, folder and contents stay true to its work.
 
-## Project config
+## Seat folders
 
-- Read a value with `~/.claude/skills/agents-config/scripts/agents-config get --role terminal <key> --root <repo>`, never from memory.
-- `seat_folders` → `per-repository` · `per-effort`: which folder a repo's seats join; the only key a repo writes, in its own config.
-- The role resolves to nothing → the terminal is unwired on this machine: say so and stop; never reach for another terminal application.
+- A repo's seats join its repository's folder · `git config cmux.seatFolders per-effort` at its base checkout → they join their effort's folder.
+- cmux absent from `/Applications` → say so and stop; never reach for another terminal application.
 
 ## What cmux imposes on the shape
 
@@ -33,4 +32,4 @@ disable-model-invocation: true
 | IF closing a finished seat — the one this session sits in included — sweeping stranded rows, or dissolving a folder | THEN `cookbook/closing.md` |
 | IF reading a seat, writing into one, surfacing one, or renaming and recolouring | THEN `references/observing.md` |
 | IF the object model, addressing, a command's shape, socket access from outside cmux, the Ghostty config, or adopting tmux work is the question | THEN `references/application.md` |
-| IF which folder a repo's seats join, or which tool fills `role: terminal` is the question | THEN § Project config |
+| IF which folder a repo's seats join is the question | THEN § Seat folders |
