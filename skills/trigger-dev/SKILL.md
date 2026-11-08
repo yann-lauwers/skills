@@ -1,6 +1,6 @@
 ---
 name: trigger-dev
-description: "Writes, runs and deploys Trigger.dev v4 background tasks. Use on \"trigger.dev\", \"background job\", \"scheduled task\", \"deploy the tasks\", a schedule that did not fire, `trigger.config.ts`, a `task`, `schemaTask` or `schedules.task`, or the `trigger.dev` CLI's `dev` or `deploy`."
+description: "Runs and deploys Trigger.dev v4 background tasks. Use on \"trigger.dev\", \"background job\", \"scheduled task\", \"deploy the tasks\", a schedule that did not fire, `trigger.config.ts`, a `schedules.task` cron, or the `trigger.dev` CLI's `dev` or `deploy`."
 ---
 
 # Trigger.dev (v4)
@@ -17,12 +17,3 @@ description: "Writes, runs and deploys Trigger.dev v4 background tasks. Use on \
 - A schedule fires in dev only while the CLI's `dev` worker runs, and in staging or production only for tasks in the latest deployment.
 - A declarative `cron` on `schedules.task` syncs on dev and deploy; its pattern is UTC unless the `cron` object names a `timezone`.
 - Build extensions apply to the deployed build only, never to local dev.
-
-## Writing tasks
-
-- `@trigger.dev/sdk` only, never `client.defineJob`, the v2 API.
-- `triggerAndWait()` and `batchTriggerAndWait()` return a `Result` → check `result.ok` before `result.output`, or `.unwrap()`.
-- Never wrap `triggerAndWait`, `batchTriggerAndWait` or a `wait` call in `Promise.all` or `Promise.allSettled`.
-- Triggering from outside a task → `tasks.trigger<typeof myTask>()` with `import type`.
-- An idempotency key is scoped to the triggered task's id; `idempotencyKeys.create()` scopes it to the current run across retries, a plain string scopes it globally.
-- A trigger inside a retryable parent carries one.
