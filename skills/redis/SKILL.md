@@ -1,6 +1,6 @@
 ---
 name: redis
-description: "Inspects a local Redis instance and names a new key by the project's convention. Use on 'inspect redis', 'check the cache', 'watch a redis key', before `redis-cli`, `--scan`, `GET`, `TTL` or `MONITOR` runs against an instance, and when a new key is named in code. Not for designing a key, a cache-invalidation rule, a lock or a limiter — /redis-patterns ."
+description: "Inspects a local Redis instance and names a new key by the project's convention. Use on 'inspect redis', 'check the cache', 'watch a redis key', before `redis-cli`, `--scan`, `GET`, `TTL` or `MONITOR` runs against an instance, and when a new key is named in code."
 user-invocable: false
 ---
 

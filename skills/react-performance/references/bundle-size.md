@@ -16,7 +16,7 @@ import { Card } from "@/components/card";
 import { Modal } from "@/components/modal";
 ```
 
-Next.js 13.5+ has `optimizePackageImports`, which automates this for listed packages — use it in the form the installed version's docs give, found through /nextjs-patterns ; manual direct imports are still required for non-listed libs.
+Next.js 13.5+ has `optimizePackageImports`, which automates this for listed packages — use it in the form the installed version's docs give; manual direct imports are still required for non-listed libs.
 
 ## Statically analyzable paths
 

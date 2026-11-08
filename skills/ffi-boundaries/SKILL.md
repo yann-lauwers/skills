@@ -1,6 +1,6 @@
 ---
 name: ffi-boundaries
-description: "Designs and reviews a boundary where two languages share memory through a C ABI. Use on 'add an export', 'change the C header', 'the callback crashes', 'use-after-free in the bridge', `Unmanaged`, `callconv(.c)`, `extern \"C\"`, `#[repr(C)]`, `#[no_mangle]`, `cbindgen`. Not for Swift actor isolation — /swift-patterns ."
+description: "Designs and reviews a boundary where two languages share memory through a C ABI. Use on 'add an export', 'change the C header', 'the callback crashes', 'use-after-free in the bridge', `Unmanaged`, `callconv(.c)`, `extern \"C\"`, `#[repr(C)]`, `#[no_mangle]`, `cbindgen`."
 ---
 
 # FFI Boundaries
@@ -40,8 +40,8 @@ A symbol missing any answer — in its name, its type or a test named for it —
 
 - Test each side at the boundary: the core's own tests for the export, the caller's tests for its
   use, and one test for teardown order — register, destroy, fire, and assert nothing was written.
-- Run the caller under Address Sanitizer and Thread Sanitizer — /swift-patterns carries the Xcode
-  invocation — and the core with its runtime safety on (Zig Debug or ReleaseSafe, Rust debug
+- Run the caller under Address Sanitizer and Thread Sanitizer (`xcodebuild test -enableAddressSanitizer YES`,
+  `-enableThreadSanitizer YES`) and the core with its runtime safety on (Zig Debug or ReleaseSafe, Rust debug
   assertions).
 - A crash in the caller on a thread it never spawned is a boundary defect until the contract rules it
   out.

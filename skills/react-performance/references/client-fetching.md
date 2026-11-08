@@ -4,7 +4,7 @@ Fetching, listeners and local storage on the client — where duplicate work is 
 
 ## SWR / TanStack Query for deduplication
 
-Multiple components calling `useUser(id)` should share one network request and one cache entry; react-patterns' data-fetching reference names the tool.
+Multiple components calling `useUser(id)` should share one network request and one cache entry.
 
 ## Deduplicate global event listeners
 

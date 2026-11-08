@@ -77,20 +77,17 @@ Run in the repo: `npx skills add yann-lauwers/skills -a claude-code -y -s <names
 
 | Repo | Skills | Copies |
 | --- | --- | --- |
-| `~/Code/nexus-project/nexus` | pr-cluster sentry supabase daytona infisical prisma redis react-patterns react-performance react-testing frontend-accessibility typescript-patterns vite-patterns nestjs-patterns prisma-patterns postgres-patterns redis-patterns docker-patterns | excluded |
-| `~/Code/nexus-project/nexus-ui` | react-patterns react-performance react-testing frontend-accessibility typescript-patterns vite-patterns | excluded |
-| `~/Code/nexus-project/nexus-landing` | react-patterns react-performance react-testing frontend-accessibility typescript-patterns nextjs-patterns | excluded |
-| `~/Code/nexus-project/nutshell` | typescript-patterns swift-patterns sqlite-patterns | committed |
-| `~/Code/nexus-project/nexus-desktop` | docker-patterns swift-patterns sqlite-patterns ffi-boundaries | excluded |
-| `~/Code/keyless` | docker-patterns | excluded |
-| `~/Code/les-gites-du-haras` | sentry webflow react-patterns react-performance react-testing frontend-accessibility typescript-patterns vite-patterns | committed |
-| `~/Code/effigest-site` | react-patterns react-performance react-testing frontend-accessibility typescript-patterns vite-patterns nextjs-patterns | committed |
-| `~/Code/personal-coach` | react-patterns react-performance react-testing frontend-accessibility typescript-patterns | committed |
-| `~/Code/playground` | react-patterns react-performance react-testing frontend-accessibility typescript-patterns nextjs-patterns | committed |
+| `~/Code/nexus-project/nexus` | pr-cluster sentry supabase daytona infisical prisma redis react-performance react-testing frontend-accessibility | excluded |
+| `~/Code/nexus-project/nexus-ui` | react-performance react-testing frontend-accessibility | excluded |
+| `~/Code/nexus-project/nexus-landing` | react-performance react-testing frontend-accessibility | excluded |
+| `~/Code/nexus-project/nexus-desktop` | ffi-boundaries | excluded |
+| `~/Code/les-gites-du-haras` | sentry webflow react-performance react-testing frontend-accessibility | committed |
+| `~/Code/effigest-site` | react-performance react-testing frontend-accessibility | committed |
+| `~/Code/personal-coach` | react-performance react-testing frontend-accessibility | committed |
+| `~/Code/playground` | react-performance react-testing frontend-accessibility | committed |
 | `~/Code/personal-ops` | billit enable-banking unifi local-markdown | committed |
 | `~/Code/athlete-os` | garmin | committed |
-| `~/Code/cswap-laxity` | docker-patterns | committed |
-| `~/Code/immo` | sentry supabase trigger-dev nextjs-patterns | committed |
+| `~/Code/immo` | sentry supabase trigger-dev | committed |
 | `~/Code/mission-manager` | supabase | committed |
 
 ## Plugins one repo uses

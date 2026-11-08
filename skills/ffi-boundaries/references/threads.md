@@ -26,5 +26,3 @@ let cb: @convention(c) (UnsafeMutableRawPointer?, UnsafePointer<UInt8>?, Int) ->
 ```
 
 - `Sink` here is a `@MainActor final class`.
-- A clean build never proves the body safe; what the Swift compiler checks on this seam →
-  /swift-patterns .

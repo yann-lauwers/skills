@@ -33,7 +33,7 @@ export const getUser = cache(async (id: string) => {
 
 ## LRU cache for cross-request data
 
-For data that does NOT change per request (config, lookup tables), cache outside React with an LRU cache, or the framework's cross-request cache — in Next.js, the one the installed version's docs give; where they live — /nextjs-patterns .
+For data that does NOT change per request (config, lookup tables), cache outside React with an LRU cache, or the framework's cross-request cache — in Next.js, the one the installed version's docs give.
 
 ## Avoid duplicate serialization in RSC props
 

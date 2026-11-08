@@ -34,6 +34,5 @@ Match the request against the routing table, read the matched reference, then wr
 
 ## Related
 
-- Component and hook design under test: /react-patterns
 - The red-green-refactor loop itself: /tdd
 - Reviewing test quality in a diff: /code-review

@@ -61,8 +61,7 @@ const hasItems = useStore((s) => s.cart.length > 0);
 
 Syncing a derived value into `useState` from an effect costs an extra render every time the
 source changes, and the intermediate frame renders the stale value. Derive inline, or with
-`useMemo` when the computation is genuinely expensive. The worked before/after is in
-/react-patterns , `references/render-and-state.md`.
+`useMemo` when the computation is genuinely expensive.
 
 ## Functional `setState` for stable callbacks
 
