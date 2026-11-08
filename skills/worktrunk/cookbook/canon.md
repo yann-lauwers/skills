@@ -44,6 +44,6 @@ find <tree> -type l ! -exec test -e {} \; -print
 
 ## Sharing a new top-level path
 
-1. Append the path's name to `CANON_ROOTS` in the repo's conf — no trailing slash, since it becomes a symlink.
-2. Ignore it by its bare name (`.agents`, never `.agents/` or `.agents/*`): the engine shares gitignored paths only, and a symlink matches no directory pattern, so it shows untracked and fails the removal guard.
+1. Append the path's name to `CANON_ROOTS` in the repo's conf.
+2. Add it to the repo's ignore rules: the engine shares gitignored paths only.
 3. Anything nested under an already-shared root is covered — no entry needed.
