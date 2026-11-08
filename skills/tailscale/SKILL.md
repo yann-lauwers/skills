@@ -6,24 +6,20 @@ disable-model-invocation: true
 
 # Tailscale
 
-## Project config
-
-- `~/.claude/skills/agents-config/scripts/agents-config get tailscale secret [--root "$CLAUDE_PROJECT_DIR"]`.
-- A repo with no `docs/agents/integrations/tailscale.md` → ask the user; on their yes, write one per /managing-harness , `references/skills.md` § A tool's skill and its config.
-- Nothing resolves → the tool is unwired: say so and stop.
+Needs: `TAILSCALE_API_KEY` — one tailnet's API access token; curl exits 2 naming it when it is unset.
 
 ## Calls
 
 - Base `https://api.tailscale.com/api/v2`; the tailnet segment `-` is the token's own tailnet.
-- Auth — Bearer, the `secret` item's `api-token` field; `<SECRET>` is `secret` uppercased, every non-alphanumeric as `_`:
+- Auth — Bearer `TAILSCALE_API_KEY`:
 
 ```sh
-keyless run -s K=<SECRET>__API_TOKEN -- curl -s --variable %K \
-  --expand-header 'Authorization: Bearer {{K}}' \
+curl --variable %TAILSCALE_API_KEY \
+  --expand-header 'Authorization: Bearer {{TAILSCALE_API_KEY}}' \
   https://api.tailscale.com/api/v2/tailnet/-/devices
 ```
 
-Provenance: 2026-09-25, curl 8.7.1, `<SECRET>` as `YANN_TAILSCALE` — `200`, a device list.
+Provenance: 2026-11-08, curl 8.7.1, `TAILSCALE_API_KEY` set from the `yann-tailscale` token — `200`, a device list; unset → `Variable 'TAILSCALE_API_KEY' import fail, not set`, exit 2.
 
 ## Traps
 
