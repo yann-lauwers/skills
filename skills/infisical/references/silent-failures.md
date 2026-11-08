@@ -20,4 +20,4 @@ Each differs from the CLI's own default → a wrong value reads as "the secret d
 ## An identity that reads nothing
 
 - A machine identity can authenticate and resolve a project while returning zero secrets in every environment → project membership and secret-read permission are separate grants.
-- Whether this project's identity carries the second → its config's `identity_reads_secrets` says; never infer it from a successful login.
+- Whether this project's identity carries the second → the project's instructions say; none stated → ask the user; never infer it from a successful login.
