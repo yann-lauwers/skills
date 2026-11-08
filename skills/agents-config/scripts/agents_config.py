@@ -48,8 +48,8 @@ TOP_DESCRIPTION = wrap(
 
 TOP_EPILOG = """\
 Examples:
-  # The branch git work in this repo is based on
-  agents-config get git base_branch
+  # Who may create labels on this repo's tracker
+  agents-config get github label_creation
 
   # One setting of whichever tool fills the vault role
   agents-config get --role vault vault_root
@@ -78,7 +78,7 @@ Exit codes:
   4  refused: the repo config is tracked by git, or git could not say
 
 Example:
-  agents-config resolve git --root ~/Code/x
+  agents-config resolve github --root ~/Code/x
 """
 
 ROLE_EPILOG = """\
@@ -101,7 +101,7 @@ Exit codes:
   4  refused: the repo config is tracked by git, or git could not say
 
 Example:
-  agents-config get git base_branch
+  agents-config get github label_creation
 """
 
 LIST_EPILOG = """\

@@ -7,7 +7,7 @@ One file per tool, at either level, same keys:
 ```yaml
 ---
 tool: <name>
-role: <capability>        # open set: tracker · secrets · messaging · vault · vcs · cache · db · errors · surveillance · accounting · …
+role: <capability>        # open set: tracker · secrets · messaging · vault · cache · db · errors · surveillance · accounting · …
 status: default | project-required
 secret: <entity>-<tool>   # item NAME in the secrets provider — never a vendor name
                           # <entity> = whoever owns the account: a project (`nexus-linear`),
@@ -43,7 +43,7 @@ defaults: { … } | {}      # tool params (team, channel, console, key-prefix): 
 ## How a project file merges
 
 - A project file is a diff against the floor, never a replacement: a key it omits keeps the floor's value, the project winning on any key it names.
-- Every overridable value is a `defaults` key; the top-level `secret` and `status` merge by the same rule — a repo scripting an API outside its vendor CLI names its own `secret` over the floor's; the forge's API item is the `vcs` config's `secret`, never the tracker config's.
+- Every overridable value is a `defaults` key; the top-level `secret` and `status` merge by the same rule — a repo scripting an API outside its vendor CLI names its own `secret` over the floor's.
 - `tool` and `role` identify the file and never merge: both levels carry the same pair, and a project file omitting `role` drops out of role resolution.
 - `status` omitted → the floor's is inherited; write it only to change it.
 - Absent ≠ `null`: an omitted key inherits the floor; a key set to `null` says "this tool has none here" and overrides a floor value.
