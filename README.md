@@ -77,14 +77,8 @@ Run in the repo: `npx skills add yann-lauwers/skills -a claude-code -y -s <names
 
 | Repo | Skills | Copies |
 | --- | --- | --- |
-| `~/Code/nexus-project/nexus` | pr-cluster sentry supabase daytona infisical prisma redis react-performance react-testing frontend-accessibility | excluded |
-| `~/Code/nexus-project/nexus-ui` | react-performance react-testing frontend-accessibility | excluded |
-| `~/Code/nexus-project/nexus-landing` | react-performance react-testing frontend-accessibility | excluded |
-| `~/Code/nexus-project/nexus-desktop` | ffi-boundaries | excluded |
-| `~/Code/les-gites-du-haras` | sentry webflow react-performance react-testing frontend-accessibility | committed |
-| `~/Code/effigest-site` | react-performance react-testing frontend-accessibility | committed |
-| `~/Code/personal-coach` | react-performance react-testing frontend-accessibility | committed |
-| `~/Code/playground` | react-performance react-testing frontend-accessibility | committed |
+| `~/Code/nexus-project/nexus` | pr-cluster sentry supabase daytona infisical prisma redis | excluded |
+| `~/Code/les-gites-du-haras` | sentry webflow | committed |
 | `~/Code/personal-ops` | billit enable-banking unifi local-markdown | committed |
 | `~/Code/athlete-os` | garmin | committed |
 | `~/Code/immo` | sentry supabase trigger-dev | committed |
