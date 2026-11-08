@@ -56,7 +56,7 @@ Every canon body — rule, skill, agent, format, command, prompt, `CLAUDE.md`/`A
 
 - Three levels load together: user (`~/.claude/`) — true in any codebase · project shared (`<repo>/`, committed) — true of one codebase for every session that loads it · project local (`<repo>/`, never committed) — true only for the user in that repo.
 - Decide each fact's level as it is written, not once per file.
-- A user-level fact naming a stack, framework, repo, ticket prefix, port, env var, integration or domain concept → project level · a language's idiom true in every codebase writing it → `AGENTS.md` § Code Style.
+- A user-level fact naming a stack, framework, repo, ticket prefix, port, env var, integration or domain concept → project level, except a tool no repo uses, whose section sits in `~/.agents/AGENTS.md` · a language's idiom true in every codebase writing it → `AGENTS.md` § Code Style.
 - A fact about the user rather than the codebase — their paths, ports, accounts, tools → local, whatever the repo does.
 - A project fact a teammate, a cloud session or CI must load → shared; in a repo only the user can pull (private, the user its only collaborator) → shared too.
 - A local copy sits at the shared one's path, excluded from git — except settings (`settings.local.json`), instructions (`CLAUDE.local.md`) and MCP servers (`claude mcp add --scope local`).
