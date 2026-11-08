@@ -8,7 +8,7 @@ One row per field, no value anywhere in it:
 
 | Part | What it says |
 | --- | --- |
-| Vault | the config's `vault` |
+| Vault | the vault keylessd's config names — `SKILL.md` § Config |
 | Item | a Login item titled `<entity>-<tool>` |
 | Per field | username, password, or a custom field with a stable lowercase name, and where its value comes from — the app's generator with the length and character set the consumer needs, a vendor console page, an existing item, or a local file by path; a multi-line value such as a PEM key goes whole into a custom field or a note |
 | Names | the minted name each field resolves under |

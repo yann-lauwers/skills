@@ -8,11 +8,10 @@ disable-model-invocation: true
 
 One shared vault holds every developer-tooling credential; item titles are global, so nothing is per-project.
 
-## Project config
+## Config
 
-- `~/.claude/skills/agents-config/scripts/agents-config get proton vault` → the vault, from `~/.claude/skills/agents-config/integrations/proton.md`. Floor only: no repo gets its own.
-- Config absent → the store is not wired on this machine: ask which provider holds the credentials, never guess a command.
-- keylessd's config, its path the `--config` default `keylessd check --help` prints → the store's `session_dir`, `key_provider`, `binary`, `token_expires` and `session.auto_login` · `~/.claude/skills/agents-config/scripts/agents-config get --role injector source_checkout` → the daemon's source.
+- keylessd's config, its path the `--config` default `keylessd check --help` prints → the store's `session_dir`, `key_provider`, `binary`, `token_expires` and `session.auto_login`, and the vault: `jq -r '[.secrets[].vault]|unique[]' <config>` · the daemon's source → `nbstr/keyless`, cloned at `~/Code/keyless`.
+- keylessd's config absent → the store is not wired on this machine: ask which provider holds the credentials, never guess a command.
 
 ## Reading
 
