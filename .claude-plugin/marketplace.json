@@ -32,11 +32,6 @@
       "description": "Answers Bash permission prompts: lets known-safe commands through, refuses destructive ones where they would run."
     },
     {
-      "name": "git-guards",
-      "source": "./plugins/git-guards",
-      "description": "Refuses a commit that carries a tool's local config."
-    },
-    {
       "name": "house-style",
       "source": "./plugins/house-style",
       "description": "Flags a standalone HTML page or stylesheet written while the house-style skill is not loaded."

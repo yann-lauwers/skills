@@ -7,7 +7,6 @@ skills/<name>/                   # one skill per folder, installed with npx skil
 hooks/                           # the hook registry, and lib/: the one source of every module plugins share
 plugins/agents/                  # browser-pilot and code-reviewer, dispatched as agents:<name>
 plugins/bash-permissions/        # answers Bash permission prompts, refuses destructive commands
-plugins/git-guards/              # refuses a commit carrying a tool's local config
 plugins/house-style/             # flags an HTML page or stylesheet written without the house-style skill
 plugins/auto-resume/             # resumes a turn an API error ended
 plugins/continuous-compaction/   # Claude Code only: the compaction plugin; Codex loads no hooks from its `modules` hooks.json
@@ -20,9 +19,6 @@ plugins/codex-local-instructions/ # Codex only: injects a repo's AGENTS.local.md
 Naming both agents makes `npx skills` keep each skill in `~/.agents/skills`, where Codex reads it, and symlink it into `~/.claude/skills`. With `-a claude-code` alone it copies into `~/.claude/skills` only.
 
 ```sh
-# the resolver every other skill and hook calls — first, and always with -g
-npx skills add yann-lauwers/skills -g -a claude-code codex -y -s agents-config
-
 # skills used everywhere
 npx skills add yann-lauwers/skills -g -a claude-code codex -y -s analysing-recordings apple-calendar apple-mail cmux cp disk-cleanup garden-domain-docs git hook-development house-style keyless managing-harness plain proton simplify-comments slack superwhisper tailscale things voice watching worktrunk x
 
@@ -39,7 +35,6 @@ npx skills add yann-lauwers/skills -a claude-code codex -y -s validating watch-p
 claude plugin marketplace add yann-lauwers/skills   # then set "autoUpdate": true on it in ~/.claude/settings.json
 claude plugin install agents@yannlauwers --scope user
 claude plugin install bash-permissions@yannlauwers --scope user
-claude plugin install git-guards@yannlauwers --scope user
 claude plugin install house-style@yannlauwers --scope user
 claude plugin install auto-resume@yannlauwers --scope user
 claude plugin install continuous-compaction@yannlauwers --scope user
@@ -48,7 +43,6 @@ claude plugin install continuous-compaction@yannlauwers --scope user
 codex plugin marketplace add yann-lauwers/skills
 codex plugin add agents@yannlauwers
 codex plugin add bash-permissions@yannlauwers
-codex plugin add git-guards@yannlauwers
 codex plugin add house-style@yannlauwers
 codex plugin add auto-resume@yannlauwers
 codex plugin add domain-canon@yannlauwers

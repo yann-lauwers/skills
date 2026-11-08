@@ -1,7 +1,0 @@
-{
-  "name": "git-guards",
-  "description": "Refuses a commit that carries a tool's local config.",
-  "author": {
-    "name": "Yann Lauwers"
-  }
-}
