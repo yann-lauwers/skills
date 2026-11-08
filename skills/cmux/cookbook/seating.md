@@ -4,7 +4,7 @@
 
 ## Step 1: Resolve the folder
 
-- `scripts/seat.sh` derives the folder from the repo's `seat_folders` and creates the repository's folder when none exists → omit `--group` unless the effort has its own folder or the script reports an ambiguity.
+- `scripts/seat.sh` derives the folder from the repo's `cmux.seatFolders` git config and creates the repository's folder when none exists → omit `--group` unless the effort has its own folder or the script reports an ambiguity.
 - The repository's folder is found by its name → a folder renamed away from its repo's name is not found and a second is created beside it: rename it back, or pass `--group`.
 - `per-repository`, one unit, or seats landing where a folder already covers them → nothing to decide; go to Step 2.
 - `per-effort`, and an effort with no folder yet → read `$C workspace-group list --json` first (names are not unique), then create it and seat with `--group`:
@@ -52,7 +52,7 @@ ${CLAUDE_SKILL_DIR}/scripts/seat.sh \
 - `--command` is parsed by the seat's shell → never put prompt text in it: write the prompt to a file, and pass a script whose last line runs `claude "$(cat <file>)"`; an apostrophe in an inline prompt leaves the seat at `dquote>` while `seat.sh` still reports `SEAT`.
 - An empty seat for the user to type in → omit `--command`.
 - Exit codes, each stopping the run:
-  - 2 → bad argument, unknown group, or an unreadable or invalid `seat_folders`.
+  - 2 → bad argument, unknown group, or an invalid `cmux.seatFolders`.
   - 3 → no hue to adopt, or every hue worn → pick per § The folder's hue, re-run with `--hex`.
   - 4 → the colour did not stick (repair the named ref, never create a second seat), or the create failed (no seat exists; re-run).
   - 5 → ambiguous folder: two groups stand in `--cwd`, two are named for the repo, or `--group` disagrees with the derived one → pass the right `--group`. Nothing is created.

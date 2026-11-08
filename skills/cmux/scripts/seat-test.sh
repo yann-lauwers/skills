@@ -22,11 +22,9 @@ reset() { printf '{"groups":[%s],"workspaces":[%s]}' "$1" "$2" > "$T/state.json"
 grp() { printf '{"ref":"workspace_group:%s","name":"%s","custom_color":"%s","anchor_workspace_ref":"workspace:%s","member_workspace_refs":["workspace:%s"]}' "$1" "$2" "$3" "$1" "$1"; }
 grpm() {  # grpm <n> <name> <hex> <member n> — a folder whose anchor is workspace:<n> and which holds one member seat besides it
   printf '{"ref":"workspace_group:%s","name":"%s","custom_color":"%s","anchor_workspace_ref":"workspace:%s","member_workspace_refs":["workspace:%s","workspace:%s"]}' "$1" "$2" "$3" "$1" "$1" "$4"; }
-folders() {  # folders <value> — repoA's own seat_folders setting; `-` removes it so the floor governs
-  local f="$T/repoA/docs/agents/integrations/cmux.md"
-  if [ "$1" = "-" ]; then rm -f "$f"; return; fi
-  mkdir -p "$(dirname "$f")"
-  printf -- '---\ntool: cmux\nrole: terminal\ndefaults:\n  seat_folders: %s\n---\n' "$1" > "$f"
+folders() {  # folders <value> — repoA's own cmux.seatFolders git config; `-` unsets it so the default governs
+  if [ "$1" = "-" ]; then git -C "$T/repoA" config --unset cmux.seatFolders; return 0; fi
+  git -C "$T/repoA" config cmux.seatFolders "$1"
 }
 landed() {  # the folder name the most recently created seat is a member of, or UNGROUPED
   python3 - "$T" <<'PY'
@@ -81,11 +79,11 @@ check "per effort, a base checkout joins the repository's folder, never an effor
 
 folders -
 reset "$(grp 1 RepoA '#167E31'),$(grpm 2 'NEX-4714' '#9360EA' 3)" "$(ws 1 "$T/elsewhere"),$(ws 2 "$T/elsewhere"),$(ws 3 "$T/repoA-wt")"
-check "per repository — the floor — a worktree joins the repository's folder even where an effort stands" 0 RepoA -- --cwd "$T/repoA-wt"
+check "per repository — the default — a worktree joins the repository's folder even where an effort stands" 0 RepoA -- --cwd "$T/repoA-wt"
 
 folders sideways
 reset "$(grp 1 RepoA '#167E31')" "$(ws 1 "$T/elsewhere")"
-check "a seat_folders value that is neither setting is refused, nothing created" 2 - -- --cwd "$T/repoA-wt"
+check "a cmux.seatFolders value that is neither setting is refused, nothing created" 2 - -- --cwd "$T/repoA-wt"
 folders -
 
 finish

@@ -16,8 +16,8 @@
 #   seat.sh --name <title> --cwd <path> [--group <ref>] [--command <text>] [--hex '#RRGGBB']
 #
 # Every seat lands in a folder. Without `--group` the folder is DERIVED from the repository's
-# `seat_folders` setting, read from the config holding `role: terminal` at the repo's base
-# checkout. `per-effort`, and --cwd is a linked worktree: a group with a member standing in
+# `cmux.seatFolders` git config, read at the repo's base checkout, `per-repository` when unset.
+# `per-effort`, and --cwd is a linked worktree: a group with a member standing in
 # --cwd itself. Otherwise, and as the fallback: the repository's own folder — the one named for
 # the repo — else a folder created for that repository, coloured, before the seat. Pass
 # `--group` to place a seat in an effort's folder — a session seated for a ticket tree — or where
@@ -27,7 +27,7 @@
 #
 # Exit 0 seat created, in its folder, and coloured
 #      2 bad arguments, the named group is not in the listing, or the repository's
-#        `seat_folders` setting cannot be read or is neither `per-repository` nor `per-effort`
+#        `cmux.seatFolders` git config is neither `per-repository` nor `per-effort`
 #      3 the group and every member are colourless and no --hex was given, or every palette
 #        and overflow hue is already worn: pick one no neighbouring folder wears, pass --hex
 #      4 the seat or the folder was created and the colour did not stick, or a create failed
@@ -135,18 +135,16 @@ print(hits[0]["ref"] if hits else "")
 #
 # The setting is read at the base checkout rather than at --cwd, because it is the repository's
 # answer and every worktree of it must get the same one.
-AGENTS_CONFIG="${AGENTS_CONFIG:-$HOME/.claude/skills/agents-config/scripts/agents-config}"
 MODE=""; IN_WORKTREE=""
 if COMMON=$(git -C "$CWD" rev-parse --path-format=absolute --git-common-dir 2>/dev/null); then
   COMMON=$(cd "$COMMON" && pwd -P)
   BASE="$COMMON"; [ "$(basename "$COMMON")" = ".git" ] && BASE="$(dirname "$COMMON")"
   GITDIR=$(cd "$(git -C "$CWD" rev-parse --path-format=absolute --git-dir)" && pwd -P)
   [ "$GITDIR" != "$COMMON" ] && IN_WORKTREE=1
-  MODE=$("$AGENTS_CONFIG" get --role terminal seat_folders --root "$BASE" 2>&1) || {
-    echo "seat.sh: cannot read this repository's seat_folders setting: $MODE" >&2; exit 2; }
+  MODE=$(git -C "$BASE" config --get cmux.seatFolders || echo per-repository)
   case "$MODE" in
     per-repository|per-effort) ;;
-    *) echo "seat.sh: seat_folders reads '$MODE' for $BASE; want per-repository or per-effort" >&2; exit 2 ;;
+    *) echo "seat.sh: cmux.seatFolders reads '$MODE' for $BASE; want per-repository or per-effort" >&2; exit 2 ;;
   esac
 fi
 
