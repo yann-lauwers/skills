@@ -13,7 +13,7 @@ For a session that arrived carrying one ticket: create its worktree, then get th
 ~/.config/worktrunk/bin/wtk-new -C <repo> <branch> [--base origin/<base>]
 ```
 
-   - `<branch>` → `~/.claude/skills/agents-config/scripts/agents-config get --role vcs branch_pattern`, filled from the ticket's id and title; `auto` → the version-control tool's skill resolves it: worktrunk takes it as typed and fetches nothing from the tracker.
+   - `<branch>` → the convention the project's instructions state, filled from the ticket's id and title; none stated → `<author>/<short-slug>`, kebab-case; worktrunk takes it as typed and fetches nothing from the tracker.
    - A shared base goes as `--base origin/<base>` after `git -C <repo> fetch origin <base>`; then confirm the tree's `HEAD` equals that ref's tip before anything is seated there.
    - `WT_SKIP=<group>,…` skips setup groups (`references/config.md`); a repo with a project folder → its `AGENTS.md` names any other create prefix.
    - It retries git's concurrent-add race on its own, and switches to an existing branch that has no tree instead of creating it.
