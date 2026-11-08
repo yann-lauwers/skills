@@ -20,8 +20,8 @@ keyless ls                                 the names you can use
 ## An unresolved name still runs
 
 - `keyless run` never refuses: an unresolved name warns `DEGRADED` on stderr and the child runs without it, at its own exit code → read stderr; exit 0 proves nothing.
-- `DEGRADED` naming a store that failed to answer → the tool `~/.claude/skills/agents-config/scripts/agents-config role secrets` resolves.
-- No such name → check the app-runtime store (`role: app-secrets`), where a wrong environment or path answers zero secrets with no error, before calling it missing.
+- `DEGRADED` naming a store that failed to answer → `proton` or `daemon` → /proton ; `keychain` → Keychain Access.
+- No such name → check the app-runtime secrets injector the project's instructions name, where a wrong environment or path answers zero secrets with no error, before calling it missing.
 
 ## Quoting
 
@@ -43,6 +43,6 @@ keyless ls                                 the names you can use
 
 - Client config `~/.config/keyless/config.json` (`$KEYLESS_CONFIG`) · daemon config `/usr/local/etc/keyless/keylessd.json` · hook pack config `~/.config/keyless/hooks.json` (`$KEYLESS_HOOKS_CONFIG`) · hook decisions `~/.local/state/keyless/hook-decisions.jsonl`.
 
-## Project config
+## Source
 
-- `~/.claude/skills/agents-config/scripts/agents-config get keyless source_checkout` → the source, for how the daemon behaves. Floor only.
+- `~/Code/keyless` (github.com/nbstr/keyless) → how the daemon behaves.
