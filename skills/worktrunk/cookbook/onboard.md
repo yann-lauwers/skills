@@ -1,33 +1,33 @@
 # Onboard a Repo, or Change Its Entry
 
-Settles whether a repo uses worktrees at all, and where it does, gives it a worktrunk project entry — finds what a fresh tree needs, writes the entry with the decisions recorded beside it, verifies. Steps 0–7 run in order, Prerequisites and Steps 1–7 only once Step 0 chose onboarding; what a tree needs and the branch convention are judgment. A repo that already has an entry → § Change an existing entry.
+Steps run in order. A repo that already has an entry → § Change an existing entry.
 
 ## Step 0: Read the marker
 
-Read the repo's marker per `SKILL.md` § The worktree marker.
+A repo uses worktrees when its root `AGENTS.local.md` carries this section; a repo without it works in its checkout as it stands.
+
+```markdown
+## Worktrees
+
+- Work that will commit runs in its own worktree: `~/.config/worktrunk/bin/wtk-new -C <repo> <branch> [--base origin/<base>]` cuts it under `~/worktrees/<repo>/`.
+```
+
+`grep -sF 'runs in its own worktree' "$(git -C <repo> rev-parse --show-toplevel)/AGENTS.local.md"` reads it.
 
 - Present → onboarding goes ahead.
-- Absent → onboarding IS the decision, so it is the user's: put it to them before Step 1. Where they decline, stop here and return to the caller with nothing written: the absent marker already says the repo works in its checkout.
+- Absent → onboarding IS the decision, so it is the user's: put it to them before Step 1. Where they decline, stop here and return to the caller with nothing written.
 - Chosen → write the marker into the root `AGENTS.local.md`, creating it; then make sure `CLAUDE.local.md` carries `@AGENTS.local.md` as a line of its own, creating it or adding the line at its top.
 
 **Done when:** the marker has been read, and either the user declined, or both files reach the marker line.
 
-## Prerequisites — once Step 0 chose onboarding
+## Prerequisites
 
-```bash
-git wt --version
-```
-
-- Fails → the `worktrunk` formula or the `~/.local/bin/git-wt` link is missing; → `brew install worktrunk` on macOS, the release binary on Linux; say so and stop.
-- No `~/.config/worktrunk/bin/` on this host → this setup's layer is absent here: say so and stop.
+- `git wt --version` fails → `brew install worktrunk` on macOS, the release binary on Linux; say so and stop.
+- No `~/.config/worktrunk/bin/` on this host → the layer is absent here: say so and stop.
 
 ## Step 1: Find the repo's key
 
-```bash
-git -C <repo> remote get-url origin
-```
-
-- The entry's key is that URL as `<host>/<owner>/<repo>`: `git@github.com:<owner>/<repo>.git` → `github.com/<owner>/<repo>`.
+- The entry's key is `git -C <repo> remote get-url origin` as `<host>/<owner>/<repo>`: `git@github.com:<owner>/<repo>.git` → `github.com/<owner>/<repo>`.
 - `grep -nF 'projects."<key>"' ~/.config/worktrunk/config.toml` finds an entry → § Change an existing entry instead.
 - The canon conf takes another name: the main checkout's directory name (`basename "$(dirname "$(git -C <repo> rev-parse --path-format=absolute --git-common-dir)")"`).
 
@@ -52,23 +52,21 @@ git -C <repo> remote get-url origin
 
 ## Step 4: Write the entry
 
-Copy the existing entry in `~/.config/worktrunk/config.toml` closest in shape, and adapt it; `references/config.md` holds the keys.
+Copy the entry in `~/.config/worktrunk/config.toml` closest in shape, and adapt it; `git wt hook --help` documents the syntax.
 
 - One `[[projects."<key>".pre-start]]` block per step, in this order, each one a named command: `canon` (always) · `env` — `wtk-step copy <wt> <primary> <file>…`, or `copy-optional` for a file the main checkout may lack · `deps` — `wtk-step run <wt> deps -- <install>` · `build` — `wtk-step run <wt> build --heavy -- <build>`.
 - One dev server → `aliases.dev` running `wtk-web {{ worktree_path }} <app> {{ args }} -- <command reading $PORT>`, plus `pre-remove` running `wtk-web {{ worktree_path }} <app> down`.
 - A server pinning its port in tracked files cannot run twice → no `dev` alias, and the reason recorded per Step 5.
 - Git hooks that re-run the canon linker after a rebase → a `relink` step running `wtk-step relink-hooks {{ worktree_path }}`; it refuses a repo whose `core.hooksPath` is set.
 - More than one command per act — servers, a database, a tunnel → a project folder `~/.config/worktrunk/projects/<repo>/`, with its own `AGENTS.md`, contract and tests, per `references/tooling-contracts.md`.
-- Never a `.config/wt.toml` in the repo: its hooks are committed for every clone and each needs approval; this setup's steps stay in the user config.
-- Canon → copy the closest `~/.config/worktrunk/canon/<name>.conf` to the canon name Step 1 resolved, per `cookbook/canon.md` § Sharing a new top-level path; its `CANON_FILES` lists `CLAUDE.local.md AGENTS.local.md`, so the marker reaches every tree.
+- Never a `.config/wt.toml` in the repo: its hooks are committed for every clone and each needs approval.
+- Canon → copy the closest `~/.config/worktrunk/canon/<name>.conf` to the canon name Step 1 resolved, keeping `CLAUDE.local.md AGENTS.local.md` in its `CANON_FILES`.
 
 **Done when:** every need Step 2 found has a step, an alias or a hook, or a recorded reason it has none.
 
 ## Step 5: Record the repo's worktree decisions
 
-- Record the repo's own worktree decisions as TOML comments beside the block each governs.
-- Only what a reader cannot derive: a create-time default the repo always wants, with the constraint behind it · why the entry is shaped unusually — no dev alias, a step that is normally skipped.
-- A fact about another resource goes in that resource's own config — a shared cache whose keyspace spans every tree, per-tree tunnel hostnames, the branch pattern: each is owned by the cache, tunnel or version-control config, where an agent reaching for that resource resolves it.
+- A TOML comment above the block it governs, only for what a reader cannot derive: a create-time default the repo always wants, with the constraint behind it · why the entry is shaped unusually — no dev alias, a step that is normally skipped.
 
 **Done when:** every non-derivable decision is written beside the block it governs.
 
@@ -79,14 +77,12 @@ git wt -C <repo> hook show
 git wt -C <repo> hook pre-start --dry-run
 ```
 
-**Done when:** `hook show` lists the entry's steps in order and the dry run renders every command. A step that fails to render is the finding → report it and stop, never print completion over it.
+**Done when:** `hook show` lists the entry's steps in order and the dry run renders every command. A step that fails to render is the finding → report it and stop.
 
-## Step 7: Print Completion
+## Step 7: Report
 
-- Report the key, the canon conf path, every step, the dev alias, then the create command that exercises it — `~/.config/worktrunk/bin/wtk-new -C <repo> <test-branch>`.
+- The key, the canon conf path, every step, the dev alias, then the create command that exercises it — `~/.config/worktrunk/bin/wtk-new -C <repo> <test-branch>`.
 - Onboarding produces an entry, never a worktree: a caller that came here to start work still owes the create and `cookbook/depart.md`'s next step.
-
-**Done when:** the report carries the values this run resolved.
 
 ## Change an existing entry
 
