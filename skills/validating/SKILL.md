@@ -15,7 +15,7 @@ argument-hint: "[ticket-or-criteria]"
 
 ## The run
 
-1. Create the run folder `$AGENTS_REPORTS_DIR/validation/<slice>/runs/<YYYY-MM-DD>_<n>/`, `<slice>` the ticket id lower-cased, else a kebab-case slug of the request.
+1. Create the run folder `validation/<slice>/runs/<YYYY-MM-DD>_<n>/` in the reports folder, `<slice>` the ticket id lower-cased, else a kebab-case slug of the request.
 2. Gather the criteria, each verbatim:
    - a ticket → its description's and every comment's, a comment replacing only the criterion it names; a spec → its child tickets'. Provenance `ticket`.
    - each the owner gave, in this conversation or as an `owner` row of the slice's newest `run.md`, less any withdrawn. Provenance `owner`.
