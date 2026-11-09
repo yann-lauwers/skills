@@ -1,9 +1,7 @@
 ---
 name: validating
 description: >-
-  Proves a built change against its criteria by using it the way its user does, and ends on a
-  verdict. Use on "validate <ticket>", "validate NEX-123", "prove it works", "does this meet the
-  criteria", "re-validate", or a brief opening `Skills: validating`.
+  Proves a built change against its criteria by using it the way its user does, and ends on a verdict. Use on "validate <ticket>", "validate <ticket>", "prove it works", "does this meet the criteria", "re-validate", or a brief opening `Skills: validating`.
 argument-hint: "[ticket-or-criteria]"
 ---
 
@@ -14,7 +12,6 @@ argument-hint: "[ticket-or-criteria]"
 - Proof is a capture this run took of the change in use; a passing test, a read of the code or a returned claim never is.
 - Nothing reaches the owner mid-run: a question lands in `run.md` as an ask.
 - The run edits no product code, test or doc; its drivers and captures live in its run folder.
-- A fix lands mid-run → stop the run and start a new one at the fix's commit.
 
 ## The run
 
