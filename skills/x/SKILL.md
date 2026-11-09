@@ -8,7 +8,7 @@ disable-model-invocation: true
 
 ## Reading on an account
 
-- A repo reading X on its own account → a persisted session from a `agents:browser-pilot` `MODE: DISCOVERY` dispatch, never a key on this route; where that session lives → as the project's instructions state it.
+- A repo reading X on its own account → a session `browser-login` mints, never a key on this route; where that session lives → as the project's instructions state it.
 
 ## Routing
 

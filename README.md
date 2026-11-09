@@ -5,7 +5,7 @@ Yann Lauwers' Claude Code skills and plugins. Every machine installs from this r
 ```
 skills/<name>/                   # one skill per folder, installed with npx skills
 hooks/                           # the hook registry, and lib/: the one source of every module plugins share
-plugins/agents/                  # browser-pilot and code-reviewer, dispatched as agents:<name>
+plugins/agents/                  # code-reviewer, dispatched as agents:<name>
 plugins/bash-permissions/        # answers Bash permission prompts, refuses destructive commands
 plugins/house-style/             # flags an HTML page or stylesheet written without the house-style skill
 plugins/auto-resume/             # resumes a turn an API error ended

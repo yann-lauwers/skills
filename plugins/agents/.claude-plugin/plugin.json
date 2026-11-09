@@ -1,6 +1,6 @@
 {
   "name": "agents",
-  "description": "Subagents: browser-pilot drives a real browser and returns its evidence, code-reviewer attacks one scope for bugs.",
+  "description": "Subagents: code-reviewer attacks one scope for bugs.",
   "author": {
     "name": "Yann Lauwers"
   }
