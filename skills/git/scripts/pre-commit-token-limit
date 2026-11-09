@@ -18,6 +18,8 @@ LOCKFILE_NAMES = {
     "packages.lock.json", "gradle.lockfile", "conan.lock", "MODULE.bazel.lock",
 }
 
+WHOLE_BY_DESIGN_NAMES = {"GLOSSARY.md"}
+
 GENERATED_PATTERNS = (
     "*.min.js", "*.min.css", "*.min.mjs", "*.map", "*.snap", "*.lock",
     "*.svg", "*.jsonl", "*.ndjson", "*.csv", "*.tsv", "*.har",
@@ -73,9 +75,9 @@ def marked_not_authored(paths):
     return {path for path, _attr, value in triples if value in ("set", "true")}
 
 
-def generated_by_name(path):
+def skipped_by_name(path):
     name = path.rsplit("/", 1)[-1]
-    return name in LOCKFILE_NAMES or any(
+    return name in LOCKFILE_NAMES or name in WHOLE_BY_DESIGN_NAMES or any(
         fnmatch.fnmatchcase("/" + path if "/" in pattern else name, pattern)
         for pattern in GENERATED_PATTERNS)
 
@@ -112,7 +114,7 @@ def oversized_files():
         return []
     sizes = blob_sizes(set(blobs.values()))
     candidates = [p for p, sha in blobs.items()
-                  if sizes[sha] > MAX_BYTES and not generated_by_name(p)]
+                  if sizes[sha] > MAX_BYTES and not skipped_by_name(p)]
     parents = merged_parents()
     if candidates and parents:
         carried = blobs_carried_from(parents, candidates)
