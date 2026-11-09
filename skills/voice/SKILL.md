@@ -1,6 +1,6 @@
 ---
 name: voice
-description: "How Yann sounds in a message a person receives. Use before drafting any message, comment, PR body or email another person reads, where no channel skill owns the wording."
+description: "How Yann sounds to someone he's addressing. Use before drafting a message written to a person: a Slack DM or channel post, an email, a reply in someone's thread."
 ---
 
 # Voice
