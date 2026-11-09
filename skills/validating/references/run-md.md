@@ -1,6 +1,6 @@
 # run.md
 
-Read by the opener relaying it and by the next run, which takes its `owner` rows.
+Read by the next run, which takes its `owner` rows.
 
 ```markdown
 # <slice> — run <YYYY-MM-DD>_<n>
