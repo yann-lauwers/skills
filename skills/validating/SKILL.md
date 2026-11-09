@@ -1,27 +1,39 @@
 ---
 name: validating
 description: >-
-  Proves a built ticket or spec against its acceptance criteria by using it the way its user does.
-  Use on "validate <ticket>", "prove it works", "does this meet the criteria", "re-validate", or a
-  brief opening `Skills: validating`. Not for whether the diff matches its spec on paper —
-  /code-review ; root-causing a failure — /diagnosing-bugs .
-argument-hint: "[ticket-or-spec-id]"
+  Proves a built change against its criteria by using it the way its user does, and ends on a
+  verdict. Use on "validate <ticket>", "validate NEX-123", "prove it works", "does this meet the
+  criteria", "re-validate", or a brief opening `Skills: validating`.
+argument-hint: "[ticket-or-criteria]"
 ---
 
 # Validating
 
-- Proof — an artifact this run captured at the slice's commit, using the slice on its vehicle the way its user does; a passing test, a read of the code or a returned claim is context, never proof.
-- Slice — the ticket or spec under proof; a spec's criteria are its child tickets'.
-- Report — `$AGENTS_REPORTS_DIR/validation/<slice>/`, `<slice>` the ticket id lower-cased, else a kebab-case slug; unset → ask the user where reports go, and stop.
-- Run — one proof of the slice at one commit: `<report>/runs/<YYYY-MM-DD>_<n>/`, holding `run.md` and one directory per scenario.
-- A slice changing nothing a person or a program uses → say so in one line and stop.
+## Rules
 
-## Pick a branch
+- Proof is a capture this run took of the change in use; a passing test, a read of the code or a returned claim never is.
+- Nothing reaches the owner mid-run: a question lands in `run.md` as an ask.
+- The run edits no product code, test or doc; its drivers and captures live in its run folder.
+- A fix lands mid-run → stop the run and start a new one at the fix's commit.
 
-| The request is… | Read |
-| --- | --- |
-| a brief opening `Skills: validating` | `cookbook/run.md` |
-| anything else — open a run, relay it, re-run after a fix | `cookbook/open.md` |
-| what a run reads before planning, its criteria, plan values and vehicles | `references/plan.md` |
-| preflight, isolation, medium, scenarios, the walk, browser and app scenarios | `references/evidence.md` |
-| `run.md`'s shape, grading, the verdict | `references/run-md.md` |
+## The run
+
+1. Create the run folder `$AGENTS_REPORTS_DIR/validation/<slice>/runs/<YYYY-MM-DD>_<n>/`, `<slice>` the ticket id lower-cased, else a kebab-case slug of the request.
+2. Gather the criteria, each verbatim:
+   - a ticket → its description's and every comment's, a comment replacing only the criterion it names; a spec → its child tickets'. Provenance `ticket`.
+   - each the owner gave, in this conversation or as an `owner` row of the slice's newest `run.md`, less any withdrawn. Provenance `owner`.
+   - none from either → write them from the change's direction, provenance `self`.
+3. Per criterion, what its user observes when it holds, carrying every value the ticket states; a value never comes from the code under test.
+4. Plan each: `prove` · `skip`, naming the event it waits for — the merge, CI, a release · `ask`, quoting the two sources that disagree · `review`, where it states no behaviour to observe.
+5. Prove each `prove` criterion on the highest surface reaching it — the app's window, the page, the API, the command, the stored data — launched the way the repo's instructions name, one folder per scenario. A page → a Playwright browser of the run's own.
+6. Use the change once more past the criteria, pressing every control it adds or changes; a console error, a failed request, a crash or a dead control, reproduced → a defect.
+7. Grade into `run.md` per `references/run-md.md`, stop every process the run started, and end on one message: the verdict line, then each FAIL, defect, ask and blocker; a ticket → the verdict line and the run folder's path go on it as a comment.
+
+## Grading
+
+- A driver, selector or environment fault → repair the proof and re-run the scenario.
+- A scenario that cannot run → each criterion it serves takes NOT EXERCISED, naming the blocker.
+- A stub standing in for a real service → the criterion it serves says so, and passes only on the real one.
+- A transition → captured across it, never by one still of its end state.
+- Verdict, the first that holds: BLOCKED — the run stopped, naming who must act · FAIL — a criterion failed or a defect is recorded · PASS — every `prove` and every `owner` criterion passed, no ask · INCOMPLETE — anything else, naming what holds it.
+- A PASS resting only on `self` criteria → the verdict line says so.

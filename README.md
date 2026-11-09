@@ -20,7 +20,7 @@ Naming both agents makes `npx skills` keep each skill in `~/.agents/skills`, whe
 
 ```sh
 # skills used everywhere
-npx skills add yann-lauwers/skills -g -a claude-code codex -y -s analysing-recordings apple-calendar apple-mail cmux cp disk-cleanup garden-domain-docs git hook-development house-style keyless managing-harness plain proton simplify-comments slack superwhisper tailscale things voice watching worktrunk x
+npx skills add yann-lauwers/skills -g -a claude-code codex -y -s analysing-recordings apple-calendar apple-mail cmux cp disk-cleanup garden-domain-docs git hook-development house-style keyless managing-harness plain proton simplify-comments slack superwhisper tailscale things validating voice watching worktrunk x
 
 # other authors' packs, everywhere
 npx skills add mattpocock/skills -g -a claude-code codex -y -s ask-matt grill-me grilling handoff retro teach to-questionnaire wait-what loop-me writing-for-agents
@@ -29,7 +29,7 @@ npx skills add cloudflare/skills -g -a claude-code codex -y -s cloudflare wrangl
 
 # coding skills, per code repo: run inside the repo, without -g
 npx skills add mattpocock/skills -a claude-code codex -y -s code-review codebase-design diagnosing-bugs domain-modeling grill-with-docs implement implement-spec improve-codebase-architecture pr prototype research setup-matt-pocock-skills tdd to-spec to-tickets triage wayfinder wizard
-npx skills add yann-lauwers/skills -a claude-code codex -y -s validating watch-pr
+npx skills add yann-lauwers/skills -a claude-code codex -y -s watch-pr
 
 # plugins
 claude plugin marketplace add yann-lauwers/skills   # then set "autoUpdate": true on it in ~/.claude/settings.json
