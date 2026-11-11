@@ -1,9 +1,7 @@
 ---
 name: plain
 description: >-
-  Re-explains the previous assistant message in plain language, visual first. Started only by /plain
-  .
-disable-model-invocation: true
+  Re-explains the previous assistant message in plain language, visual first. Use on "/plain", "say it plainly", "explain that simply", "simpler", "eli5", "I don't get it", "you lost me", "plus simple", "j'ai pas compris".
 ---
 
 # Plain
