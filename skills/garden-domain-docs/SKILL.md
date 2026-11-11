@@ -1,42 +1,42 @@
 ---
 name: garden-domain-docs
-description: "Walks the decision records and glossaries against today's code and applies only what the user picks. Started only by /garden-domain-docs , with a folder or a record to narrow it."
+description: "Walks a repo's ADRs and glossaries against today's code and applies only what the user picks. Started only by /garden-domain-docs , narrowed by `adr` or `glossary`, then a folder, a file or a note."
+argument-hint: "[adr|glossary] [folder or file] [context]"
 disable-model-invocation: true
 ---
 
 # Garden Domain Docs
 
-- Run /domain-modeling first; every proposal meets its bar.
-- The repo's domain docs name where its records and glossaries live; none provided → the user runs `/setup-matt-pocock-skills`.
+/domain-modeling owns the rules: its three-part ADR bar, its ADR and glossary formats, its file structure. Read it for those; every verdict cites one. Its write-inline habit does not apply here: nothing changes before the user picks.
 
-## Process
+## 1. Scope
 
-### 1. Read
+- First word `adr` or `glossary` → walk that kind only; neither → both. A kind the repo lacks is skipped silently.
+- The rest of the message — a folder, a file, a note — narrows the walk and says what to look for.
+- Find every `GLOSSARY.md` and `docs/adr/*.md` in this repo, under the folder passed when there is one, so the ones the map misses surface.
 
-- Scope — the folder or record passed, else every records folder and every glossary.
-- Read each record whole and test its claims against the code it names, as it stands today.
+## 2. Classify
 
-### 2. Classify
+Read each ADR whole and test its claims against the code it names, as it stands today. Each takes one verdict, tested in this order:
 
-Each record takes one verdict:
-
-- Keep — it meets domain-modeling's ADR bar and every clause holds.
+- Retire, subject gone — what it decided about no longer exists in the code, or the decision changes nothing there today. Delete it; nothing to carry.
+- Retire, fails the bar — name the criterion. What a reader still needs moves to the code that carries it; a rule a check could enforce becomes the check.
+- Supersede — a later decision replaced it and the road between them is worth knowing; mark it per the ADR format, its text left as written.
+- Merge — two ADRs hold one decision; the survivor carries both, the other's lessons in its _Considered Options_.
+- Move — it sits outside the folder the file structure gives it; name that folder.
 - Update — the decision holds, a clause doesn't; each stale clause gets its replacement, checked at `path:line`.
-- Supersede — a later decision replaced it and the road between them is worth knowing; mark it per domain-modeling's ADR format, its text left as written.
-- Fold into code — it fails the bar because a reader of the code would not wonder why; name what will carry it; a rule a check could enforce becomes the check.
-- Merge — two records hold one decision; the survivor carries both, the other's lessons in its _Considered options_.
-- Move — it sits outside the folder domain-modeling's file structure and the repo's domain docs give it; name that folder.
+- Keep — it passes the bar and every clause holds.
 
-Each glossary term takes one: keep · update · cut — it fails domain-modeling's glossary rules, or nothing in the code or the records uses it · move — to the glossary the file structure names.
+Each glossary term takes one: keep · update · cut — it fails the glossary rules, or nothing in the code or the ADRs uses it · move — to its context's glossary.
 
-### 3. Present
+Multi-context → each map entry takes one: keep · update · cut — the context is gone · add — a glossary in the repo the map misses.
 
-- One table per folder — record or term · verdict · one-line reason · change — with the folder's numbering after the changes beneath it.
+## 3. Present
+
+- One table per folder — number · ADR or term · verdict · one-line reason · change.
+- Numbers run once across every table and never restart, so a number names one change.
 - Calls only the user can make → one round of questions per /grilling ; then wait.
 
-### 4. Apply what the user picked
+## 4. Apply what the user picked
 
-Make the picked changes, renumber each touched folder, and rewrite every citation of a number that moved. Done when, in every records folder:
-
-- the numbers run 0001, 0002, … with no gap and none twice, superseded records included;
-- every path a record names exists, and every record number cited in the repo names the record it meant.
+Done when every path an ADR names exists, every ADR number cited in the repo names the ADR it meant, and the map lists exactly the glossaries in the repo.
