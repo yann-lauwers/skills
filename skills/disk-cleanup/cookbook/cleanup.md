@@ -25,7 +25,7 @@
 6. Ask the owner which IDs to clean, and wait.
    Done when the owner has named them.
 7. Clean exactly the named IDs:
-   - Worktrees → /worktrunk ; the owner's pick of an A or B row is the choice to lose what it holds.
+   - Worktrees → `wt remove` ; the owner's pick of an A or B row is the choice to lose what it holds.
    - Duplicate trees that must stay readable → `python3 -I <skill>/scripts/clone_dedupe.py <dirs…>`, then again with `--apply`; files become APFS clones sharing blocks, every path and byte kept.
    - Package caches → their own prune command, run from a repo that pins the tool's version.
    - Every path removal → one script at `<scratch>/free-disk-<n>.sh` that re-checks each path for a process inside at run time, skips it when busy, and prints the free space before and after; `rm -rf` outside the scratchpad is refused here, so the owner runs it as one `! bash <script>` line.
