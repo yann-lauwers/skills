@@ -9,7 +9,7 @@ A repo uses worktrees when its root `AGENTS.local.md` carries this section; a re
 ```markdown
 ## Worktrees
 
-- Work that will commit runs in its own worktree: `~/.config/worktrunk/bin/wtk-new -C <repo> <branch> [--base origin/<base>]` cuts it under `~/worktrees/<repo>/`.
+- Work that will commit runs in its own worktree: `git wt -C <repo> -y switch --create <branch> [--base origin/<base>] --no-cd --format json 2>/dev/null` cuts it under `~/worktrees/<repo>/` and prints its `path`.
 ```
 
 `grep -sF 'runs in its own worktree' "$(git -C <repo> rev-parse --show-toplevel)/AGENTS.local.md"` reads it.
@@ -81,7 +81,7 @@ git wt -C <repo> hook pre-start --dry-run
 
 ## Step 7: Report
 
-- The key, the canon conf path, every step, the dev alias, then the create command that exercises it — `~/.config/worktrunk/bin/wtk-new -C <repo> <test-branch>`.
+- The key, the canon conf path, every step, the dev alias, then the create command that exercises it — `git wt -C <repo> -y switch --create <test-branch> --no-cd`.
 - Onboarding produces an entry, never a worktree: a caller that came here to start work still owes the create and `cookbook/depart.md`'s next step.
 
 ## Change an existing entry

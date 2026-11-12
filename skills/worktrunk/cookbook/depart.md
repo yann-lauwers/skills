@@ -3,20 +3,22 @@
 ## Create
 
 0. `command -v git-wt` is empty → say so and stop.
-   - No `~/.config/worktrunk/` on this host → `git wt -C <repo> -y switch --create <branch> --no-cd [--base origin/<base>]`; then § Then the work moves into it.
+   - No `~/.config/worktrunk/` on this host → the same create runs, without setup steps.
 1. The repo's `AGENTS.local.md` lacks the worktree marker, or `~/.config/worktrunk/config.toml` holds no project entry for the repo → `cookbook/onboard.md` first.
 2. A worktree for this ticket already exists → never create a second: take its path, and read who is seated there; a seat already at it holds this ticket → telling that session is the whole act, and for a build command the user typed here, name that seat to them and stop.
 3. Create it:
 
 ```bash
 git -C <repo> fetch origin <base>
-~/.config/worktrunk/bin/wtk-new -C <repo> <branch> --base origin/<base>
+git wt -C <repo> -y switch --create <branch> --base origin/<base> --no-cd --format json 2>/dev/null
 ```
 
    - `<branch>` → the convention the project's instructions state, filled from the ticket's id and title; none stated → `<author>/<short-slug>`, kebab-case; worktrunk takes it as typed and fetches nothing from the tracker.
    - Confirm the tree's `HEAD` equals `origin/<base>`'s tip before anything is seated there.
    - `WT_SKIP=<group>,…` skips the `wtk-step run` steps of those groups; a repo with a project folder → its `AGENTS.md` names any other create prefix.
-   - The tree's path is `wtk-new`'s last line, `path: <tree>`.
+   - The tree's path is the printed JSON's `path`.
+   - A branch that already exists → the same command without `--create`.
+   - A non-zero exit → rerun without `2>/dev/null` and read why.
 4. A setup step failed → it names itself and aborts every later block: fix the cause, then `git wt -C <tree> -y hook pre-start <step> [<later-step>…]`, the names in `git wt -C <tree> hook show`'s order.
 
 **Done when:** the tree exists at a known path and who is seated there has been read — a seat, nothing, or a listing that would not answer.
