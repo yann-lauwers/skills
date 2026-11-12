@@ -1,40 +1,16 @@
 ---
 name: proton
-description: "Specifies, rotates and reads tooling credentials in Proton Pass, and keeps the injector's vault session alive. Started only by /proton ."
+description: "Proton Pass vault conventions: the spec for an item the user creates or changes, and renewing the agent token."
 disable-model-invocation: true
 ---
 
 # Proton
 
-One shared vault holds every developer-tooling credential; item titles are global, so nothing is per-project.
+- The vault → the one the host's instructions name; it holds every tooling credential, so an item's title is global.
+- The agent's access is read-only by decision: the user makes every change in the Proton Pass app.
+- `pass-cli` by hand → never: bare, it answers from the default session directory, the user's full-account login over every vault.
 
-## Config
-
-- keylessd's config, its path the `--config` default `keylessd check --help` prints → the store's `session_dir`, `key_provider`, `binary`, `token_expires` and `session.auto_login`, and the vault: `jq -r '[.secrets[].vault]|unique[]' <config>` · the daemon's source → `nbstr/keyless`, cloned at `~/Code/keyless`.
-- keylessd's config absent → the store is not wired on this machine: ask which provider holds the credentials, never guess a command.
-
-## Reading
-
-- `keyless run -s VAR=<NAME> -- <cmd>` → the item's password · `<NAME>__<FIELD>` → a named field.
-- Nothing to declare: the daemon mints `<NAME>` from the vault — the title uppercased, every non-alphanumeric as `_`, a leading digit prefixed with `_`.
-- The daemon lists the vault and reads the match by share and item id under its vault-scoped agent session → never read through raw `pass-cli item view` or `pass-cli run`: they fall back to the full-account login and skip the trash filter.
-- Provenance: 2026-09-02, `keyless run -s K=NEXUS_LINEAR -- sh -c 'echo "${#K} chars"'` printed a length and no value; an unknown name warned `DEGRADED` on stderr and exited 0.
-- Confirm an item exists → read its name once, then `keyless ls`, never `pass-cli item list`: it reads under a session nothing maintains, and `--output json` prints every item's secret fields.
-- A job running as root is refused: `peer.allow_uids` in keylessd's config excludes 0, with no root exemption → `sudo -u '#501' keyless run …`, or add root to that list deliberately.
-
-## Conventions
-
-- Item title `<entity>-<tool>`, lowercase-hyphenated; `<entity>` owns the account — a project, a business or a person.
-- Never write to the vault: hand the user an item spec, then prove the name resolves.
-- Which item serves which service → `keyless ls` and the vault; canon keeps no list of it.
-- Every consumer reads through `keyless run`, unattended jobs included; no job gets a store of its own.
-- Never confirm a session with a bare `pass-cli info` — `references/session-keeper.md` § Traps.
-
-## Routing
-
-| Task | Read |
+| Case | Read |
 | --- | --- |
-| A credential that has to exist or change — new, rotated, retitled, purged | `references/adding-a-secret.md` |
-| A read that injected nothing or the wrong value | `references/troubleshooting.md` |
-| Wiring a machine, a session that keeps dying, logging the daemon in, rotating the agent token | `references/session-keeper.md` |
-| Moving the vault to another provider | `references/moving-provider.md` |
+| A credential that has to exist or change | `references/item-spec.md` |
+| The agent token expiring or renewed | `references/agent-token.md` |

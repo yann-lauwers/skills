@@ -14,14 +14,15 @@ keyless run -s VAR=<NAME> -- <cmd>
 keyless ls                                 the names you can use
 ```
 
+- `<NAME>` → a `keyless ls` name, or a vault item's title as written: `<title>` reads its password · `<title>__<field>` a named field.
 - `keyless` not on `PATH` → stop and say so.
 - Every caller writes `keyless run` and the name; no wrapper script stands in front of it.
 
-## An unresolved name still runs
+## A name that did not arrive
 
-- `keyless run` never refuses: an unresolved name warns `DEGRADED` on stderr and the child runs without it, at its own exit code → read stderr; exit 0 proves nothing.
-- `DEGRADED` naming a store that failed to answer → `proton` or `daemon` → /proton ; `keychain` → Keychain Access.
-- No such name → check the app-runtime secrets injector the project's instructions name, where a wrong environment or path answers zero secrets with no error, before calling it missing.
+- `DEGRADED` on stderr → a store stayed silent and the child ran without the variable, at its own exit code → read stderr; exit 0 proves nothing.
+- `DEGRADED` naming `daemon` or `proton`, or a renewed vault token → `references/daemon.md`.
+- `REFUSED` (exit 64, the child never started) → check the app-runtime secrets injector the project's instructions name, where a wrong environment or path answers zero secrets with no error, before calling it missing; an item absent from the vault → /proton .
 
 ## Quoting
 
