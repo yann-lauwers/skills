@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
-"""Where a merged pull request's local worktree stands, for the closeout in cookbook/closeout.md.
+"""Close out a merged pull request: remove its local worktree and branch once nothing is lost.
 
 Run from the session's own Bash, so the process ancestry that excludes the session's own
-client and the cwd behind `session_inside` are the session's.
+client and the cwd behind the session-inside check are the session's.
 
-Usage: worktree-occupancy.py --repo OWNER/REPO --branch BRANCH
-Prints one JSON object: worktree_path (or null), worktree_occupied (true, false or "unknown"),
-session_inside. Exit 0; 2 on bad args.
+Usage: closeout.py --repo OWNER/REPO --pr N [--dry-run]
+Prints one JSON object. `closeout` is `removed`, `no_worktree`, `would_remove` (--dry-run)
+or `refused` with a `reason`; a refusal leaves the tree untouched.
+Exit 0 removed, no_worktree or would_remove; 1 refused; 2 bad args.
 """
 from __future__ import annotations
 
@@ -17,6 +18,8 @@ import re
 import subprocess
 import sys
 from pathlib import Path
+
+LOCK_HELD = 75
 
 
 def find_worktree(owner: str, repo: str, branch: str) -> str | None:
@@ -150,21 +153,95 @@ def worktree_occupied(path: str):
     return "unknown" if client == "unknown" else False
 
 
+def git(cwd: str, *args: str, stdin: str | None = None) -> subprocess.CompletedProcess:
+    return subprocess.run(["git", "-C", cwd, *args], capture_output=True, text=True, input=stdin)
+
+
+def patch_id(cwd: str, *diff_args: str) -> str:
+    diff = git(cwd, *diff_args).stdout
+    return git(cwd, "patch-id", "--stable", stdin=diff).stdout.split(" ")[0].strip()
+
+
+def unlanded(tree: str, base: str, merge_sha: str) -> str | None:
+    """The reason the tree's work is not on the base, or None once it is."""
+    dirty = git(tree, "status", "--porcelain").stdout.splitlines()
+    if dirty:
+        return "uncommitted: " + ", ".join(line[3:] for line in dirty[:5]) + (" …" if len(dirty) > 5 else "")
+    if git(tree, "fetch", "origin", base).returncode != 0:
+        return f"cannot fetch origin/{base}"
+    cherry = git(tree, "cherry", f"origin/{base}", "HEAD")
+    if cherry.returncode != 0:
+        return "git cherry failed: " + cherry.stderr.strip()[-160:]
+    if not any(line.startswith("+") for line in cherry.stdout.splitlines()):
+        return None
+    fork = git(tree, "merge-base", f"origin/{base}", "HEAD").stdout.strip()
+    branch_id = patch_id(tree, "diff", fork, "HEAD")
+    if branch_id and branch_id == patch_id(tree, "show", merge_sha):
+        return None
+    return "unmerged local work: the branch diff differs from the merge commit"
+
+
+def finish(closeout: str, code: int = 0, **fields) -> None:
+    print(json.dumps({"closeout": closeout, **fields}, separators=(",", ":")))
+    sys.exit(code)
+
+
+def refuse(reason: str, **fields) -> None:
+    finish("refused", 1, reason=reason, **fields)
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("--repo", required=True, help="OWNER/REPO")
-    ap.add_argument("--branch", required=True)
+    ap.add_argument("--pr", required=True, type=int)
+    ap.add_argument("--dry-run", action="store_true", help="run every check, remove nothing")
     args = ap.parse_args()
     owner, _, repo = args.repo.partition("/")
     if not owner or not repo:
-        print("worktree-occupancy: --repo must be OWNER/REPO", file=sys.stderr)
+        print("closeout: --repo must be OWNER/REPO", file=sys.stderr)
         sys.exit(2)
-    wt = find_worktree(owner, repo, args.branch)
-    print(json.dumps({
-        "worktree_path": wt,
-        "worktree_occupied": worktree_occupied(wt) if wt else False,
-        "session_inside": contains(wt, os.getcwd()) if wt else False,
-    }, separators=(",", ":")))
+    try:
+        proc = subprocess.run(["gh", "api", f"repos/{owner}/{repo}/pulls/{args.pr}"],
+                              capture_output=True, text=True, timeout=60)
+    except (OSError, subprocess.TimeoutExpired) as e:
+        refuse(f"cannot read the pull request: {e}")
+    if proc.returncode != 0:
+        refuse("cannot read the pull request: " + proc.stderr.strip()[-160:])
+    pull = json.loads(proc.stdout)
+    if not pull.get("merged"):
+        refuse(f"pull request is {pull.get('state')}, not merged")
+    branch, base, merge_sha = pull["head"]["ref"], pull["base"]["ref"], pull["merge_commit_sha"]
+    merged = {"pr": args.pr, "merged_by": (pull.get("merged_by") or {}).get("login"), "base": base,
+              "merge_commit_sha": merge_sha[:12]}
+    tree = find_worktree(owner, repo, branch)
+    if not tree:
+        finish("no_worktree", **merged)
+    occupied = worktree_occupied(tree)
+    if occupied is True:
+        refuse("another session holds the worktree", worktree=tree)
+    if occupied == "unknown":
+        refuse("occupancy unreadable: the seat listing or the process table did not answer", worktree=tree)
+    common = git(tree, "rev-parse", "--path-format=absolute", "--git-common-dir").stdout.strip()
+    checkout = str(Path(common).parent)
+    if contains(tree, os.getcwd()):
+        refuse("this session stands inside the worktree: cd to the base checkout and rerun",
+               worktree=tree, cd=checkout)
+    lost = unlanded(tree, base, merge_sha)
+    if lost:
+        refuse(lost, worktree=tree)
+    if args.dry_run:
+        finish("would_remove", worktree=tree, branch=branch, **merged)
+    rm = subprocess.run(["git", "wt", "-C", checkout, "-y", "remove", branch, "-D", "--foreground"],
+                        capture_output=True, text=True)
+    if rm.returncode == LOCK_HELD:
+        refuse("another start or stop holds the tree's lock: rerun once it frees", worktree=tree)
+    if rm.returncode != 0:
+        refuse("git wt remove failed: " + (rm.stderr or rm.stdout).strip()[-300:], worktree=tree)
+    if tree in git(checkout, "worktree", "list", "--porcelain").stdout.split():
+        refuse("git wt remove left the worktree on disk", worktree=tree)
+    if git(checkout, "branch", "--list", branch).stdout.strip():
+        git(checkout, "branch", "-D", branch)
+    finish("removed", worktree=tree, branch=branch, **merged)
 
 
 if __name__ == "__main__":

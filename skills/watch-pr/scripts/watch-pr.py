@@ -35,6 +35,7 @@ from pr_reads import Auth, GhError, GhMissing, NotFound, RateLimited, Reader
 EXIT_OK, EXIT_ARGS, EXIT_DUPLICATE, EXIT_AUTH, EXIT_NOT_FOUND, EXIT_BLIND = 0, 2, 3, 4, 5, 7
 TERMINAL = {"MERGED", "CLOSED"}
 BACKOFF_CEILING = 600
+SHA_WIDTH = 12
 LOCK_ROOT = Path.home() / ".local" / "state" / "watch" / "pr"
 
 
@@ -47,7 +48,7 @@ def note(msg: str) -> None:
 
 
 def fail(error: str, detail: str, code: int, pr=None) -> None:
-    emit({"verdict": "WATCHER_ERROR", "reason": detail, "error": error, "detail": detail, "pr": pr})
+    emit({"verdict": "WATCHER_ERROR", "reason": detail, "error": error, "pr": pr})
     sys.exit(code)
 
 
@@ -101,32 +102,24 @@ def take_lock(slug: str, pr: int):
 
 
 def dedupe_key(verdict: str, facts: dict) -> str:
-    head = facts["head_sha"]
+    head = facts["head_sha"][:SHA_WIDTH]
     if verdict == "DRAFT":
         return head
     if verdict == "BASE_ADVANCED":
-        return f"{head}|{facts.get('base_tip_sha')}"
+        return f"{head}|{str(facts.get('base_tip_sha'))[:SHA_WIDTH]}"
     return f"{head}|{facts['unresolved_bot_threads']}"
 
 
-def build_line(owner: str, repo: str, pr: int, pull: dict, facts: dict) -> dict:
+def build_line(pr: int, pull: dict, facts: dict) -> dict:
     v = facts["verdict"]
-    key = dedupe_key(v, facts)
-    line = {
-        "verdict": v, "reason": facts["reason"], "pr": pr, "repo": f"{owner}/{repo}",
-        "url": pull.get("html_url"), "branch": pull["head"]["ref"], "base": pull["base"]["ref"],
-        "head_sha": facts["head_sha"], "ci": facts["ci"],
-        "unresolved_bot_threads": facts["unresolved_bot_threads"], "bots": facts["bots"],
-        "integration_base": facts["integration_base"], "base_tip_sha": facts["base_tip_sha"],
-    }
+    line = {"verdict": v, "reason": facts["reason"], "pr": pr}
     if v in ("CONFLICT", "BASE_ADVANCED"):
-        line.update(behind_by=facts["behind_by"], base_changed_files=facts["base_changed_files"],
-                    conflict_source=facts["conflict_source"])
-    if v == "MERGED":
-        line.update(merged_by=(pull.get("merged_by") or {}).get("login"),
-                    merge_commit_sha=pull.get("merge_commit_sha"), merged_at=pull.get("merged_at"))
+        line.update(branch=pull["head"]["ref"], base=pull["base"]["ref"],
+                    integration_base=facts["integration_base"])
+    if facts["bots"]["stalled_checks"]:
+        line["stalled_checks"] = facts["bots"]["stalled_checks"]
     if v not in TERMINAL:
-        line["rearm"] = f"--seen {v}:{key}"
+        line["rearm"] = f"--seen {v}:{dedupe_key(v, facts)}"
     return line
 
 
@@ -176,10 +169,10 @@ def main() -> None:
         facts = classify(read)
         v = facts["verdict"]
         if args.once:
-            emit(build_line(owner, repo, pr, read["pull"], facts))
+            emit(build_line(pr, read["pull"], facts))
             sys.exit(EXIT_OK)
         if v != "WAITING" and f"{v}:{dedupe_key(v, facts)}" != args.seen:
-            emit(build_line(owner, repo, pr, read["pull"], facts))
+            emit(build_line(pr, read["pull"], facts))
             sys.exit(EXIT_OK)
         time.sleep(args.interval)
 
