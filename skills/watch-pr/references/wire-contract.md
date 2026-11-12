@@ -1,7 +1,6 @@
 # Wire contract — the line, the flags, the exit codes
 
 - Every flag → `scripts/watch-pr.py --help`.
-- The probe's loop, lock, backoff and blind exit → `scripts/watch-pr.py`.
 
 ## Exit codes
 
