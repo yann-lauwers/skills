@@ -58,8 +58,8 @@ def state_root():
 
 
 def canon_ledger_dir():
-    """Resolved exactly as `domain-canon.py` resolves it, from the same variable —
-    a second spelling would archive a directory nothing writes to."""
+    """Where a canon read gate keeps its per-session ledger; with no gate installed
+    the directory holds no ledger and both readers below find nothing."""
     return os.environ.get("CANON_STATE_DIR") or os.path.expanduser(
         "~/.claude/state/domain-canon")
 

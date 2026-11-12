@@ -4,6 +4,10 @@
 - Retirements up to 2026-10-07, and the retired verdicts and pattern names → `registry/retired-to-2026-10-07.md`.
 - A clause states what the check did, why it went, and its successor or that there is none; measurements and the argument behind it are in git history.
 
+## The domain-canon plugin's removal, 2026-11-12
+
+**Retired ids — `canon-read-first`, `canon-map-injection`, `canon-read-credit`** (2026-11-12). The gate refused a call running in, or naming, a directory whose `GLOSSARY.md` and `docs/adr/*.md` the session had not read whole; the injection put the root `GLOSSARY-MAP.md` into context at session start; the credit recorded each whole canon read in the ledger the gate read. They went with the `domain-canon` plugin, removed on the owner's word. No successor.
+
 ## The tool-config guards' removal, 2026-11-08
 
 **Retired ids — `tool-config-commit`, `tool-config-pointer`** (2026-11-08). Refused a commit adding a tool's project config under `docs/agents/integrations/`, or a tracked line pointing into that folder; the `git-guards` plugin went with them. They went with agents-config: no tool keeps a config there any more, each repo stating its tools in its own instructions. No successor.
