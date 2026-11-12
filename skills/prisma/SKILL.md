@@ -1,45 +1,24 @@
 ---
 name: prisma
-description: "Runs the Prisma CLI through the repo's pinned runner and confirms the database host before any schema write. Use to create, apply, amend or baseline a migration, on `db push`, `prisma generate` or TypedSQL, on migration drift, a `P1xxx` / `P3xxx` code or `PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION`. Also fires on the ACT — before any `prisma` command, or a package script wrapping one, runs."
+description: "Confirms the database host before a Prisma schema write. Use before any `prisma migrate`, `db push` or `db execute` command, or a package script wrapping one; also on `migrate resolve`, `CREATE INDEX CONCURRENTLY` in a migration, or a failed `generate --sql`."
 user-invocable: false
 ---
 
 # Prisma
 
-## The repo's Prisma choices
-
-- Each value below → as the project's instructions state it, and their own rules for the repo; unstated → the default the table gives.
-- `workflow_doc` stated → read it before a schema change reaches a database; it outranks this skill on when to push and when to migrate · unstated → this skill says only what each verb does.
-
-| Value | What it answers; unstated → |
-| --- | --- |
-| `package_dir` | the directory the CLI runs from; unstated → the directory of the repo's schema file, outside `node_modules` |
-| `runner` | the command that runs the repo's pinned CLI; unstated → the CLI through the package manager of the nearest lockfile at or above `package_dir` |
-| `scripts` | act → the `package.json` script in `package_dir` performing it: `generate`, `create_migration`, `check_migration`, `apply_migration`, `push`, `format`; unstated → none |
-| `workflow_doc` | the repo's own document on when to push and when to migrate |
-| `local_hosts` | the hosts a schema write proceeds on without asking; unstated → `localhost`, `127.0.0.1` |
-
-## Running
-
-- Run from `package_dir`, through `runner`; never a bare `prisma`.
-- An act `scripts` maps → `<pm> run <script>` from `package_dir`, `<pm>` the lockfile's package manager · an act it does not map → the raw verb through `runner`.
-- A write — `migrate deploy`, `migrate dev`, `migrate reset`, `migrate resolve`, `db push`, `db execute`, or a script wrapping one → § Before a write first.
-
 ## Before a write
 
-1. `<runner> migrate status` from `package_dir`; read its `Datasource "<name>": … at "<host>:<port>"` line. Done when the host is in hand, or the line names a driver adapter and no host, which leaves it unknown.
-2. Host in `local_hosts` → run the write · any other host, or an unknown one → print the host, the port and the exact command, then wait for the user's yes. Done when the write ran or the user declined.
+- A write — `migrate deploy`, `migrate dev`, `migrate reset`, `migrate resolve`, `db push`, `db execute`, or a script wrapping one.
 
-## Consent guard
+1. `prisma migrate status`; read `Datasource "<name>": … at "<host>:<port>"`. It prints before connecting and names `directUrl`'s host when the schema sets one. Done when the host is in hand.
+2. `localhost` or `127.0.0.1` → run the write · any other host → print the host, the port and the exact command, then wait for the user's yes. Done when the write ran or the user declined.
 
-- A refusal naming `PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION` → follow its text, adding the host § Before a write found.
-- `db push --accept-data-loss` passes the guard unchecked → before running it, give the user the exact command and the host, say it destroys data, and wait for their yes.
+- Prisma's own agent guard stops only `migrate reset` and `db push --force-reset`; `db push --accept-data-loss` drops the data unasked → step 2's ask on every host, saying it destroys data.
 
-## Routing
+## Traps
 
-| Act | Read |
+| On | Read |
 | --- | --- |
-| creating, proving, applying or amending a migration; pushing; baselining; recovering a wrong baseline; SQL Prisma cannot express; a rename | `cookbook/migrate.md` |
-| a failed `generate --sql`, a Prisma error code, a symptom, a database disagreeing with `migrate status` | `cookbook/debug.md` |
-| what `status`, `diff`, `resolve`, `deploy`, `push`, `db execute` and `generate --sql` each read and write | `references/commands.md` |
-| a flag, a URL source, or what a verb runs after it, on the installed major | `references/versions.md` |
+| `migrate resolve`, a baseline, or `migrate status` up to date while the app misses a column | `references/traps.md` § The ledger |
+| `CREATE INDEX CONCURRENTLY` | `references/traps.md` § Concurrent index |
+| a failed `generate --sql` | `references/traps.md` § TypedSQL |
