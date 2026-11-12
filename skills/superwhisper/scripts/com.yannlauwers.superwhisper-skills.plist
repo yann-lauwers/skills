@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.yannlauwers.superwhisper-skills</string>
+
+    <!-- --auto applies in a window the machine is not being used: no dictation for three
+         minutes, no keyboard or mouse for five. A machine that never goes quiet gets one
+         notification a day instead. It writes nothing to this log unless it acted. -->
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/yannlauwers/.claude/skills/superwhisper/scripts/sync-slash-commands.py</string>
+        <string>--auto</string>
+    </array>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/Users/yannlauwers/.local/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+    </dict>
+
+    <!-- A quarter hour: short enough that a coffee break is a window, long enough that
+         the pass costs nothing. A fixed hour would need the machine idle at that hour. -->
+    <key>StartInterval</key>
+    <integer>900</integer>
+
+    <key>RunAtLoad</key>
+    <true/>
+
+    <key>StandardOutPath</key>
+    <string>/Users/yannlauwers/.local/share/superwhisper-skills/launchd.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/yannlauwers/.local/share/superwhisper-skills/launchd.log</string>
+</dict>
+</plist>
