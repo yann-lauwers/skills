@@ -1,5 +1,6 @@
 {
   "name": "bash-permissions",
+  "version": "0.1.0",
   "description": "Answers Bash permission prompts: lets known-safe commands through, refuses destructive ones where they would run.",
   "author": {
     "name": "Yann Lauwers"

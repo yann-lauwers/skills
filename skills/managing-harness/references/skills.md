@@ -47,7 +47,6 @@
 - A new user skill takes no name any `.claude/skills/` under `~/Code` holds; a new project skill takes none the user level holds. The listing shows only the current repo's project skills → check on disk; an existing collision goes to the user.
 - A tool's or a stack's skill → user level when every repo uses it, per repo when only some do; it names no repo's paths, scripts or skills.
 - Per repo → a service a repo's own stack or tracker uses, or a stack only some repos hold · everywhere → a tool of this machine or of every repo, or one a caller reaches outside the repos using it.
-- Installed in a repo → that repo's row in `~/Code/skills/README.md` in the same change.
 - `Unknown skill: <name>` for a per-repo skill, in a repo whose stack or tracker uses it → read `~/Code/skills/skills/<name>/SKILL.md` by path, write what the repo adds to it per § A tool's skill and its config where nothing is written yet, and install it there; the skill loads in the next session.
 - Done → a fresh session's `system/init` event (`claude -p hi --output-format stream-json --verbose`) lists the skill in each repo holding it and nowhere else.
 

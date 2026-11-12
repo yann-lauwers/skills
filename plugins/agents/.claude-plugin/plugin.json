@@ -1,5 +1,6 @@
 {
   "name": "agents",
+  "version": "0.1.0",
   "description": "Subagents: code-reviewer attacks one scope for bugs.",
   "author": {
     "name": "Yann Lauwers"
