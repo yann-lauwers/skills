@@ -131,7 +131,8 @@ def build_line(pr: int, pull: dict, facts: dict, humans_after: int) -> dict:
         repo_path = pull["base"]["repo"]["full_name"]
         line["failed_jobs"] = [
             {"name": job["name"], "run_id": job["run_id"], "attempt": job["attempt"],
-             "logs": f"repos/{repo_path}/actions/jobs/{job['job_id']}/logs" if job["job_id"] else None}
+             "log": (f"gh api repos/{repo_path}/actions/jobs/{job['job_id']}/logs --allow-escape-sequences"
+                     if job["job_id"] else None)}
             for job in facts["failed_jobs"][:MAX_ITEMS]]
     if v == "HUMAN_COMMENTS":
         line["items"] = [{k: item[k] for k in ("author", "kind", "url")}

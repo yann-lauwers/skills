@@ -26,7 +26,7 @@
 | `reason` | always | one human line behind the verdict: the thread count, who merged into which base, the error's detail |
 | `pr` | always | the pull request's number |
 | `rearm` | every non-terminal verdict | the next arm's whole argument list: `--pr <url> --seen VERDICT:KEY`, plus `--humans-after` once a `HUMAN_COMMENTS` line was printed |
-| `failed_jobs` | `CI_RED` | per failed job: `name`, `run_id`, `attempt`, and `logs`, a path `gh api` reads while the run is still going |
+| `failed_jobs` | `CI_RED` | per failed job: `name`, `run_id`, `attempt`, and `log`, the command that prints the job's log while the run is still going; the log carries colour codes, which `gh api` prints only under `--allow-escape-sequences` |
 | `items` | `HUMAN_COMMENTS` | the newest 10: `author`, `kind` (`thread` `review` `comment`), `url` |
 | `branch`, `base`, `integration_base` | `CONFLICT`, `BASE_ADVANCED` | the refs to integrate, and whether a pull request has already merged INTO this head (`true` `false` `"unknown"`), so it is absorbed by merge and never rebased |
 | `stalled_checks` | when non-empty | review checks pending past `--bot-pending-timeout`, which stopped gating |
