@@ -13,6 +13,8 @@ BOT_TOKENS = re.compile(r"cursor|coderabbit|bugbot", re.IGNORECASE)
 NON_REVIEW_BOT_JOBS = re.compile(r"autofix", re.IGNORECASE)
 CI_APP_SLUGS = {"github-actions"}
 CI_OK_CONCLUSIONS = {"success", "neutral", "skipped"}
+TRUSTED_ASSOCIATIONS = {"OWNER", "MEMBER", "COLLABORATOR"}
+JOB_URL = re.compile(r"/actions/runs/(\d+)/job/(\d+)")
 
 
 def now_utc() -> datetime:
@@ -28,13 +30,14 @@ def parse_iso(s: str | None) -> datetime | None:
         return None
 
 
-def _run_order(cr: dict) -> tuple[int, datetime]:
-    """Creation order of a check run: its check suite id (monotonic, assigned at creation),
-    then started_at. started_at alone misorders a burst: a run cancelled by a concurrency
-    group can sit queued and *start* after the sibling that superseded it."""
+def _run_order(cr: dict) -> tuple[int, int, datetime]:
+    """Creation order of a check run: its check suite id, then its own id (both monotonic,
+    assigned at creation), then started_at. started_at alone misorders a burst: a run
+    cancelled by a concurrency group can sit queued and *start* after the sibling that
+    superseded it, and a rerun's job is queued with no start while the failed one has one."""
     suite_id = int(((cr.get("check_suite") or {}).get("id")) or 0)
     started = parse_iso(cr.get("started_at")) or datetime.min.replace(tzinfo=UTC)
-    return suite_id, started
+    return suite_id, int(cr.get("id") or 0), started
 
 
 def dedupe_check_runs(runs: list[dict]) -> list[dict]:
@@ -49,14 +52,62 @@ def dedupe_check_runs(runs: list[dict]) -> list[dict]:
     return list(latest.values())
 
 
+def failed_ci_jobs(check_runs: list[dict]) -> list[dict]:
+    """The CI jobs that failed on this head: name, and the Actions run and job ids its
+    details URL carries (None for a check no Actions job backs)."""
+    jobs = []
+    for cr in dedupe_check_runs(check_runs):
+        if (((cr.get("app") or {}).get("slug")) or "") not in CI_APP_SLUGS:
+            continue
+        if cr.get("status") != "completed" or cr.get("conclusion") in CI_OK_CONCLUSIONS:
+            continue
+        m = JOB_URL.search(cr.get("details_url") or cr.get("html_url") or "")
+        jobs.append({"name": cr.get("name") or "",
+                     "run_id": int(m.group(1)) if m else None,
+                     "job_id": int(m.group(2)) if m else None})
+    return jobs
+
+
+def human_items(threads: dict, viewer: str, after: float) -> list[dict]:
+    """What trusted humans wrote after `after` (epoch seconds): the newest comment of an
+    unresolved thread, a review that requests changes or carries a body, a pull-request
+    comment. The viewer's own account is skipped: the agent posts through it."""
+    def trusted(node: dict | None) -> bool:
+        author = (node or {}).get("author") or {}
+        login = author.get("login") or ""
+        return (author.get("__typename") == "User" and login != viewer
+                and (node or {}).get("authorAssociation") in TRUSTED_ASSOCIATIONS
+                and not BOT_TOKENS.search(login))
+
+    found: list[tuple[str, dict]] = []
+    for t in threads["threads"]:
+        newest = ((t.get("latest") or {}).get("nodes") or [None])[-1]
+        if not t.get("isResolved") and trusted(newest):
+            found.append(("thread", newest))
+    for r in threads["reviews"]:
+        if trusted(r) and (r.get("state") == "CHANGES_REQUESTED" or (r.get("body") or "").strip()):
+            found.append(("review", r))
+    found += [("comment", c) for c in threads["comments"] if trusted(c)]
+
+    items = []
+    for kind, node in found:
+        created = parse_iso(node.get("createdAt"))
+        at = int(created.timestamp()) if created else 0
+        if at > after:
+            items.append({"author": node["author"]["login"], "kind": kind,
+                          "url": node.get("url"), "at": at})
+    return sorted(items, key=lambda i: i["at"])
+
+
 def pending_seconds(cr: dict) -> float:
     started = parse_iso(cr.get("started_at"))
     return 0.0 if started is None else (now_utc() - started).total_seconds()
 
 
 def classify(facts: dict) -> dict:
-    """Facts: `pull`, `check_runs`, `threads` (reviews, comments, threads), `head_age`,
-    `reviewable_age`, `scm`, `integration_base`, `fresh_window`, `bot_pending_timeout`."""
+    """Facts: `pull`, `check_runs`, `threads` (reviews, comments, threads, viewer), `head_age`,
+    `reviewable_age`, `scm`, `integration_base`, `fresh_window`, `bot_pending_timeout`,
+    `run_attempts` (Actions run id → attempt), `humans_after` (epoch seconds)."""
     pull = facts["pull"]
     threads = facts["threads"]
     head_age = facts.get("head_age")
@@ -111,6 +162,10 @@ def classify(facts: dict) -> dict:
         and BOT_TOKENS.search(login(((t.get("comments") or {}).get("nodes") or [None])[0]))
     )
 
+    humans = human_items(threads, threads.get("viewer") or "", facts.get("humans_after") or 0)
+    attempts = facts.get("run_attempts") or {}
+    failed_jobs = [{**job, "attempt": attempts.get(job["run_id"])} for job in failed_ci_jobs(facts["check_runs"])]
+
     window_age = reviewable_age if reviewable_age is not None else head_age
     fresh = window_age is not None and window_age < fresh_window
     mstate = (pull.get("mergeable_state") or "unknown").upper()
@@ -133,14 +188,17 @@ def classify(facts: dict) -> dict:
             f"a trial merge of {head[:10]} with {str((scm or {}).get('base_tip_sha'))[:10]} conflicts"
             if conflict_source == "git"
             else f"mergeable={pull.get('mergeable')} mergeable_state={mstate.lower()}")
+    elif humans:
+        authors = ", ".join(sorted({i["author"] for i in humans}))
+        verdict, reason = "HUMAN_COMMENTS", f"{len(humans)} new from {authors}"
     elif bot_pending:
         verdict, reason = "WAITING", "review bot check pending on HEAD"
     elif participates and not bot_done and fresh:
         verdict, reason = "WAITING", f"reviewable for {round(window_age)}s, bots have not registered yet"
     elif unresolved > 0:
-        verdict, reason = "NEW_COMMENTS", f"{unresolved} unresolved bot thread(s)"
+        verdict, reason = "BOT_THREADS", f"{unresolved} unresolved bot thread(s)"
     elif ci == "failed":
-        verdict, reason = "CI_RED", "a CI check on HEAD failed"
+        verdict, reason = "CI_RED", "failed: " + ", ".join(j["name"] for j in failed_jobs)
     elif ci == "pending":
         verdict, reason = "WAITING", "CI still running"
     elif ci == "none" and fresh:
@@ -158,6 +216,7 @@ def classify(facts: dict) -> dict:
     return {
         "verdict": verdict, "reason": reason, "head_sha": head, "ci": ci,
         "unresolved_bot_threads": unresolved, "merge_state_status": mstate,
+        "failed_jobs": failed_jobs, "human_items": humans,
         "conflict_source": conflict_source, "integration_base": integration_base,
         "base_tip_sha": (scm or {}).get("base_tip_sha"),
         "behind_by": behind_by, "base_changed_files": base_changed_files,

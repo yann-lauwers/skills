@@ -1,6 +1,6 @@
 ---
 name: watching
-description: "Picks the instrument for anything waited on or driven to a target state — a deploy, job, queue, inbox, a Slack reply, a ticket, a suite driven to green. Use when the turn would otherwise end on a promise to report back later, or on 'watch this', 'monitor it', 'keep an eye on', 'wake the session when', 'poll until'; also before hand-rolling a poll loop, sleep-and-check or `tail -F`. Not for one pull request — /watch-pr ."
+description: "Picks the instrument for any wait — a deploy, a CI run, a ticket, a timer. Use when the turn would end on a promise to report back, on 'monitor it', 'ping me when', 'wake up in'; also before hand-rolling a poll loop."
 allowed-tools: Read, Write(${CLAUDE_SKILL_DIR}/**), Edit(${CLAUDE_SKILL_DIR}/**), Grep, Glob, Skill, Monitor, TaskStop, PushNotification
 ---
 

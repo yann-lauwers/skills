@@ -11,7 +11,7 @@ import time
 from datetime import datetime
 from pathlib import Path
 
-from pr_classify import now_utc, parse_iso
+from pr_classify import failed_ci_jobs, now_utc, parse_iso
 
 GH_TIMEOUT = 60.0
 
@@ -160,13 +160,22 @@ THREADS_QUERY = """
 query($owner: String!, $repo: String!, $pr: Int!) {
   repository(owner: $owner, name: $repo) {
     pullRequest(number: $pr) {
-      reviews(last: 50) { nodes { author { login } commit { oid } } }
-      comments(last: 50) { nodes { author { login } } }
+      reviews(last: 50) {
+        nodes { author { login __typename } authorAssociation state body url createdAt commit { oid } }
+      }
+      comments(last: 50) { nodes { author { login __typename } authorAssociation url createdAt } }
       reviewThreads(first: 100) {
-        nodes { isResolved comments(first: 1) { nodes { author { login } } } }
+        nodes {
+          isResolved
+          comments(first: 1) { nodes { author { login } } }
+          latest: comments(last: 1) {
+            nodes { author { login __typename } authorAssociation url createdAt }
+          }
+        }
       }
     }
   }
+  viewer { login }
 }
 """
 
@@ -305,7 +314,21 @@ class Reader:
             "reviews": (pr.get("reviews") or {}).get("nodes") or [],
             "comments": (pr.get("comments") or {}).get("nodes") or [],
             "threads": (pr.get("reviewThreads") or {}).get("nodes") or [],
+            "viewer": (d.get("viewer") or {}).get("login") or "",
         }
+
+    def read_run_attempts(self, check_runs: list[dict]) -> dict[int, int]:
+        """The attempt number of each Actions run behind a failed CI job, uncached: a rerun
+        raises it. An unreadable run is left out, never guessed."""
+        attempts: dict[int, int] = {}
+        for run_id in {job["run_id"] for job in failed_ci_jobs(check_runs) if job["run_id"]}:
+            try:
+                run = gh_api(f"{self.base_path}/actions/runs/{run_id}")
+            except (GhError, NotFound, RateLimited):
+                continue
+            if isinstance((run or {}).get("run_attempt"), int):
+                attempts[run_id] = run["run_attempt"]
+        return attempts
 
     def read_merged_into(self, head_ref: str) -> bool | str:
         """True once any pull request has merged INTO this head: a branch other work lands
@@ -323,12 +346,14 @@ class Reader:
         scm = None
         integration = "unknown"
         check_runs: list[dict] = []
-        threads = {"reviews": [], "comments": [], "threads": []}
+        threads = {"reviews": [], "comments": [], "threads": [], "viewer": ""}
+        run_attempts: dict[int, int] = {}
         head_age = reviewable_age = None
         if not pull.get("merged") and pull.get("state") == "open":
             head = pull["head"]["sha"]
             base_ref, head_ref = pull["base"]["ref"], pull["head"]["ref"]
             check_runs = self.read_checks(head)
+            run_attempts = self.read_run_attempts(check_runs)
             threads = self.read_threads()
             committed = self.head_committed_at(head)
             head_age = None if committed is None else (now_utc() - committed).total_seconds()
@@ -337,7 +362,7 @@ class Reader:
             integration = self.read_merged_into(head_ref)
             base_tip = self.read_base_tip(base_ref)
             scm = self.scm.facts(head, head_ref, base_ref, base_tip or "")
-        return {"pull": pull, "check_runs": check_runs, "threads": threads,
+        return {"pull": pull, "check_runs": check_runs, "threads": threads, "run_attempts": run_attempts,
                 "head_age": head_age, "reviewable_age": reviewable_age,
                 "scm": scm, "integration_base": integration,
                 "fresh_window": self.fresh_window, "bot_pending_timeout": self.bot_pending_timeout}
