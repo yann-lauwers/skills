@@ -1,7 +1,6 @@
 # Wire contract — the line, the flags, the exit codes
 
 - Every flag → `scripts/watch-pr.py --help`.
-- The probe contract (loop, lock, backoff, blind) → /watching , § Write a probe; this file holds what is specific to the pull-request watcher.
 
 ## Exit codes
 
