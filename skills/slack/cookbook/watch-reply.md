@@ -1,7 +1,7 @@
 # Watch a conversation for a reply
 
 - `scripts/watch-reply.py` emits a line only for a reply the session must act on; acknowledgements and unrelated chatter wake nobody.
-- The watcher is a probe armed per /watching : it exits on its first line, and the session re-arms it when the line asks for it.
+- The watcher is a probe armed like /watch-pr 's: it exits on its first line, and the session re-arms it when the line asks for it.
 
 ## Step 1 — Resolve the conversation and the question
 
