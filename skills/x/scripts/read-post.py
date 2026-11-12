@@ -13,8 +13,8 @@ its last digit where this emits twenty fixed fractional digits. That difference 
 nothing while the value goes unchecked, and a faithful shape is the better bet if it stops
 being unchecked.
 
-Exit codes: 0 answered · 2 the argument names no post · 3 the endpoint has no such post
-            · 4 the endpoint answered a payload that is not a post
+Exit codes: 0 answered · 2 the argument names no post · 3 the endpoint knows no such id
+            · 4 the endpoint answered a tombstone or another payload that is not a post
             · 5 the endpoint could not be reached, answered unreadably, or answered the
               empty object that means the token was not accepted
 """
@@ -89,7 +89,7 @@ def main():
         data = fetch(pid)
     except urllib.error.HTTPError as err:
         if err.code == 404:
-            die(3, f"no such post: {pid} — deleted, or the account is protected")
+            die(3, f"no such post: {pid} — the endpoint knows no post under this id")
         die(5, f"the endpoint answered {err.code}")
     except (urllib.error.URLError, TimeoutError) as err:
         die(5, f"could not reach the endpoint: {err}")
@@ -104,8 +104,11 @@ def main():
         die(5, "the endpoint answered an empty object — the token this call sends was "
                "rejected, so the derivation needs revisiting")
     if data.get("__typename") != "Tweet":
-        die(4, f"the endpoint answered a {data.get('__typename')!r} rather than a post; "
-               "an unavailable post arrives this way rather than as a 404")
+        tombstone = data.get("tombstone")
+        text = tombstone.get("text") if isinstance(tombstone, dict) else None
+        reason = text.get("text") if isinstance(text, dict) else None
+        die(4, f"the endpoint answered a {data.get('__typename')!r} rather than a post"
+               + (f": {reason}" if reason else ""))
     json.dump(data, sys.stdout, ensure_ascii=False, indent=2)
     print()
 
