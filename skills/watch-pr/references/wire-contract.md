@@ -12,37 +12,35 @@
 | 2 | bad arguments |
 | 3 | duplicate: another watcher holds this PR's lock |
 | 4 | auth refused (HTTP 401) or `gh` missing |
-| 5 | pull request not found on the first read |
+| 5 | pull request not found on the first read, or none resolved from the current folder |
 | 7 | blind: no read landed for `--blind-after` (3600 s) |
 
 ## Stdout line
 
 - One compact JSON object, flushed, then exit 0. Never a `WAITING` line outside `--once`.
-- The line is printed once `verdict:key` differs from `--seen`; the key is `head|unresolved bot threads`, `head` for `DRAFT`, `head|base tip` for `BASE_ADVANCED`, each sha cut to 12 characters.
+- The line is printed once `verdict:key` differs from `--seen`; the key is `head|unresolved bot threads`, `head` for `DRAFT`, `head|base tip` for `BASE_ADVANCED`, `head|unresolved bot threads|attempt` for `CI_RED`, the newest item's epoch second for `HUMAN_COMMENTS`; each sha cut to 12 characters.
 
 | Field | Present | Meaning |
 | --- | --- | --- |
-| `verdict` | always | `DRAFT` `CONFLICT` `NEW_COMMENTS` `CI_RED` `BASE_ADVANCED` `CLEAN` `MERGED` `CLOSED` `WATCHER_ERROR`; `--once` may also print `WAITING` |
+| `verdict` | always | `DRAFT` `CONFLICT` `HUMAN_COMMENTS` `BOT_THREADS` `CI_RED` `BASE_ADVANCED` `CLEAN` `MERGED` `CLOSED` `WATCHER_ERROR`; `--once` may also print `WAITING` |
 | `reason` | always | one human line behind the verdict: the thread count, who merged into which base, the error's detail |
 | `pr` | always | the pull request's number |
-| `rearm` | every non-terminal verdict | the `--seen VERDICT:KEY` the next arm adds |
+| `rearm` | every non-terminal verdict | the next arm's whole argument list: `--pr <url> --seen VERDICT:KEY`, plus `--humans-after` once a `HUMAN_COMMENTS` line was printed |
+| `failed_jobs` | `CI_RED` | per failed job: `name`, `run_id`, `attempt`, and `logs`, a path `gh api` reads while the run is still going |
+| `items` | `HUMAN_COMMENTS` | the newest 10: `author`, `kind` (`thread` `review` `comment`), `url` |
 | `branch`, `base`, `integration_base` | `CONFLICT`, `BASE_ADVANCED` | the refs to integrate, and whether a pull request has already merged INTO this head (`true` `false` `"unknown"`), so it is absorbed by merge and never rebased |
 | `stalled_checks` | when non-empty | review checks pending past `--bot-pending-timeout`, which stopped gating |
 | `error` | `WATCHER_ERROR` | `auth` `duplicate` `pr_not_found` `gh_missing` `blind` `unknown` |
 
-- The line carries what its row in the verdict table acts on; every other fact stays in `pr_classify.py`'s reading.
-
-## Closeout line
-
-- `scripts/closeout.py` prints one object: `closeout` is `removed`, `no_worktree`, `would_remove` (`--dry-run`) or `refused` with `reason`; exit 1 on `refused`.
-- A refusal leaves the tree untouched: another session in it, occupancy unreadable, this session inside it (`cd` names the base checkout), uncommitted files, or a branch diff whose `git patch-id --stable` differs from the merge commit's.
+- The line carries what the agent acts on; every other fact stays in `pr_classify.py`'s reading.
 
 ## Flags worth tuning
 
 - `--interval` (60 s) → seconds between reads.
 - `--blind-after` (3600 s; 0 disables) → how long reads may fail before `blind`.
 - `--fresh-window`, `--bot-pending-timeout` → `references/green-detection.md` § Tuning.
-- `--seen VERDICT:KEY` → the reading already acted on; a re-arm passes the line's `rearm`.
+- `--pr N|URL` → the pull request; absent → the current folder's branch. `--repo` qualifies a bare number.
+- `--seen VERDICT:KEY`, `--humans-after EPOCH` → the reading already acted on; a re-arm passes the line's `rearm` whole.
 
 ## Lock and reads
 

@@ -39,7 +39,20 @@
 
 ### Cancelled-supersession
 
-- `dedupe_check_runs` keeps the most recently created run per app slug and name, never the newest `started_at`; a cancelled run that is still the newest for its name counts as failing.
+- `dedupe_check_runs` keeps the most recently created run per app slug and name — check suite id, then check run id — never the newest `started_at`; a cancelled run that is still the newest for its name counts as failing.
+- A rerun's job is queued with a higher id and no start: it supersedes the failed job it replaces, so the reading is `WAITING` until it ends.
+
+## Human comments
+
+- `human_items` keeps what a trusted human wrote after `--humans-after`: the newest comment of an unresolved thread, a review that requests changes or carries a body, a pull-request comment.
+- Trusted → a `User` whose `authorAssociation` is `OWNER`, `MEMBER` or `COLLABORATOR`.
+- The viewer's own account is skipped: the agent posts through it, so its replies would wake the watch.
+- The `HUMAN_COMMENTS` line's `rearm` moves `--humans-after` to its newest item, so the same items never outrank the verdicts below them twice.
+
+## Failed jobs
+
+- `failed_ci_jobs` reads the Actions run and job ids from each failed check run's details URL; a job's log is readable at `actions/jobs/<id>/logs` while its run is still going.
+- `attempt` is the run's own `run_attempt`, read uncached: the rerun budget lives on the forge, not in a state file.
 
 ## Mergeability, and the base
 
@@ -53,7 +66,7 @@
 ## Verdict rules
 
 - Evaluated in order; the first match wins.
-- `CONFLICT` sits ahead of the bot-wait rules, threads outrank CI red, and CI pending outranks `CLEAN`.
+- `CONFLICT` sits ahead of the human and bot rules, threads outrank CI red, and CI pending outranks `CLEAN`.
 
 | # | Condition | Verdict |
 | --- | --- | --- |
@@ -61,9 +74,10 @@
 | 1 | closed without merge | `CLOSED` |
 | 2 | `draft` | `DRAFT` |
 | 3 | the trial merge conflicts, else `mergeable == false` or `mergeable_state == dirty` | `CONFLICT` |
+| 3a | a trusted human's item newer than `--humans-after` | `HUMAN_COMMENTS` |
 | 4 | a review bot's review check pending on HEAD inside the bot-pending timeout | `WAITING` |
 | 5 | bots participate, none done on HEAD, PR inside the fresh window | `WAITING` |
-| 6 | unresolved bot threads > 0 | `NEW_COMMENTS` |
+| 6 | unresolved bot threads > 0 | `BOT_THREADS` |
 | 7 | `ci == failed` | `CI_RED` |
 | 8 | `ci == pending` | `WAITING` |
 | 9 | `ci == none` and PR inside the fresh window | `WAITING` |
