@@ -7,7 +7,7 @@
 - A skill carries no tests: no `tests/` directory and no test files.
 - Format — the shape of one artifact a skill or agent writes: a report, a ticket, a PR body; the only place its length and shape are decided, reply rules deferring to it; it states its reader, none stated → a person.
 - A format lives with its writer: one agent writing it on every dispatch → that agent's body · one skill → its `references/<artifact>.md` · several writers → the skill owning the act, every other writer naming it.
-- A script lives with the act it performs: one skill running it → that skill's `scripts/` · several skills → the skill owning the act, every other caller citing it per § Citing a sibling and running it by `~/.claude/skills/<owner>/scripts/<name>` · an engine outside the skills among its callers → that engine's directory · a command people or launchd type → on `PATH`; never a canon folder of shared scripts.
+- A script lives with the act it performs: one skill running it → that skill's `scripts/` · several skills → the skill owning the act, every other caller citing it per § Citing a sibling and running it by `~/.claude/skills/<owner>/scripts/<name>` · an engine outside the skills among its callers → that engine's directory · a command people type → on `PATH`; never a canon folder of shared scripts.
 
 ## The body
 
@@ -19,7 +19,7 @@
 - A sibling shares its keywords → "not for … — /owner ;", naming the true owner after reading its description; never excluding what this skill's own trigger or body owns.
 - An ACT item a sibling's routine command also matches — a shared recorder, a sibling's spine, a read-only status call → leave it out.
 - `when_to_use` → trigger phrases and example requests, appended to `description`; past 1,536 characters together the listing cuts the tail.
-- A skill with `disable-model-invocation: true` gets no ACT clause; its description says who starts it.
+- A skill with `disable-model-invocation: true` gets no ACT clause; its description is one line saying what it does.
 - A slash-name stands with whitespace both sides, never touching punctuation: "— /name ;".
 - A description joining two subjects with "and" → two skills.
 
