@@ -29,16 +29,6 @@
 
 - Orca's entries were dropped from `~/.claude/settings.json`; an Orca install that writes them again shows as a `git diff` in `~/Code/machine-setup/home/`, and is reverted there.
 
-## The `domain-canon` plugin — installed as `domain-canon@yannlauwers`, enforced from `plugins/domain-canon/`
-
-- A plugin of its own in this repo, so a repo or a teammate can install it alone; each repo that wants the gate declares it in its `.claude/settings.json` (`extraKnownMarketplaces` + `enabledPlugins`). It logs to the shared `hook-decisions.jsonl` through its copies of `lib/hook_decisions.py`, `lib/hook_mode.py`, `lib/hook_run.py` and `lib/hook_shell.py`.
-
-| id | component | event | fires when | class | rollout |
-| --- | --- | --- | --- | --- | --- |
-| `canon-read-first` | `plugins/domain-canon/hooks/domain-canon.py` | PreToolUse (Bash, Read, Grep, Glob, Edit, Write, NotebookEdit) | a call runs in, or names, a directory with canon above it (each `GLOSSARY.md` and `docs/adr/*.md` but the index, from the repo root down) that this session has not read whole: the file tool's target, the Grep/Glob path or working directory, and for Bash each statement's directory plus the directory of every word naming a path (literal part before `$`, backtick or glob; after `=`; with a stuck redirect stripped). A `cat` naming only canon files counts for nothing, so the printed remedy passes; a canon file itself owes nothing | DENY | `ENFORCING` (`HOOK_MODE_CANON_READ_FIRST=observe` records `would-deny`). |
-| `canon-map-injection` | `plugins/domain-canon/hooks/domain-canon.py` | SessionStart | the repository root holds a `GLOSSARY-MAP.md`: injects it whole, truncated at 9,000 characters | WARN | `ENFORCING`. |
-| `canon-read-credit` | `plugins/domain-canon/hooks/domain-canon.py` | PostToolUse (Read, Bash) | the Read tool with no `offset` or `limit`, or a `cat`/`bat` with no pipe or redirect, read a canon file: records it in `~/.claude/state/domain-canon/<session or agent>.txt`, the ledger `canon-read-first` reads | ACT | `ENFORCING`. |
-
 ## The `codex-local-instructions` plugin — installed in Codex alone as `codex-local-instructions@yannlauwers`, from `plugins/codex-local-instructions/`
 
 - A plugin of its own, so the Codex-only handler stays visible apart from the Claude Code ones; it logs to the shared `hook-decisions.jsonl` through its copies of `lib/hook_decisions.py` and `lib/hook_run.py`, rows marked `provider: codex`.
