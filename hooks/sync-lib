@@ -5,12 +5,13 @@ A plugin carries real copies because both installers drop a symlink that leaves
 the plugin's folder. A plugin takes a module by holding a file of the same name in
 its hooks/lib/; this script refreshes those files and never adds or removes one.
 
-    hooks/sync-lib           refresh every copy
+    hooks/sync-lib           refresh every copy, then bump each plugin it changed
     hooks/sync-lib --check   list the copies that differ, exit 1 if any do
 """
 import filecmp
 import os
 import shutil
+import subprocess
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -42,6 +43,8 @@ def main():
     if check and stale:
         print("run hooks/sync-lib, then stage the copies", file=sys.stderr)
         return 1
+    if stale:
+        return subprocess.run([os.path.join(ROOT, "hooks", "bump-plugins")]).returncode
     return 0
 
 

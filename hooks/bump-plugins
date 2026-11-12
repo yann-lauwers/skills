@@ -1,0 +1,114 @@
+#!/usr/bin/env python3
+import json
+import os
+import re
+import subprocess
+import sys
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+PLUGINS = "plugins"
+VERSION_FIELD = re.compile(r'("version"\s*:\s*")[^"]*(")')
+PATCH_VERSION = re.compile(r"^(\d+)\.(\d+)\.(\d+)$")
+
+
+def git(*args):
+    return subprocess.run(["git", *args], cwd=ROOT, capture_output=True, text=True)
+
+
+def base_commit():
+    merge_base = git("merge-base", "HEAD", "origin/main")
+    return merge_base.stdout.strip() if merge_base.returncode == 0 else "HEAD"
+
+
+def manifest_path(plugin):
+    return f"{PLUGINS}/{plugin}/.claude-plugin/plugin.json"
+
+
+def version_of(manifest_text):
+    return json.loads(manifest_text).get("version") if manifest_text else None
+
+
+def manifest_at(revision, plugin):
+    shown = git("show", f"{revision}:{manifest_path(plugin)}")
+    return shown.stdout if shown.returncode == 0 else None
+
+
+def manifest_on_disk(plugin):
+    path = os.path.join(ROOT, manifest_path(plugin))
+    if not os.path.isfile(path):
+        return None
+    with open(path, encoding="utf-8") as manifest:
+        return manifest.read()
+
+
+def plugins_of(paths):
+    prefix = PLUGINS + "/"
+    return sorted({p[len(prefix):].split("/", 1)[0] for p in paths if p.startswith(prefix) and "/" in p[len(prefix):]})
+
+
+def staged_plugins(base):
+    return plugins_of(git("diff", "--cached", "--name-only", base, "--", PLUGINS).stdout.splitlines())
+
+
+def edited_plugins(base):
+    tracked = git("diff", "--name-only", base, "--", PLUGINS).stdout.splitlines()
+    untracked = git("ls-files", "--others", "--exclude-standard", "--", PLUGINS).stdout.splitlines()
+    return plugins_of(tracked + untracked)
+
+
+def next_patch(version):
+    parts = PATCH_VERSION.match(version or "")
+    if not parts:
+        return None
+    major, minor, patch = (int(part) for part in parts.groups())
+    return f"{major}.{minor}.{patch + 1}"
+
+
+def check(base):
+    unbumped = []
+    for plugin in staged_plugins(base):
+        staged = manifest_at("", plugin)
+        if staged is None:
+            continue
+        if version_of(staged) in (None, version_of(manifest_at(base, plugin))):
+            unbumped.append(plugin)
+    for plugin in unbumped:
+        print(f"{PLUGINS}/{plugin} changed without a version bump", file=sys.stderr)
+    if unbumped:
+        print("run hooks/bump-plugins, then stage the manifests", file=sys.stderr)
+        return 1
+    return 0
+
+
+def bump(base):
+    failed = False
+    for plugin in edited_plugins(base):
+        current_text = manifest_on_disk(plugin)
+        if current_text is None:
+            continue
+        current = version_of(current_text)
+        if current is not None and current != version_of(manifest_at(base, plugin)):
+            continue
+        bumped = next_patch(current)
+        if bumped is None:
+            print(f"{manifest_path(plugin)}: version {current!r} is not MAJOR.MINOR.PATCH", file=sys.stderr)
+            failed = True
+            continue
+        bumped_text = VERSION_FIELD.sub(rf"\g<1>{bumped}\g<2>", current_text, count=1)
+        if version_of(bumped_text) != bumped:
+            print(f"{manifest_path(plugin)}: its first \"version\" is not the plugin's own", file=sys.stderr)
+            failed = True
+            continue
+        with open(os.path.join(ROOT, manifest_path(plugin)), "w", encoding="utf-8") as manifest:
+            manifest.write(bumped_text)
+        print(f"bumped {PLUGINS}/{plugin} {current} -> {bumped}")
+    return 1 if failed else 0
+
+
+def main():
+    base = base_commit()
+    return check(base) if "--check" in sys.argv[1:] else bump(base)
+
+
+if __name__ == "__main__":
+    sys.exit(main())
