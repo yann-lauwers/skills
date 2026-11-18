@@ -35,6 +35,11 @@
       "name": "auto-resume",
       "source": "./plugins/auto-resume",
       "description": "Resumes a turn an API error ended, and posts a desktop notification when it cannot."
+    },
+    {
+      "name": "wispr-flow",
+      "source": "./plugins/wispr-flow",
+      "description": "Wispr Flow meetings, notes and calendar as an MCP server."
     }
   ]
 }
