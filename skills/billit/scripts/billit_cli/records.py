@@ -90,13 +90,17 @@ def file_entry(app, entry):
     return {"FileName": name, "MimeType": mime, "FileContent": base64.b64encode(raw).decode()}
 
 
+def billit_snapshot(entry):
+    return str(entry.get("FileName", "")).lower().endswith(".json") or entry.get("MimeType") == "application/json"
+
+
 def sendable(app, kind, body):
     send = {k: v for k, v in body.items() if k not in STRIP}
     if kind == "orders":
         if send.get("OrderPDF"):
             send["OrderPDF"] = file_entry(app, send["OrderPDF"])
         if send.get("Attachments"):
-            send["Attachments"] = [file_entry(app, a) for a in send["Attachments"]]
+            send["Attachments"] = [file_entry(app, a) for a in send["Attachments"] if not billit_snapshot(a)]
     return send
 
 
@@ -116,14 +120,11 @@ def covered(path, named):
 
 
 def attachment_problems(before, after):
-    old = {a.get("FileName") for a in before.get("Attachments") or []}
-    new = after.get("Attachments") or []
+    old = {a.get("FileName") for a in before.get("Attachments") or [] if not billit_snapshot(a)}
+    new = [a for a in after.get("Attachments") or [] if not billit_snapshot(a)]
     names = {a.get("FileName") for a in new}
     problems = ["lost Attachments %s" % name for name in sorted(n or "" for n in old - names)]
-    for extra in new:
-        if extra.get("FileName") not in old and not (
-                str(extra.get("FileName", "")).lower().endswith(".json") or extra.get("MimeType") == "application/json"):
-            problems.append("unexpected Attachments %s" % extra.get("FileName"))
+    problems += ["unexpected Attachments %s" % extra.get("FileName") for extra in new if extra.get("FileName") not in old]
     return problems
 
 

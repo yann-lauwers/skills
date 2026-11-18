@@ -27,6 +27,8 @@ def message_of(data):
         for key in ("Message", "message", "ErrorMessage", "error"):
             if isinstance(data.get(key), str):
                 return data[key]
+    if data:
+        return json.dumps(data, ensure_ascii=False)[:2000] if isinstance(data, (dict, list)) else str(data)[:2000]
     return ""
 
 
