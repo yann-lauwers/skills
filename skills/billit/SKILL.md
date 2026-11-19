@@ -11,7 +11,7 @@ Needs: `BILLIT_API_KEY` — one Billit account's key; the command exits 4 when i
 
 ## The entity's own choices
 
-- Invoice numbering and payment terms, which costs are re-invoiced, whether hours carry a description, whether its books read Billit's codes → as the project's instructions state them; none stated → ask the user.
+- Invoice numbering and payment terms, which costs are re-invoiced, whether hours carry a description, what an order with no bank row means, whether its books read Billit's codes → as the project's instructions state them; none stated → ask the user.
 - Its books read Billit's codes → stop and ask the user how its books are kept.
 
 ## Ask the user first
