@@ -2,6 +2,7 @@
 //
 //   save <dir>          writes <dir>/pb.html and <dir>/pb.txt from the current pasteboard
 //   load <html> <text>  puts an HTML flavour plus a plain-text fallback on the pasteboard
+//   load-files <path>…  puts those files on the pasteboard, as Finder's Copy does
 //   restore <dir>       puts back what `save` captured
 //
 // The pasteboard is machine-wide, so a concurrent copy can land between `load` and
@@ -42,6 +43,16 @@ function run(argv) {
     return 'loaded'
   }
 
+  if (verb === 'load-files') {
+    const paths = argv.slice(1)
+    if (paths.length === 0) throw new Error('load-files needs at least one path')
+    const urls = $.NSMutableArray.alloc.init
+    paths.forEach((path) => urls.addObject($.NSURL.fileURLWithPath(path)))
+    pb.clearContents
+    if (!pb.writeObjects(urls)) throw new Error('the pasteboard refused the files')
+    return 'loaded'
+  }
+
   if (verb === 'restore') {
     const h = readFile(argv[1] + '/pb.html')
     const t = readFile(argv[1] + '/pb.txt')
@@ -51,5 +62,5 @@ function run(argv) {
     return 'restored'
   }
 
-  throw new Error('usage: pasteboard.js save <dir> | load <html> <text> | restore <dir>')
+  throw new Error('usage: pasteboard.js save <dir> | load <html> <text> | load-files <path>… | restore <dir>')
 }

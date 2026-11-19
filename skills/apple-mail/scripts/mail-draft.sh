@@ -491,71 +491,16 @@ if [ "$pasted" != "true" ]; then
 	exit 1
 fi
 
-# 4. Give the window its real subject back, then attach.
+# 4. Attach, while the window still carries the nonce.
+if [ -s "$dir/attach" ]; then
+	"$HERE/attach-files.sh" "$NONCE" "${ATTACHMENTS[@]}"
+fi
+
+# 5. Give the window its real subject back.
 restore_subject
 
 sweep_nonce_drafts
 trap 'sweep_nonce_drafts; cleanup' EXIT
-
-if [ -s "$dir/attach" ]; then
-	MAIL_PAYLOAD_DIR="$dir" MAIL_MSG_ID="$NEWID" osascript >/dev/null <<'APPLESCRIPT'
-on readText(p)
-	try
-		return (read (POSIX file p) as «class utf8»)
-	on error
-		return ""
-	end try
-end readText
-
-on readLines(p)
-	set raw to my readText(p)
-	if raw is "" then return {}
-	set AppleScript's text item delimiters to linefeed
-	set parts to text items of raw
-	set AppleScript's text item delimiters to ""
-	set out to {}
-	repeat with x in parts
-		if (x as string) is not "" then set end of out to (x as string)
-	end repeat
-	return out
-end readLines
-
--- Apple Mail resolves an attachment through an HFS alias, not a POSIX file:
--- the POSIX form is accepted and silently attaches nothing.
-on toHFS(posixPath)
-	set AppleScript's text item delimiters to "/"
-	set parts to text items of posixPath
-	set AppleScript's text item delimiters to ":"
-	set hfs to "Macintosh HD" & (parts as string)
-	set AppleScript's text item delimiters to ""
-	return hfs
-end toHFS
-
-set d to (system attribute "MAIL_PAYLOAD_DIR")
-set wanted to (system attribute "MAIL_MSG_ID") as integer
-set theAttachments to my readLines(d & "/attach")
-
-tell application "Mail"
-	set msg to missing value
-	repeat with m in (every outgoing message)
-		try
-			if (id of m) is wanted then set msg to m
-		end try
-	end repeat
-	if msg is missing value then error "the draft went away before its attachments landed"
-	tell msg
-		repeat with p in theAttachments
-			try
-				make new attachment with properties {file name:((my toHFS(p as string)) as alias)} at after last paragraph
-				delay 1
-			on error errText
-				error "attachment failed for " & (p as string) & ": " & errText
-			end try
-		end repeat
-	end tell
-end tell
-APPLESCRIPT
-fi
 
 osascript -e 'tell application "Mail" to activate' >/dev/null
 echo "drafted"

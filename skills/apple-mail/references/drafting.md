@@ -14,7 +14,8 @@
 
 Every line holds for `mail-draft.sh`; a change to it keeps each one.
 
-- Attach a file through an HFS alias — `"Macintosh HD:Users:…" as alias` — never `POSIX file "/path"`, which Mail accepts while attaching nothing; verify by counting `attachments of content of msg`, never assume.
+- Attach a file by pasting it at the caret, one file per paste, never with `make new attachment`: on a reply or a forward that verb replaces the whole body, quoted original included, with the attachment alone.
+- Verify each attachment by its file name in the compose window's accessibility tree, both names normalised to NFC; `attachments of content of msg` answers 0 on a reply.
 - Paste a body into the compose window, never assign it to `content`: on a reply or a forward `content` holds the quoted original as one field, writing it replaces the quote, and reading it answers `""` on a fresh reply, so it cannot be read, amended and written back.
 - The paste goes through the pasteboard and ⌘V, leaving Mail's attribution line, quote bar, formatting and inline images standing underneath.
 - Find the compose window by a nonce stamped into its `subject`, never by focus: raise the window carrying that title, paste, then put the real subject back.
