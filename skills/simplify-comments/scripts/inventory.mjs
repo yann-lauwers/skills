@@ -129,7 +129,7 @@ function hashComments(text, { afterCode = true } = {}) {
   let start = 0;
   text.split('\n').forEach((line, row) => {
     const whole = line.match(/^(\s*)#/);
-    const trailing = afterCode ? line.match(/^(?:\$\{?#|[^'"#]|"[^"]*"|'[^']*')*?\s(#(?:\s.*)?)$/) : null;
+    const trailing = afterCode ? line.match(/^(?:\$\{?#|[^'"#]|"[^"]*"|'[^']*')*?\s(#.*)$/) : null;
     if (whole && !(row === 0 && line.startsWith('#!'))) ranges.push([start + whole[1].length, start + line.length]);
     else if (trailing) ranges.push([start + line.length - trailing[1].length, start + line.length]);
     start += line.length + 1;
